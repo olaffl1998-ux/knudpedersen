@@ -1,7 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getBrand, getModelsForBrand, nonRolexBrands } from "@/data/catalog";
+import { getBrand, getModelsForBrand, nonRolexBrands, type Model } from "@/data/catalog";
+
+/** Grupperer urene efter kollektion (i den rækkefølge de står i data) */
+function groups(ms: Model[]): [string, Model[]][] {
+  const map = new Map<string, Model[]>();
+  for (const m of ms) {
+    const k = m.collection || "Øvrige modeller";
+    map.set(k, [...(map.get(k) ?? []), m]);
+  }
+  return [...map.entries()];
+}
 import ModelCard from "@/components/ModelCard";
 import { Breadcrumbs } from "@/components/Seo";
 
@@ -34,14 +44,18 @@ export default async function BrandPage({ params }: P) {
           <div className="stack"><p className="eyebrow">Autoriseret forhandler</p><h1>{b.name} i Aarhus</h1></div>
           <div className="stack">
             <p className="measure">{b.intro}</p>
-            <p className="note">Teksten udbygges til ca. 300 ord, skrevet til Knud Pedersen og ikke kopieret fra mærket.</p>
           </div>
         </div>
         {ms.length ? (
-          <div className="models">{ms.map((m) => <ModelCard key={m.slug} model={m} />)}</div>
+          groups(ms).map(([name, list]) => (
+            <div key={name} className="stack">
+              <h2 className="collection-head">{name} <small className="muted">({list.length})</small></h2>
+              <div className="models">{list.map((m) => <ModelCard key={m.slug} model={m} />)}</div>
+            </div>
+          ))
         ) : (
           <div className="placeholder">
-            Modellerne for {b.name} importeres fra mærkets forhandlerportal med billeder, specifikationer, vejledende priser og kompatible remme og lænker.
+            Vi har {b.name} i butikken. Ring på 86 12 17 99 eller book et møde, så viser vi dig de aktuelle modeller.
           </div>
         )}
         <div className="cta-row"><Link className="btn" href={`/kontakt?emne=${encodeURIComponent(b.name)}`}>Book et møde om {b.name}</Link></div>

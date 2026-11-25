@@ -30,8 +30,8 @@ export default function Header() {
       <header className="site">
         <div className="wrap">
           <Link className="logo" href="/" aria-label="Knud Pedersen, til forsiden">
-            <b>KNUD PEDERSEN</b>
-            <span>URE &amp; SMYKKER · AARHUS</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="https://shop16933.sfstatic.io/upload_dir/pics/Knud_Pedersen_logo.png" alt="Knud Pedersen" width={180} height={70} />
           </Link>
           <nav className={`main${open ? " open" : ""}`} id="hovedmenu" aria-label="Hovedmenu">
             {mainNav.map((n) => (

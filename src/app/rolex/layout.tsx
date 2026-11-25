@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { rolexAssets } from "@/data/rolex";
 import { KeepExploring, RolexMenu } from "@/components/RolexNav";
 
 /**
@@ -10,8 +11,9 @@ export default function RolexLayout({ children }: { children: React.ReactNode })
     <div className="rolex-zone">
       <div className="wrap">
         <div className="rolex-head">
-          <Link className="plaque" href="/rolex" aria-label="Officiel Rolex-forhandler, udforsk Rolex">
-            Rolex-plakette<br />(fil fra Rolex)
+          <Link className="plaque" href="/rolex">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={rolexAssets.plaque} alt="Officiel Rolex-forhandler" width={120} height={60} />
           </Link>
           <RolexMenu />
         </div>

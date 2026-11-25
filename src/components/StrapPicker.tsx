@@ -59,7 +59,12 @@ export default function StrapPicker({ model, straps, brandName }: Props) {
             </button>
           ))}
           <div className="slot is-watch" aria-live="polite">
-            <WatchSvg model={model} strap={current} />
+            {model.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={model.image} alt={`${brandName} ${model.name} ${model.ref}`} />
+            ) : (
+              <WatchSvg model={model} strap={current} />
+            )}
           </div>
           {right.map(({ s, i }) => (
             <button key={s.key} type="button" className="slot" onClick={() => go(i)} aria-label={`Vis uret på ${s.name}`}>
@@ -79,7 +84,11 @@ export default function StrapPicker({ model, straps, brandName }: Props) {
           <p className="eyebrow">Valgt rem eller lænke</p>
           <h2 style={{ fontSize: "1.25rem" }}>{current.name}</h2>
         </div>
-        <p className="note">{current.material} · passer til {model.size} · reference fra {brandName}</p>
+        <p className="note">
+          {sel === 0
+            ? `Uret leveres på denne ${current.type === "steel" || current.type === "bicolor" ? "lænke" : "rem"}, som vist på billedet.`
+            : `${current.material}. ${brandName} tilbyder også denne type til kollektionen. Vi bekræfter pasformen, når du besøger os.`}
+        </p>
       </div>
       <div className="chips" role="group" aria-label="Vælg rem eller lænke">
         {straps.map((s, i) => {

@@ -24,7 +24,7 @@ export const business = {
 } as const;
 
 export const mainNav = [
-  { href: "/rolex/discover", label: "Rolex", key: "rolex" },
+  { href: "/rolex", label: "Rolex", key: "rolex" },
   { href: "/ure", label: "Ure", key: "ure" },
   { href: "/smykker", label: "Smykker", key: "smykker" },
   { href: "/service", label: "Service", key: "service" },

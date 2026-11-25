@@ -27,7 +27,8 @@ Teknik: Next.js 15 (App Router) og TypeScript. Ingen database: indhold ligger i 
 
 Data:
 
-- `src/data/catalog.ts`: mærker, modeller, remme og lænker. **Modeller, priser og remme er eksempler** (`example: true`) og skal erstattes med data og billeder fra mærkernes forhandlerportaler.
+- `src/data/products.raw.ts`: 393 ure hentet fra den nuværende webshop (navn, reference, pris, billede, specifikationer). Ét ur pr. linje, nemt at rette.
+- `src/data/catalog.ts`: mærker, remme og lænker, og indlæsning af urene. Gamle produkt-URL'er omdirigeres automatisk til det nye ur.
 - `src/data/rolex.ts`: Rolex-menu, 15 kollektioner, sidetekster og typen for Rolex' Technical Specifications-fil.
 
 ## Rolex-sektionen
@@ -47,6 +48,8 @@ Bygget efter Rolex' guide for officielle forhandlere og den danske struktur, som
 - [ ] Import af Rolex' modeldata, billeder, plakette, ur-nøgle og Adobe Launch-kode
 - [ ] Rigtige modeller, billeder, vejledende priser og kompatible remme fra hvert mærke
 - [ ] Logo, butiksfotos og medarbejderfotos
+- [ ] Kopiér billeder (ure, logo og Rolex-billeder) fra shop16933.sfstatic.io til det nye site, før den gamle webshop lukkes
+- [ ] Gennemgå priserne (hentet fra webshoppen 25.11.2026) og fjern ure, I ikke længere fører
 - [ ] Tekster: mærkesider (ca. 300 ord hver), om os, service med priseksempler
 - [ ] E-mail til booking: sæt `RESEND_API_KEY` og afsenderdomæne
 - [ ] Juridisk gennemgang af privatlivs- og cookiepolitik, evt. certificeret CMP med Google Consent Mode v2

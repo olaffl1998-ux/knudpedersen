@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { rolexNav } from "@/data/rolex";
+import { rolexAssets, rolexNav } from "@/data/rolex";
 
 export function RolexMenu() {
   const path = usePathname() || "";
@@ -18,12 +18,26 @@ export function RolexMenu() {
 
 export function KeepExploring() {
   const path = usePathname() || "";
-  const links = rolexNav.filter((n) => n.href !== path).slice(0, 6);
+  const links = rolexNav.filter((n) => n.href !== path && rolexAssets.keepExploring[n.href]);
   return (
     <section className="keep-exploring" aria-labelledby="keep-exploring">
       <h2 id="keep-exploring" style={{ fontSize: "1.2rem" }}>Fortsæt med at udforske</h2>
-      <ul>{links.map((n) => <li key={n.href}><Link href={n.href}>{n.label}</Link></li>)}</ul>
-      <a className="back-top" href="#indhold">Tilbage til toppen</a>
+      <ul>
+        {links.map((n) => (
+          <li key={n.href}>
+            <Link href={n.href}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={rolexAssets.keepExploring[n.href]} alt="" loading="lazy" />
+              <span>{n.label}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <a className="back-top" href="#indhold">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={rolexAssets.crown} alt="" width={28} height={30} />
+        <span>Tilbage til toppen</span>
+      </a>
     </section>
   );
 }

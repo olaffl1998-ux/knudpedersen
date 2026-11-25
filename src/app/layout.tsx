@@ -28,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a className="skip" href="#indhold">Gå til indhold</a>
         <ConsentProvider>
           {SHOW_PREVIEW_BANNER && (
-            <div className="preview-flag">Forhåndsvisning. Modeller, priser og remme er eksempler, og Rolex-indhold indsættes fra Rolex.</div>
+            <div className="preview-flag">Forhåndsvisning. Ure og priser er hentet fra den nuværende webshop og skal gennemgås før lancering.</div>
           )}
           <Header />
           <main id="indhold">{children}</main>

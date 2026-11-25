@@ -1,9 +1,11 @@
+import { RAW } from "./products.raw";
+
 /**
  * Katalog over mærker, modeller og remme/lænker.
  *
- * VIGTIGT: Modeller, priser og remme herunder er EKSEMPLER til forhåndsvisningen.
- * Før lancering skal de erstattes med data fra hvert mærkes forhandlerportal
- * (billeder med brugsret, referencenumre, vejledende udsalgspriser og kompatible remme).
+ * Urene og priserne er hentet fra den nuværende webshop på knudpedersen.dk (se products.raw.ts).
+ * Remme og lænker ud over den, uret leveres på, er de typer mærket tilbyder til kollektionen;
+ * præcis pasform bekræftes i butikken.
  * Rolex vises IKKE her: Rolex-modeller kommer fra Rolex Brand Centre og ligger under /rolex.
  */
 
@@ -30,13 +32,20 @@ export type Model = {
   slug: string;
   brand: string;
   name: string;
+  /** Mærkets referencenummer */
+  ref: string;
   size: string;
-  /** Vejledende udsalgspris i DKK for uret på den første rem/lænke i listen */
+  /** Vejledende udsalgspris i DKK, som den står i den nuværende webshop */
   price: number;
-  /** true indtil rigtige data er hentet fra mærket */
+  /** true for tegnede eksempler; false for ure hentet fra den nuværende webshop */
   example: boolean;
+  /** Produktbillede (fra den nuværende webshop) */
+  image?: string;
+  collection?: string;
+  /** Produkt-id i den gamle webshop, bruges til 301-redirects */
+  oldId?: number;
   look: { dial: string; bezel: string; case: string };
-  /** Kompatible remme og lænker; den første er standard */
+  /** Remme og lænker; den første er den, uret leveres på */
   straps: string[];
   specs: Record<string, string>;
 };
@@ -73,56 +82,91 @@ export const straps: Record<string, Strap> = {
   "leather-brown": { key: "leather-brown", name: "Læderrem, brun", type: "leather", color: "#6B3E22", material: "Kalveskind" },
   "leather-black": { key: "leather-black", name: "Læderrem, sort", type: "leather", color: "#1B1714", material: "Kalveskind" },
   "alligator-brown": { key: "alligator-brown", name: "Alligatorrem, mørkebrun", type: "leather", color: "#3E2416", material: "Alligator" },
+  "titanium": { key: "titanium", name: "Titaniumlænke", type: "steel", color: "#A9ADB2", material: "Titanium" },
+  "gold": { key: "gold", name: "Guldlænke", type: "bicolor", color: "#C9A55A", material: "18 kt. guld" },
+  "fabric-black": { key: "fabric-black", name: "Tekstilrem, sort", type: "nato", color: "#232323", material: "Jacquard-vævet tekstil" },
+  "original-strap": { key: "original-strap", name: "Original rem", type: "leather", color: "#2B211B", material: "Som på billedet" },
 };
 
-export const models: Model[] = [
-  {
-    slug: "seamaster-diver-300m", brand: "omega", name: "Seamaster Diver 300M", size: "42 mm", price: 44600, example: true,
-    look: { dial: "#121212", bezel: "#111111", case: "#C9CCD0" },
-    straps: ["steel", "nato-black", "nato-blue", "nato-brown", "nato-grey", "rubber-black", "rubber-blue"],
-    specs: { Urværk: "Automatisk, Master Chronometer", Kasse: "Rustfrit stål", Vandtæthed: "300 m", Glas: "Safirglas" },
-  },
-  {
-    slug: "speedmaster-moonwatch-professional", brand: "omega", name: "Speedmaster Moonwatch Professional", size: "42 mm", price: 57900, example: true,
-    look: { dial: "#151515", bezel: "#141414", case: "#C9CCD0" },
-    straps: ["steel", "nato-black", "nato-grey", "leather-black", "leather-brown", "rubber-black"],
-    specs: { Urværk: "Manuelt optræk, Master Chronometer", Kasse: "Rustfrit stål", Vandtæthed: "50 m", Glas: "Hesalit eller safir" },
-  },
-  {
-    slug: "seamaster-aqua-terra-150m", brand: "omega", name: "Seamaster Aqua Terra 150M", size: "41 mm", price: 47300, example: true,
-    look: { dial: "#2C4A73", bezel: "#C9CCD0", case: "#C9CCD0" },
-    straps: ["steel", "leather-brown", "leather-black", "rubber-blue"],
-    specs: { Urværk: "Automatisk, Master Chronometer", Kasse: "Rustfrit stål", Vandtæthed: "150 m", Glas: "Safirglas" },
-  },
-  {
-    slug: "black-bay-58", brand: "tudor", name: "Black Bay 58", size: "39 mm", price: 31900, example: true,
-    look: { dial: "#101010", bezel: "#13213D", case: "#C9CCD0" },
-    straps: ["steel", "nato-black", "nato-blue", "leather-brown"],
-    specs: { Urværk: "Automatisk, manufaktur", Kasse: "Rustfrit stål", Vandtæthed: "200 m", Glas: "Safirglas" },
-  },
-  {
-    slug: "spirit-zulu-time", brand: "longines", name: "Spirit Zulu Time", size: "42 mm", price: 27900, example: true,
-    look: { dial: "#1D1D1D", bezel: "#2B2B2B", case: "#C9CCD0" },
-    straps: ["steel", "leather-brown", "nato-brown", "nato-blue"],
-    specs: { Urværk: "Automatisk, GMT", Kasse: "Rustfrit stål", Vandtæthed: "100 m", Glas: "Safirglas" },
-  },
-  {
-    slug: "carrera-chronograph", brand: "tag-heuer", name: "Carrera Chronograph", size: "42 mm", price: 49950, example: true,
-    look: { dial: "#DADCDF", bezel: "#C9CCD0", case: "#C9CCD0" },
-    straps: ["steel", "leather-black", "leather-brown", "alligator-brown"],
-    specs: { Urværk: "Automatisk kronograf", Kasse: "Rustfrit stål", Vandtæthed: "100 m", Glas: "Safirglas" },
-  },
-  {
-    slug: "navitimer-b01-chronograph", brand: "breitling", name: "Navitimer B01 Chronograph", size: "43 mm", price: 68900, example: true,
-    look: { dial: "#1A1A1A", bezel: "#C9CCD0", case: "#C9CCD0" },
-    straps: ["steel", "alligator-brown", "leather-black"],
-    specs: { Urværk: "Automatisk kronograf, manufaktur", Kasse: "Rustfrit stål", Vandtæthed: "30 m", Glas: "Safirglas" },
-  },
-];
+/**
+ * Rem- og lænketyper, som mærket tilbyder til sine ure. Bruges som "andre muligheder" i vælgeren.
+ * Den præcise pasform (bredde og hornafstand) bekræftes i butikken.
+ */
+const brandStrapOptions: Record<string, string[]> = {
+  tudor: ["steel", "fabric-black", "rubber-black", "leather-brown"],
+  omega: ["steel", "nato-black", "rubber-black", "leather-brown", "leather-black"],
+  "tag-heuer": ["steel", "rubber-black", "leather-black", "leather-brown"],
+  longines: ["steel", "leather-brown", "leather-black", "rubber-black"],
+  "glashutte-original": ["steel", "alligator-brown", "rubber-black"],
+  "grand-seiko": ["steel", "titanium", "alligator-brown", "leather-black"],
+  "baume-mercier": ["steel", "leather-brown", "leather-black", "rubber-blue"],
+  oris: ["steel", "rubber-black", "leather-brown", "nato-grey"],
+  doxa: ["steel", "rubber-black"],
+  montblanc: ["steel", "leather-brown", "leather-black"],
+  chopard: ["steel", "alligator-brown", "rubber-black"],
+  gucci: ["steel", "leather-black"],
+};
 
 export const nonRolexBrands = brands.filter((b) => !b.rolex);
 export const getBrand = (slug: string) => brands.find((b) => b.slug === slug);
 export const getModelsForBrand = (slug: string) => models.filter((m) => m.brand === slug);
 export const getModel = (brand: string, slug: string) => models.find((m) => m.brand === brand && m.slug === slug);
-export const brandHref = (b: Brand) => (b.rolex ? "/rolex/discover" : `/ure/${b.slug}`);
+export const brandHref = (b: Brand) => (b.rolex ? "/rolex" : `/ure/${b.slug}`);
 export const modelHref = (m: Model) => `/ure/${m.brand}/${m.slug}`;
+
+const IMG_BASE = "https://shop16933.sfstatic.io/upload_dir/shop/";
+
+const slugify = (t: string) =>
+  t.toLowerCase().replace(/[æ]/g, "ae").replace(/[ø]/g, "oe").replace(/[å]/g, "aa").replace(/&/g, "og")
+    .normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+function fittedStrap(kind: string, material: string): string {
+  if (kind === "Lænke") {
+    if (/guld/i.test(material) && /stål/i.test(material)) return "steel-gold";
+    if (/titanium/i.test(material)) return "titanium";
+    if (/guld/i.test(material)) return "gold";
+    return "steel";
+  }
+  return "original-strap";
+}
+
+function lookFor(dial: string) {
+  const d = dial.toLowerCase();
+  const col = d.startsWith("blå") ? "#1F3A66" : d.startsWith("champagne") ? "#C9B07A" : /hvid|sølv|opalin|perlemor/.test(d) ? "#E6E3DD" : "#141414";
+  return { dial: col, bezel: col, case: "#C9CCD0" };
+}
+
+function parseProducts(): Model[] {
+  const seen = new Set<string>();
+  const out: Model[] = [];
+  for (const line of RAW.trim().split("\n")) {
+    const [brand, oldId, name, ref, price, img, collection, diameter, strapKind, material, movement, water, dial] = line.split("|");
+    let slug = slugify(`${name}-${ref}`);
+    while (seen.has(`${brand}/${slug}`)) slug += "-2";
+    seen.add(`${brand}/${slug}`);
+    const fitted = fittedStrap(strapKind, material);
+    const options = (brandStrapOptions[brand] ?? ["steel"]).filter((k) => k !== fitted && !(fitted !== "original-strap" && k === "steel"));
+    const specs: Record<string, string> = { Reference: ref };
+    if (collection) specs.Kollektion = collection;
+    if (material) specs.Kasse = material;
+    if (movement) specs["Urværk"] = movement;
+    if (water) specs["Vandtæthed"] = water;
+    if (dial) specs.Skive = dial;
+    if (strapKind) specs["Leveres på"] = strapKind === "Lænke" ? "Lænke" : "Rem";
+    out.push({
+      slug, brand, name, ref,
+      size: diameter,
+      price: Number(price),
+      example: false,
+      image: img.startsWith("http") ? img : IMG_BASE + img,
+      collection: collection || undefined,
+      oldId: Number(oldId),
+      look: lookFor(dial),
+      straps: [fitted, ...options],
+      specs,
+    });
+  }
+  return out;
+}
+
+export const models: Model[] = parseProducts();

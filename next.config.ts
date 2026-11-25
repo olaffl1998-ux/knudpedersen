@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { models } from "./src/data/catalog";
 
 /** 301-omdirigeringer fra den gamle ScanNet-side, så placeringer i Google bevares */
 const shopBrand: Record<string, string> = {
@@ -50,6 +51,8 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       ...Object.entries(pages).map(([source, destination]) => ({ source, destination, permanent: true })),
+      // Hvert gammelt produkt (/shop/<kategori>/<id>-<varenr>/) sendes til samme ur på den nye side
+      ...models.filter((m) => m.oldId).map((m) => ({ source: `/shop/:cat/:product(${m.oldId}-[^/]*)/:rest*`, destination: `/ure/${m.brand}/${m.slug}`, permanent: true })),
       ...Object.entries(shopBrand).flatMap(([id, destination]) => [
         { source: `/shop/${id}`, destination, permanent: true },
         { source: `/shop/${id}/:product*`, destination, permanent: true },

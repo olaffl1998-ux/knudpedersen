@@ -5,10 +5,13 @@ import ModelCard from "@/components/ModelCard";
 import { Breadcrumbs } from "@/components/Seo";
 
 export const metadata: Metadata = {
-  title: "Ure i Aarhus – Rolex, Tudor, Omega, Breitling og flere",
+  title: "Ure i Aarhus – Rolex, Tudor, Omega, Grand Seiko og flere",
   description: "Se ure fra 15 anerkendte mærker hos Knud Pedersen i Aarhus. Vejledende priser online, rådgivning og prøvning i butikken på Skt. Clemens Torv.",
   alternates: { canonical: "/ure" },
 };
+
+/** Første ur fra hvert mærke */
+const featured = brands.flatMap((b) => models.find((m) => m.brand === b.slug) ?? []);
 
 export default function Ure() {
   return (
@@ -24,7 +27,7 @@ export default function Ure() {
           {brands.map((b) => <Link key={b.slug} href={brandHref(b)}>{b.name}<small>{b.kind}</small></Link>)}
         </div>
         <h2>Udvalgte modeller</h2>
-        <div className="models">{models.map((m) => <ModelCard key={`${m.brand}-${m.slug}`} model={m} />)}</div>
+        <div className="models">{featured.map((m) => <ModelCard key={`${m.brand}-${m.slug}`} model={m} />)}</div>
       </div>
     </section>
   );

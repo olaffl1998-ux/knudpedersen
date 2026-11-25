@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { brands, brandHref, models, straps } from "@/data/catalog";
-import { WatchSvg } from "@/components/WatchArt";
+import { brands, brandHref, models } from "@/data/catalog";
+import { rolexAssets } from "@/data/rolex";
 
 export default function Home() {
-  const hero = models[0];
+  const rolexBanner = rolexAssets.slides[1];
+  const hero = models.find((m) => m.ref === "M79000N-0001") ?? models[0];
   return (
     <>
       <section className="hero section">
@@ -20,7 +21,8 @@ export default function Home() {
             </div>
           </div>
           <div className="hero-art" aria-hidden="true">
-            <WatchSvg model={hero} strap={straps[hero.straps[0]]} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={hero.image} alt="" fetchPriority="high" />
           </div>
         </div>
       </section>
@@ -29,12 +31,17 @@ export default function Home() {
       <section className="section">
         <div className="wrap">
           <div className="banner">
-            <div className="ph">Rolex-banner<br />Billede og tekst fra Rolex Brand Centre, bruges uændret</div>
+            <Link href={rolexBanner.href} className="banner-img">
+              <picture>
+                <source media="(max-width: 700px)" srcSet={rolexBanner.mobile} />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={rolexBanner.desktop} alt={rolexBanner.alt} loading="lazy" />
+              </picture>
+            </Link>
             <div className="txt">
-              <p className="eyebrow">Officiel Rolex-forhandler</p>
-              <h2>Rolex hos Knud Pedersen</h2>
-              <p className="muted">Opdag Rolex-kollektionerne i vores butik i Aarhus.</p>
-              <div><Link className="btn ghost" href="/rolex">Udforsk Rolex</Link></div>
+              <p className="eyebrow">{rolexBanner.eyebrow}</p>
+              <h2>{rolexBanner.title}</h2>
+              <div><Link className="btn ghost" href={rolexBanner.href}>Opdag</Link></div>
             </div>
           </div>
         </div>
@@ -43,7 +50,7 @@ export default function Home() {
       <section className="section tight-top">
         <div className="wrap stack-lg">
           <div className="split">
-            <div><p className="eyebrow">Vores mærker</p><h2>15 urmærker under ét tag</h2></div>
+            <div><p className="eyebrow">Vores mærker</p><h2>{brands.length} urmærker under ét tag</h2></div>
             <p className="measure muted">
               Vi er autoriseret forhandler af alle mærker i butikken. Det betyder originale ure, fuld fabriksgaranti og service efter producentens krav.
             </p>
