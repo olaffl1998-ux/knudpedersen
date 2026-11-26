@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Catalog, { type Item } from "@/components/Catalog";
-import { getBrand, genderOf, models, priceBands, sizeOf } from "@/data/catalog";
+import Catalog from "@/components/Catalog";
+import { models, priceBands } from "@/data/catalog";
+import { watchCategories } from "@/data/categories";
+import { toItems } from "@/lib/watchItems";
 import { Breadcrumbs } from "@/components/Seo";
 
 export const metadata: Metadata = {
@@ -12,15 +14,8 @@ export const metadata: Metadata = {
 
 export default function Watches() {
   // Rolex vises ikke her (Rolex' krav). Rolex har sin egen sektion.
-  const items: Item[] = models.map((m, order) => ({
-    m, order,
-    brandName: getBrand(m.brand)!.name,
-    gender: genderOf(m),
-    size: sizeOf(m),
-    material: m.specs.Kasse ?? "",
-    movement: m.specs["Urværk"] ?? "",
-    band: priceBands.find((b) => m.price >= b.min && m.price < b.max)!.label,
-  }));
+  const items = toItems(models);
+
   return (
     <>
       <div className="container"><Breadcrumbs items={[{ name: "Ure", href: "/ure" }]} /></div>
@@ -28,6 +23,7 @@ export default function Watches() {
         <span className="label">Ure</span>
         <h1>Ure</h1>
         <p className="lead">{models.length} ure fra {new Set(models.map((m) => m.brand)).size} mærker. Vejledende priser. Urene kan ikke købes online. Book et møde, så har vi dem klar. Rolex finder du i <Link href="/rolex/discover">Rolex-sektionen</Link>.</p>
+        <nav className="subcats" aria-label="Kategorier"><ul>{watchCategories.map((c) => <li key={c.slug}><Link href={`/ure/${c.slug}`}>{c.label}</Link></li>)}</ul></nav>
       </section>
       <section className="container" style={{ paddingBottom: 120 }}>
         <Catalog items={items} bandOrder={priceBands.map((b) => b.label)} />

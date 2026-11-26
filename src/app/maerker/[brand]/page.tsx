@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getBrand, getModelsForBrand, nonRolexBrands } from "@/data/catalog";
+import { getBrand, getModelsForBrand, nonRolexBrands, collectionSlug } from "@/data/catalog";
 import ModelCard from "@/components/ModelCard";
 import { Breadcrumbs } from "@/components/Seo";
 import { business } from "@/lib/site";
+import BrandHero from "@/components/BrandHero";
+import Carousel from "@/components/Carousel";
+import Catalog from "@/components/Catalog";
+import { priceBands } from "@/data/catalog";
+import { toItems } from "@/lib/watchItems";
+import { brandMedia } from "@/data/brandMedia";
 
 type P = { params: Promise<{ brand: string }> };
 export const dynamicParams = false;
@@ -27,47 +33,59 @@ export default async function BrandPage({ params }: P) {
   const list = getModelsForBrand(b.slug);
   const tudor = b.slug === "tudor";
   const collections = Array.from(new Set(list.map((m) => m.collection).filter(Boolean))) as string[];
+  const media = brandMedia[b.slug] ?? {};
+  const withImg = list.filter((m) => m.image);
+  // Populære modeller: én pr. kollektion først, så resten
+  const seen = new Set<string>();
+  const popular = [...withImg.filter((m) => { const k = m.collection ?? m.name; if (seen.has(k)) return false; seen.add(k); return true; }), ...withImg].filter((m, i, a) => a.indexOf(m) === i).slice(0, 10);
   return (
     <>
       {/* Mærkesider godkendes mod mærkets retailer guidelines før lancering */}
       <div hidden dangerouslySetInnerHTML={{ __html: `<!-- Godkendes mod ${b.name} Retailer Guidelines før lancering -->` }} />
-      <div className="container"><Breadcrumbs items={[{ name: "Mærker", href: "/maerker" }, { name: b.name, href: `/maerker/${b.slug}` }]} /></div>
-      <section className="container page-head">
-        {tudor ? <span className="badge">Officiel Tudor-forhandler</span> : <span className="label">{b.kind}</span>}
-        <h1 style={{ marginTop: 16 }}>{b.name}</h1>
-        <p className="lead">{b.intro}</p>
-        <div className="btn-row" style={{ marginTop: 24 }}>
-          <Link className="btn" href={`/book-tid?maerke=${b.slug}`}>Book et møde om {b.name}</Link>
-          <a className="btn btn--outline" href={`tel:${business.phoneE164}`}>Ring {business.phone}</a>
-        </div>
-      </section>
-      {tudor && (
-        <section className="container" style={{ paddingBottom: 72 }}>
-          <div className="split">
-            <div className="split__media">{list[0]?.image ? <img src={list[0].image} alt={`Tudor ${list[0].name}`} loading="lazy" className="on-stage" /> : <div className="ph" aria-hidden="true" />}</div>
-            <div className="split__text">
-              <span className="label">Tudor hos Knud Pedersen</span>
-              <h2>Kollektionerne</h2>
-              <ul className="cat-list">{collections.map((c) => <li key={c}><a href={`#k-${c.replace(/\W+/g, "-")}`}>{c}</a></li>)}</ul>
-            </div>
+      <BrandHero name={b.name} eyebrow={tudor ? "Officiel Tudor-forhandler" : "Autoriseret forhandler"} intro={b.intro} hero={media.hero} heroMobile={media.heroMobile} packshot={withImg[0]?.image} video={media.video}>
+        <Link className="btn btn--light" href={`/book-tid?maerke=${b.slug}`}>Book et møde om {b.name}</Link>
+      </BrandHero>
+      <div className="container"><Breadcrumbs items={[{ name: b.name, href: `/maerker/${b.slug}` }]} /></div>
+
+      {popular.length > 1 && (
+        <section className="section ed-featured">
+          <div className="container">
+            <Carousel title={`Populære ${b.name}-modeller`} action={<a className="link-arrow" href="#alle-ure">Alle {list.length} ure</a>}>
+              {popular.map((m) => <li key={m.slug}><ModelCard model={m} /></li>)}
+            </Carousel>
           </div>
         </section>
       )}
-      <div className="container" style={{ paddingBottom: 120 }}>
-        {list.length === 0 && <div className="empty"><p>Kontakt os for at se udvalget fra {b.name} i butikken.</p><p className="btn-row" style={{ justifyContent: "center" }}><Link className="btn" href={`/book-tid?maerke=${b.slug}`}>Book et møde</Link></p></div>}
-        {(collections.length > 1 ? collections : [null]).map((c) => {
-          const g = c ? list.filter((m) => m.collection === c) : list;
-          return (
-            <section key={c ?? "alle"} id={c ? `k-${c.replace(/\W+/g, "-")}` : undefined} style={{ marginBottom: 72 }}>
-              {c && <h2>{c}</h2>}
-              <ul className="cards">{g.map((m) => <li key={m.slug}><ModelCard model={m} /></li>)}</ul>
-            </section>
-          );
-        })}
-        {collections.length > 1 && list.some((m) => !m.collection) && (
-          <section><h2>Øvrige modeller</h2><ul className="cards">{list.filter((m) => !m.collection).map((m) => <li key={m.slug}><ModelCard model={m} /></li>)}</ul></section>
-        )}
-      </div>
+
+      {collections.length > 1 && (
+        <section className="section section--white">
+          <div className="container">
+            <div className="section-head"><div><span className="label">Kollektioner</span><h2>{b.name}s kollektioner</h2></div></div>
+            <ul className="col-tiles">
+              {collections.map((c) => {
+                const g = list.filter((m) => m.collection === c);
+                const img = g.find((m) => m.image)?.image;
+                return (
+                  <li key={c}><Link href={`/maerker/${b.slug}/${collectionSlug(c)}`} className="col-tile">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <span className="col-tile__media">{img && <img src={img} alt="" loading="lazy" />}</span>
+                    <strong>{c}</strong><span>{g.length} {g.length === 1 ? "ur" : "ure"}</span>
+                  </Link></li>
+                );
+              })}
+            </ul>
+          </div>
+        </section>
+      )}
+
+      <section className="section" id="alle-ure">
+        <div className="container">
+          <div className="section-head"><div><span className="label">Udvalget</span><h2>Alle {b.name}-ure</h2></div><a className="btn btn--outline" href={`tel:${business.phoneE164}`}>Ring {business.phone}</a></div>
+          {list.length === 0
+            ? <div className="empty"><p>Kontakt os for at se udvalget fra {b.name} i butikken.</p><p className="btn-row" style={{ justifyContent: "center" }}><Link className="btn" href={`/book-tid?maerke=${b.slug}`}>Book et møde</Link></p></div>
+            : <Catalog items={toItems(list)} bandOrder={priceBands.map((x) => x.label)} />}
+        </div>
+      </section>
     </>
   );
 }

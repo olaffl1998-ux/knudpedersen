@@ -1,12 +1,29 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getBrand, getModelByKey, getModelsForBrand, modelHref, modelKey, models, straps } from "@/data/catalog";
-import StrapPicker from "@/components/StrapPicker";
+import { getBrand, getModelByKey, getModelsForBrand, modelHref, modelKey, models, type Model } from "@/data/catalog";
+import WatchDetail, { type Variant } from "@/components/WatchDetail";
 import ModelCard from "@/components/ModelCard";
-import { HeartButton } from "@/components/Wishlist";
 import { Breadcrumbs, JsonLd } from "@/components/Seo";
 import { SITE_URL, business, formatPrice } from "@/lib/site";
+
+/** Rem/lænke ud fra mærkets referencekode og "Leveres på" */
+function strapLabel(m: Model): string {
+  const r = m.ref.toUpperCase();
+  if (m.brand === "tag-heuer") {
+    const c = r.split(".")[1] ?? "";
+    if (/^B[A-Z]/.test(c)) return "Lænke i stål";
+    if (/^FC/.test(c)) return "Læderrem";
+    if (/^F[TS]/.test(c)) return "Gummirem";
+  }
+  const on = m.specs["Leveres på"];
+  return on === "Lænke" ? "Lænke" : on === "Rem" ? "Rem" : on || "Udførelse";
+}
+const toVariant = (m: Model): Variant => ({
+  key: modelKey(m), href: modelHref(m), ref: m.ref, image: m.image, price: formatPrice(m.price), size: m.size,
+  strap: strapLabel(m),
+  specs: [...Object.entries(m.specs), ...(m.size ? [["Størrelse", m.size] as [string, string]] : [])],
+});
 
 type P = { params: Promise<{ slug: string }> };
 export const dynamicParams = false;
@@ -18,7 +35,7 @@ export async function generateMetadata({ params }: P): Promise<Metadata> {
   if (!m || !b) return {};
   return {
     title: `${b.name} ${m.name} ${m.ref}`,
-    description: `${b.name} ${m.name}${m.size ? ` ${m.size}` : ""}, ref. ${m.ref}. Vejledende pris ${formatPrice(m.price)}. Se uret på forskellige remme og lænker, og book tid hos Knud Pedersen i Aarhus.`,
+    description: `${b.name} ${m.name}${m.size ? ` ${m.size}` : ""}, ref. ${m.ref}. Vejledende pris ${formatPrice(m.price)}. Se uret og book tid hos Knud Pedersen i Aarhus.`,
     openGraph: m.image ? { images: [m.image] } : undefined,
     alternates: { canonical: modelHref(m) },
   };
@@ -28,42 +45,19 @@ export default async function WatchPage({ params }: P) {
   const m = getModelByKey((await params).slug);
   const b = m && getBrand(m.brand);
   if (!m || !b) notFound();
-  const strapList = m.straps.map((k) => straps[k]);
-  const subject = `${b.name} ${m.name} ${m.ref}`;
-  const related = getModelsForBrand(b.slug).filter((x) => x.slug !== m.slug && (x.collection === m.collection || !m.collection)).slice(0, 4);
+  // Samme ur (mærke, model og størrelse) i andre udførelser, som butikken fører
+  const siblings = models.filter((x) => x.brand === m.brand && x.name === m.name && x.size === m.size && x.image);
+  const group = siblings.some((x) => x === m) ? siblings : [m, ...siblings];
+  // Navngiv udførelser med samme rem, så de kan skelnes
+  const variants = group.map(toVariant);
+  const count: Record<string, number> = {};
+  for (const v of variants) count[v.strap] = (count[v.strap] ?? 0) + 1;
+  for (const v of variants) if (count[v.strap] > 1) v.strap = `${v.strap} · ${v.ref.split(/[.\s-]/).slice(-2).join(".")}`;
+  const related = getModelsForBrand(b.slug).filter((x) => !group.includes(x) && (x.collection === m.collection || !m.collection)).slice(0, 4);
   return (
     <>
       <div className="container"><Breadcrumbs items={[{ name: "Ure", href: "/ure" }, { name: b.name, href: `/maerker/${b.slug}` }, { name: `${m.name} ${m.ref}`, href: modelHref(m) }]} /></div>
-      <section className="container pdp">
-        <div>
-          <StrapPicker model={m} straps={strapList} brandName={b.name} />
-        </div>
-        <div>
-          <span className="label">{b.name}</span>
-          <h1>{m.name}</h1>
-          <p className="muted">Ref. {m.ref}{m.size && ` · ${m.size}`}</p>
-          <p className="pdp__price"><small>Vejledende udsalgspris</small>{formatPrice(m.price)}</p>
-          <div className="btn-row">
-            <Link className="btn" href={`/book-tid?emne=${encodeURIComponent(subject)}&maerke=${b.slug}`}>Book tid og prøv uret</Link>
-            <a className="btn btn--outline" href={`tel:${business.phoneE164}`}>Ring {business.phone}</a>
-            <span className="pdp__save"><HeartButton id={`ur:${modelKey(m)}`} label={subject} /></span>
-          </div>
-          <p className="notice">Uret kan ikke købes online. Prisen gælder uret som vist. Book en tid, så har vi det klar til dig i butikken på {business.street}.</p>
-          <div className="accordion" style={{ marginTop: 24 }}>
-            <details open>
-              <summary>Specifikationer</summary>
-              <div>
-                <dl className="specs">
-                  {Object.entries(m.specs).map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}
-                  {m.size && <div><dt>Størrelse</dt><dd>{m.size}</dd></div>}
-                </dl>
-              </div>
-            </details>
-            <details><summary>Garanti og service</summary><div><p>Alle nye ure leveres med producentens internationale garanti. Vores eget værksted servicerer uret efter producentens krav. Garantiperioden afhænger af mærket, og vi fortæller gerne mere i butikken.</p></div></details>
-            <details><summary>Remme og lænker</summary><div><p>Uret vises på den rem eller lænke, det leveres på. De øvrige typer er dem, {b.name} tilbyder til kollektionen. Vi bekræfter pasformen, når du besøger os.</p></div></details>
-          </div>
-        </div>
-      </section>
+      <WatchDetail brand={b.name} brandSlug={b.slug} name={m.name} variants={variants} initial={group.indexOf(m)} phone={business.phone} phoneE164={business.phoneE164} street={business.street} />
       {related.length > 0 && (
         <section className="section container">
           <div className="section-head"><h2>Flere fra {b.name}</h2><Link className="link-arrow" href={`/maerker/${b.slug}`}>Se alle</Link></div>
