@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 const SELECTOR = [
   ".section-head", ".ed-head", ".ed-statement", ".ed-facts li", ".ed-tile", ".cards > li", ".feature",
-  ".ed-brands li", ".services li", ".ed-cine", ".split__media", ".split__text", ".fx__media", ".fx__text", ".visit > *", ".page-head", ".timeline li",
+  ".ed-brands li", ".services li", ".ed-cine", ".split__media", ".split__text", ".fx__media", ".fx__text", ".visit > *", ".page-head", ".timeline li", ".footer-brand > *",
 ].join(",");
 
 /** Elementer glider blødt ind, når de kommer til syne. Uden JavaScript eller med reduceret bevægelse vises alt med det samme. */

@@ -982,3 +982,20 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
 .timeline--text h3 { margin-top: 0; font-size: 30px; }
 .timeline--text p { max-width: 62ch; color: var(--grey); }
 @media (max-width: 767px) { .timeline--text li { grid-template-columns: 1fr; } }
+
+/* Mobil: topbaren holder sig på én linje */
+@media (max-width: 767px) {
+  .topbar { font-size: 12px; }
+  .topbar__open { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .topbar__info, .topbar__info a { white-space: nowrap; flex: none; }
+}
+/* Hover-effekter kun på enheder med mus, så de ikke "hænger" efter et tryk på mobil */
+.card__media::after { white-space: nowrap; }
+@media (hover: none) {
+  .card:hover { transform: none; }
+  .card:hover .card__media img { transform: none; }
+  .card:hover .card__media::after { opacity: 0; }
+}
+/* Footer: navnetrækket spærres langsomt ud, når det kommer til syne */
+.footer-brand > .rv .footer-logo { display: inline-block; letter-spacing: .02em; transition: letter-spacing 1.8s var(--ease); }
+.footer-brand > .rv.is-in .footer-logo { letter-spacing: .24em; }
