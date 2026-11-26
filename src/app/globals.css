@@ -209,9 +209,22 @@ p { margin: 0 0 var(--s2); }
 .hero h1 { color: var(--cream); }
 .hero .lead { color: #e4dbd0; }
 .hero .label { color: #e4dbd0; }
-.hero-watches { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(3, 1fr); align-items: center; gap: 4vw; padding: 8vh 8vw 30vh; }
-.hero-watches img { width: 100%; max-height: 52vh; object-fit: contain; filter: drop-shadow(0 30px 40px rgba(0,0,0,.45)); }
-@media (max-width: 767px) { .hero-watches { grid-template-columns: 1fr 1fr; padding: 6vh 6vw 44vh; } .hero-watches img:nth-child(3) { display: none; } }
+/* Indtil hero-fotoet kommer: urene står i en lys "vitrine" i højre halvdel, teksten til venstre */
+.hero-watches { position: absolute; top: 0; right: 0; bottom: 0; width: 50%; background: var(--sand); display: grid; grid-template-columns: repeat(3, 1fr); align-items: center; gap: 0; padding: var(--s6) var(--s3); z-index: 1; }
+.hero-watches img { width: 100%; height: auto; min-height: 0; max-height: 60vh; object-fit: contain; mix-blend-mode: multiply; transition: transform .4s ease; }
+.hero-watches img:nth-child(2) { transform: translateY(-6%); }
+.hero:has(.hero-watches) .hero__content { max-width: 46%; }
+.hero:has(.hero-watches)::after { background: none; }
+.hero:has(.hero-watches) .hero__media > .ph { justify-content: flex-start; padding-left: var(--s8); }
+.hero-watches img { transform: scale(1.12); }
+.hero-watches img:nth-child(2) { transform: scale(1.12) translateY(-6%); }
+@media (max-width: 1023px) {
+  .hero:has(.hero-watches) { align-items: end; padding-top: 46vh; }
+  .hero-watches { width: 100%; height: 46vh; bottom: auto; padding: var(--s3); grid-template-columns: 1fr 1fr; }
+  .hero-watches img:nth-child(3) { display: none; }
+  .hero:has(.hero-watches) .hero__media > .ph { display: none; }
+  .hero:has(.hero-watches) .hero__content { max-width: none; padding-block: var(--s6) var(--s9); }
+}
 
 /* Rolex-bannere på den almindelige side */
 .rolex-banner { display: block; position: relative; text-decoration: none; color: #fff; background: #000; }
@@ -504,3 +517,8 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
 @media (max-width: 1023px) { .steps--list { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 560px) { .steps--list { grid-template-columns: 1fr; } }
 .not-found .search-box { margin: var(--s4) auto; max-width: 560px; }
+
+.pdp__save .heart { position: static; width: 48px; height: 48px; border: 1px solid var(--ink); border-radius: 0; background: transparent; }
+.services--3 li { border-top: 0; padding-top: 0; }
+.timeline h3 { margin-top: var(--s1); }
+@media (max-width: 560px) { .steps li { flex: 1 1 calc(50% - var(--s1)); } }

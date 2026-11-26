@@ -46,8 +46,8 @@ export default async function WatchPage({ params }: P) {
           <div className="btn-row">
             <Link className="btn" href={`/book-tid?emne=${encodeURIComponent(subject)}&maerke=${b.slug}`}>Book tid og prøv uret</Link>
             <a className="btn btn--outline" href={`tel:${business.phoneE164}`}>Ring {business.phone}</a>
+            <span className="pdp__save"><HeartButton id={`ur:${modelKey(m)}`} label={subject} /></span>
           </div>
-          <div style={{ position: "relative", height: 48, marginTop: 8 }}><HeartButton id={`ur:${modelKey(m)}`} label={subject} /></div>
           <p className="notice">Uret kan ikke købes online. Prisen gælder uret som vist. Book en tid, så har vi det klar til dig i butikken på {business.street}.</p>
           <div className="accordion" style={{ marginTop: 24 }}>
             <details open>

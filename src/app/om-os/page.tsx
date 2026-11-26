@@ -30,7 +30,9 @@ function chapters() {
 }
 
 export default function OmOs() {
-  const ch = chapters();
+  const all = chapters();
+  const intro = all.find((c) => !c.year);
+  const ch = all.filter((c) => c.year);
   return (
     <>
       <div className="container"><Breadcrumbs items={[{ name: "Om os", href: "/om-os" }]} /></div>
@@ -42,7 +44,7 @@ export default function OmOs() {
 
       <section className="section" aria-labelledby="historie">
         <div className="container">
-          <div className="section-head"><div><span className="label">Historie</span><h2 id="historie">Vores historie</h2></div></div>
+          <div className="section-head"><div><span className="label">Historie</span><h2 id="historie">Vores historie</h2>{intro && <p className="lead">{intro.text}</p>}</div></div>
           <ol className="timeline">
             {ch.map((c) => (
               <li key={c.title + c.year}>
