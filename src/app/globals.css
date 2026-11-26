@@ -349,3 +349,12 @@ footer.site .legal { border-top-color: var(--line); color: var(--muted); }
 .rolex-zone h1 { font-size: clamp(2rem, 4.5vw, 3.25rem); }
 .rolex-zone h2 { font-size: clamp(1.6rem, 3vw, 2.25rem); }
 .rolex-zone .eyebrow { letter-spacing: .1em; }
+
+/* Smykke-side */
+.piece { display: grid; grid-template-columns: 1.1fr .9fr; gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+.piece-img { background: color-mix(in srgb, var(--stone) 55%, var(--paper)); aspect-ratio: 1; display: flex; align-items: center; justify-content: center; }
+.piece-img img { width: 80%; height: 80%; object-fit: contain; mix-blend-mode: multiply; }
+@media (max-width: 800px) { .piece { grid-template-columns: 1fr; } }
+/* Produktsider: mindre overskrift og samme flade bag billedet, så hvid baggrund på produktfotos forsvinder */
+.split h1, .piece h1 { font-size: clamp(2.2rem, 4vw, 3.5rem); }
+.track { background: color-mix(in srgb, var(--stone) 55%, var(--paper)); }

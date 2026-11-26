@@ -70,7 +70,7 @@ export default async function ModelPage({ params }: P) {
           name: `${b.name} ${m.name}`,
           sku: m.ref,
           mpn: m.ref,
-          image: m.image,
+          image: m.image ? `${SITE_URL}${m.image}` : undefined,
           brand: { "@type": "Brand", name: b.name },
           url,
           offers: {

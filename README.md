@@ -29,6 +29,7 @@ Data:
 
 - `src/data/products.raw.ts`: 393 ure hentet fra den nuværende webshop (navn, reference, pris, billede, specifikationer). Ét ur pr. linje, nemt at rette.
 - `src/data/catalog.ts`: mærker, remme og lænker, og indlæsning af urene. Gamle produkt-URL'er omdirigeres automatisk til det nye ur.
+- `src/data/jewellery.raw.ts` og `src/data/jewellery.ts`: 307 smykker fra Marselis, Georg Jensen, Chopard og Gucci, hentet fra webshoppen 26.11.2026.
 - `src/data/rolex.ts`: Rolex-menu, 15 kollektioner, sidetekster og typen for Rolex' Technical Specifications-fil.
 
 ## Rolex-sektionen
@@ -48,7 +49,7 @@ Bygget efter Rolex' guide for officielle forhandlere og den danske struktur, som
 - [ ] Import af Rolex' modeldata, billeder, plakette, ur-nøgle og Adobe Launch-kode
 - [ ] Rigtige modeller, billeder, vejledende priser og kompatible remme fra hvert mærke
 - [ ] Logo, butiksfotos og medarbejderfotos
-- [ ] Kopiér billeder (ure, logo og Rolex-billeder) fra shop16933.sfstatic.io til det nye site, før den gamle webshop lukkes
+- [x] Billeder (ure, smykker og Rolex-billeder) er kopieret fra den gamle webshop til `public/billeder` (26.11.2026)
 - [ ] Gennemgå priserne (hentet fra webshoppen 25.11.2026) og fjern ure, I ikke længere fører
 - [ ] Tekster: mærkesider (ca. 300 ord hver), om os, service med priseksempler
 - [ ] E-mail til booking: sæt `RESEND_API_KEY` og afsenderdomæne

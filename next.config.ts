@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { pieces } from "./src/data/jewellery";
 import { models } from "./src/data/catalog";
 
 /** 301-omdirigeringer fra den gamle ScanNet-side, så placeringer i Google bevares */
@@ -20,9 +21,9 @@ const shopBrand: Record<string, string> = {
   "16-montblanc-tilbehoer": "/ure/montblanc",
   "25-gucci-watches": "/ure/gucci",
   "25-gucci": "/ure/gucci",
-  "27-gucci-jewellery": "/smykker",
-  "18-marselis-jewellery": "/smykker",
-  "37-georg-jensen": "/smykker",
+  "27-gucci-jewellery": "/smykker/gucci",
+  "18-marselis-jewellery": "/smykker/marselis",
+  "37-georg-jensen": "/smykker/georg-jensen",
 };
 
 const pages: Record<string, string> = {
@@ -52,6 +53,7 @@ const nextConfig: NextConfig = {
     return [
       ...Object.entries(pages).map(([source, destination]) => ({ source, destination, permanent: true })),
       // Hvert gammelt produkt (/shop/<kategori>/<id>-<varenr>/) sendes til samme ur på den nye side
+      ...pieces.map((p) => ({ source: `/shop/:cat/:product(${p.oldId}-[^/]*)/:rest*`, destination: `/smykker/${p.brand}/${p.slug}`, permanent: true })),
       ...models.filter((m) => m.oldId).map((m) => ({ source: `/shop/:cat/:product(${m.oldId}-[^/]*)/:rest*`, destination: `/ure/${m.brand}/${m.slug}`, permanent: true })),
       ...Object.entries(shopBrand).flatMap(([id, destination]) => [
         { source: `/shop/${id}`, destination, permanent: true },

@@ -16,7 +16,8 @@ export const RETAILER = { name: "Knud Pedersen", city: "Aarhus" };
  * Rolex-billeder fra Knud Pedersens nuværende Rolex-sektion (Rolex Brand Centre-materiale, bruges uændret).
  * De ligger i dag på den gamle webshops billedserver og skal kopieres til det nye site før lancering.
  */
-const R = "https://shop16933.sfstatic.io/upload_dir/pics/Rolex/";
+// Rolex-materiale ligger uændret i public/billeder/pics/Rolex
+const R = "/billeder/pics/Rolex/";
 const KE = R + "v7images/discover-rolex-page-assets/discover-rolex-page-assets-landscape/keep-exploring-landscape/";
 const DP = R + "v72026/discover-rolex-page/discover-rolex-page-assets/";
 export const rolexAssets = {

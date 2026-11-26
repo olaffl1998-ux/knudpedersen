@@ -114,7 +114,10 @@ export const getModel = (brand: string, slug: string) => models.find((m) => m.br
 export const brandHref = (b: Brand) => (b.rolex ? "/rolex" : `/ure/${b.slug}`);
 export const modelHref = (m: Model) => `/ure/${m.brand}/${m.slug}`;
 
-const IMG_BASE = "https://shop16933.sfstatic.io/upload_dir/shop/";
+// Billederne er kopieret fra den gamle webshop til public/billeder (konverteret til webp, maks. 1000 px).
+const OLD_HOST = "https://shop16933.sfstatic.io/upload_dir/";
+const localImage = (img: string) =>
+  (img.startsWith("http") ? img.replace(OLD_HOST, "/billeder/") : "/billeder/shop/" + img).replace(/\.(jpe?g|png|webp)$/i, ".webp");
 
 const slugify = (t: string) =>
   t.toLowerCase().replace(/[æ]/g, "ae").replace(/[ø]/g, "oe").replace(/[å]/g, "aa").replace(/&/g, "og")
@@ -158,7 +161,7 @@ function parseProducts(): Model[] {
       size: diameter,
       price: Number(price),
       example: false,
-      image: img.startsWith("http") ? img : IMG_BASE + img,
+      image: localImage(img),
       collection: collection || undefined,
       oldId: Number(oldId),
       look: lookFor(dial),
