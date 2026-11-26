@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Lato, Marcellus } from "next/font/google";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -7,8 +7,8 @@ import { ConsentProvider } from "@/components/Consent";
 import { JsonLd, storeJsonLd } from "@/components/Seo";
 import { SITE_URL, SHOW_PREVIEW_BANNER } from "@/lib/site";
 
-const display = Marcellus({ weight: "400", subsets: ["latin"], variable: "--font-display", display: "swap" });
-const body = Lato({ weight: ["300", "400", "700"], subsets: ["latin"], variable: "--font-body", display: "swap" });
+const display = Cormorant_Garamond({ weight: ["300", "400", "500"], subsets: ["latin"], variable: "--font-display", display: "swap" });
+const body = Inter({ weight: ["300", "400", "500"], subsets: ["latin"], variable: "--font-body", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   robots: SHOW_PREVIEW_BANNER ? { index: false, follow: false } : undefined,
 };
 
-export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#CCBFAC" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#F6F1EA" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

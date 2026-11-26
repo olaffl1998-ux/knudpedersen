@@ -1,28 +1,33 @@
 import Link from "next/link";
-import { brands, brandHref, models } from "@/data/catalog";
+import { brands, brandHref, models, nonRolexBrands } from "@/data/catalog";
 import { rolexAssets } from "@/data/rolex";
 
 export default function Home() {
   const rolexBanner = rolexAssets.slides[1];
-  const hero = models.find((m) => m.ref === "M79000N-0001") ?? models[0];
+  const heroWatches = ["omega", "tudor", "grand-seiko"]
+    .map((b) => models.find((m) => m.brand === b && m.image))
+    .filter((m): m is (typeof models)[number] => Boolean(m));
+  const tiles = nonRolexBrands
+    .map((b) => ({ b, m: models.find((m) => m.brand === b.slug && m.image) }))
+    .filter((t) => t.m)
+    .slice(0, 8);
+
   return (
     <>
-      <section className="hero section">
+      <section className="hero-c">
         <div className="wrap">
-          <div className="stack">
-            <p className="eyebrow">Ure og smykker i hjertet af Aarhus</p>
-            <h1>Knud Pedersen – ure og smykker på Skt. Clemens Torv</h1>
-            <p className="lead">
-              Hos os møder du faguddannede urmagere og rådgivere, der tager sig tid til dig. Book et møde, så står urene klar, når du kommer.
-            </p>
-            <div className="cta-row" style={{ marginTop: "1rem" }}>
-              <Link className="btn" href="/kontakt">Book et møde</Link>
-              <Link className="btn ghost" href="/ure">Se vores ure</Link>
-            </div>
+          <p className="eyebrow">Skt. Clemens Torv · Aarhus</p>
+          <h1>Ure og smykker, valgt med omhu</h1>
+          <p className="lead">Faguddannede urmagere og rådgivere, der tager sig tid til dig. Book et møde, så står urene klar, når du kommer.</p>
+          <div className="cta-row">
+            <Link className="btn" href="/kontakt">Book et møde</Link>
+            <Link className="btn ghost" href="/ure">Se kollektionen</Link>
           </div>
-          <div className="hero-art" aria-hidden="true">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={hero.image} alt="" fetchPriority="high" />
+          <div className="hero-trio" aria-hidden="true">
+            {heroWatches.map((m) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img key={m.slug} src={m.image} alt="" fetchPriority="high" />
+            ))}
           </div>
         </div>
       </section>
@@ -47,41 +52,48 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section tight-top">
+      <section className="section">
         <div className="wrap stack-lg">
-          <div className="split">
-            <div><p className="eyebrow">Vores mærker</p><h2>{brands.length} urmærker under ét tag</h2></div>
-            <p className="measure muted">
-              Vi er autoriseret forhandler af alle mærker i butikken. Det betyder originale ure, fuld fabriksgaranti og service efter producentens krav.
-            </p>
+          <div className="section-head">
+            <p className="eyebrow">Vores mærker</p>
+            <h2>{brands.length} urmærker under ét tag</h2>
+            <p className="muted measure">Autoriseret forhandler af alle mærker i butikken: originale ure, fuld fabriksgaranti og service efter producentens krav.</p>
           </div>
-          <div className="brand-grid">
-            {brands.map((b) => (
-              <Link key={b.slug} href={brandHref(b)}>{b.name}<small>{b.kind}</small></Link>
+          <div className="tiles">
+            {tiles.map(({ b, m }) => (
+              <Link key={b.slug} href={brandHref(b)} className="tile">
+                <span className="tile-img">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={m!.image} alt="" loading="lazy" />
+                </span>
+                <span className="tile-name">{b.name}</span>
+                <span className="tile-link">Se ure</span>
+              </Link>
             ))}
           </div>
+          <div className="center"><Link className="btn ghost" href="/ure">Alle mærker</Link></div>
         </div>
       </section>
 
-      <section className="section soft">
-        <div className="wrap cards">
-          <div className="card">
-            <p className="eyebrow">Værksted</p>
-            <h3>Service på dit ur</h3>
-            <p>Vores urmagere er certificeret af producenterne og servicerer dit ur efter deres standarder. Vi er også officielt Rolex-servicecenter.</p>
-            <Link href="/service">Læs om service</Link>
+      <section className="atelier">
+        <div className="wrap">
+          <div className="atelier-txt">
+            <p className="eyebrow">Værkstedet</p>
+            <h2>Service i vores eget urmagerværksted</h2>
+            <p>Vores urmagere er certificeret af producenterne og servicerer dit ur efter deres standarder. Vi er officielt Rolex-servicecenter, og vi omtrækker også perlekæder og tilpasser smykker.</p>
+            <div className="cta-row"><Link className="btn" href="/service">Læs om service</Link></div>
           </div>
-          <div className="card">
-            <p className="eyebrow">Smykker</p>
-            <h3>Smykker med certificerede diamanter</h3>
-            <p>Ringe, øreringe og halskæder fra Marselis, Chopard, Georg Jensen og flere. Vi omtrækker også perlekæder.</p>
-            <Link href="/smykker">Se smykker</Link>
-          </div>
-          <div className="card">
-            <p className="eyebrow">Personlig rådgivning</p>
-            <h3>Book et møde</h3>
-            <p>Vælg et tidspunkt hos en salgs- eller servicemedarbejder. Så har vi god tid til dig.</p>
-            <Link href="/kontakt">Book tid</Link>
+          <div className="atelier-cards">
+            <Link href="/smykker" className="mini">
+              <p className="eyebrow">Smykker</p>
+              <h3>Ringe, øreringe og halskæder</h3>
+              <span className="tile-link">Se smykker</span>
+            </Link>
+            <Link href="/kontakt" className="mini">
+              <p className="eyebrow">Personlig rådgivning</p>
+              <h3>Book et møde i butikken</h3>
+              <span className="tile-link">Book tid</span>
+            </Link>
           </div>
         </div>
       </section>

@@ -29,17 +29,17 @@ export default function Header() {
       </div>
       <header className="site">
         <div className="wrap">
-          <Link className="logo" href="/" aria-label="Knud Pedersen, til forsiden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="https://shop16933.sfstatic.io/upload_dir/pics/Knud_Pedersen_logo.png" alt="Knud Pedersen" width={180} height={70} />
-          </Link>
           <nav className={`main${open ? " open" : ""}`} id="hovedmenu" aria-label="Hovedmenu">
-            {mainNav.map((n) => (
-              <Link key={n.key} href={n.href} aria-current={active === n.key ? "page" : undefined}>
+            {mainNav.map((n, i) => (
+              <Link key={n.key} href={n.href} className={i < 3 ? "nav-left" : "nav-right"} aria-current={active === n.key ? "page" : undefined}>
                 {n.label}
               </Link>
             ))}
           </nav>
+          <Link className="logo" href="/" aria-label="Knud Pedersen, til forsiden">
+            <b>KNUD PEDERSEN</b>
+            <span>Ure &amp; smykker · Aarhus</span>
+          </Link>
           <div className="head-actions">
             {/* Rolex-uret leveres af Rolex og linker til Rolex-sektionen (krav i Rolex' guide) */}
             {ROLEX_CLOCK_KEY ? (
@@ -55,7 +55,7 @@ export default function Header() {
             ) : (
               <Link className="rolex-clock-slot" href="/rolex">Rolex-ur<br />(fra Rolex)</Link>
             )}
-            <Link className="btn head-book" href="/kontakt">Book tid</Link>
+            <Link className="head-book" href="/kontakt">Book tid</Link>
             <button className="menu-btn" type="button" aria-expanded={open} aria-controls="hovedmenu" onClick={() => setOpen(!open)}>
               Menu
             </button>
