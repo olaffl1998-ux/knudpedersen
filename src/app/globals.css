@@ -1124,3 +1124,171 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
 @media (max-width: 767px) { .rx-pos__in { grid-template-columns: 1fr; } .rx-pos__photo { min-height: 0; aspect-ratio: 4 / 3; } }
 @media (max-width: 767px) { .col-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s2); } .col-tile strong { font-size: 19px; } }
 .rx .rx-top img, .rx-keep .rx-top img { width: 28px; height: auto; aspect-ratio: auto; object-fit: contain; }
+
+/* ============================================================
+   v7: Cartier-inspireret udtryk. Lyst, roligt og præcist:
+   næsten hvid flade, et strejf af den varme beige, små versaler
+   med luft, store billeder og tekst under billederne.
+   (Rolex-sektionen har sin egen stil og påvirkes ikke.)
+   ============================================================ */
+:root {
+  --cream: #fcfbf9; --white: #ffffff; --sand: #f4f0ea; --sand-2: #e9e2d8;
+  --stage: #f3f1ed; --stage-2: #ebe7e1; --line: #e6e1da; --grey: #6f6a66;
+  --header-h: 76px;
+}
+body { background: var(--cream); font-size: 16px; }
+@media (min-width: 1024px) { body { font-size: 16px; } }
+h1, .h1 { font-size: clamp(32px, 3.6vw, 52px); font-weight: 300; letter-spacing: 0; }
+h2, .h2 { font-size: clamp(26px, 2.4vw, 36px); font-weight: 300; }
+h3, .h3 { font-size: clamp(20px, 1.6vw, 24px); }
+.lead { font-size: 17px; }
+.label { font-size: 11px; letter-spacing: .2em; font-variant-caps: normal; font-weight: 500; color: var(--grey); }
+.section { padding-block: var(--s9); }
+@media (min-width: 1024px) { .section { padding-block: var(--s12); } }
+.section--white { background: var(--white); }
+.section-head { margin-bottom: var(--s5); }
+a:hover { color: var(--ink); }
+
+/* Knapper og links: sort, kantet, små versaler. "Opdag"-links er understreget */
+.btn { min-height: 46px; padding: 12px 36px; font-size: 12px; letter-spacing: .16em; font-weight: 500; background: var(--ink); border-color: var(--ink); }
+.btn:hover { background: #000; border-color: #000; }
+.btn--outline { background: transparent; }
+.btn--outline:hover { background: var(--ink); color: #fff; }
+.link-arrow { min-height: 0; padding: 0 0 3px; font-size: 12px; letter-spacing: .16em; border-bottom: 1px solid currentColor; gap: 0; transition: opacity .25s var(--ease); }
+.link-arrow::after { content: none; }
+.link-arrow:hover { opacity: .6; }
+
+/* Topbar og header: hvid, tynd linje, centreret logo, små versaler */
+.topbar { background: var(--white); color: var(--grey); font-size: 12px; border-bottom: 1px solid var(--line); }
+.topbar .container { min-height: 32px; }
+.topbar a:hover { color: var(--ink); }
+.site-header { background: rgba(255,255,255,.97); border-bottom: 1px solid var(--line); }
+.site-header.is-scrolled { box-shadow: none; }
+.site-header.is-scrolled .site-header__in { height: 60px; }
+.logo b { font-size: clamp(20px, 1.9vw, 26px); letter-spacing: .26em; }
+.logo span { font-size: 10px; letter-spacing: .3em; }
+.nav { gap: var(--s4); }
+.nav__link { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; }
+.scroll-bar { background: var(--ink) !important; height: 1px !important; }
+
+/* Produktkort: lys grå scene, centreret tekst, ingen skygger */
+.cards { gap: var(--s6) var(--s2); }
+.card__media { aspect-ratio: 1 / 1; background: var(--stage); }
+.card__media img { padding: 14%; transition: transform .8s var(--ease); }
+.card__media::after { content: none; }
+.card:hover .card__media img { transform: scale(1.04); }
+.card__body { text-align: center; justify-items: center; padding-top: var(--s2); gap: 4px; }
+.card__brand { font-size: 10px; letter-spacing: .22em; }
+.card__name { font-family: var(--font-body); font-size: 14px; font-weight: 400; letter-spacing: .02em; line-height: 1.4; }
+.card__meta { font-size: 12px; }
+.card__price { font-size: 13px; margin-top: 2px; }
+.card__price small { font-size: 12px; }
+
+/* Forsidens kampagne-hero: billedet i fuld bredde, teksten under */
+.cx { position: relative; background: var(--white); }
+.cx__stage { position: relative; aspect-ratio: 2400 / 880; overflow: hidden; background: var(--stage); }
+.cx__slide { position: absolute; inset: 0; display: block; opacity: 0; visibility: hidden; transition: opacity 1.4s var(--ease), visibility 0s linear 1.4s; }
+.cx__slide.is-on { opacity: 1; visibility: visible; transition: opacity 1.4s var(--ease); }
+.cx__slide picture, .cx__slide img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.cx__slide img { transform: scale(1.06); transition: transform 8s cubic-bezier(.2,.6,.2,1); }
+.cx__slide.is-on img { transform: scale(1); }
+.cx__cap { text-align: center; padding: var(--s5) var(--gutter) var(--s3); display: grid; justify-items: center; gap: 10px; }
+.cx__cap small { font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--grey); animation: hx-up .9s var(--ease) both; }
+.cx__cap h2 { margin: 0; font-size: clamp(26px, 2.6vw, 38px); font-weight: 300; animation: hx-up .9s var(--ease) .08s both; }
+.cx__link { margin-top: var(--s1); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 3px; }
+.cx__link:hover { opacity: .6; color: var(--ink); }
+.cx__dots { display: flex; justify-content: center; gap: 10px; padding-bottom: var(--s6); }
+.cx__dots button { width: 36px; height: 20px; padding: 0; border: 0; background: none; cursor: pointer; position: relative; }
+.cx__dots button::before, .cx__dots span { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--line); }
+.cx__dots span { background: var(--ink); transform-origin: left; transform: scaleX(0); }
+.cx__dots button.is-on span { animation: cx-bar linear forwards; }
+.cx.is-paused .cx__dots button.is-on span { animation-play-state: paused; }
+@keyframes cx-bar { to { transform: scaleX(1); } }
+@media (max-width: 767px) { .cx__stage { aspect-ratio: 1 / 1; } .cx__cap { padding-top: var(--s4); } }
+
+/* Velkomst: rolig, centreret, lille */
+.ed-intro { padding-block: var(--s12); background: var(--white); }
+.ed-statement { font-size: clamp(24px, 2.4vw, 34px); max-width: 30ch; margin-bottom: var(--s5); text-transform: none; }
+.ed-welcome__text { max-width: 62ch; margin-inline: auto; color: var(--grey); font-size: 15px; line-height: 1.8; }
+.ed-facts { margin-top: var(--s8); padding-top: var(--s6); border-top: 1px solid var(--line); max-width: 760px; }
+.ed-facts strong { font-size: clamp(28px, 2.4vw, 36px); }
+.ed-facts li > span { font-size: 10px; letter-spacing: .22em; }
+
+/* Kategorier: billeder på lys scene, tekst under, som Cartiers kategorigitter */
+.ed-tiles { max-width: calc(var(--max) + 2 * var(--gutter)); margin: 0 auto; padding: var(--s12) var(--gutter) var(--s6); gap: var(--s2); background: transparent; }
+.ed-tile { aspect-ratio: auto; display: flex; flex-direction: column; background: none; }
+.ed-tile__media { position: relative; inset: auto; aspect-ratio: 4 / 5; padding: 12%; background: var(--stage); overflow: hidden; }
+.ed-tile--photo .ed-tile__media { padding: 0; }
+.ed-tile__media img { transition: transform 1.2s var(--ease); }
+.ed-tile:hover .ed-tile__media img { transform: scale(1.04); }
+.ed-tile__cap { position: static; text-align: center; justify-items: center; padding-top: var(--s3); gap: 8px; }
+.ed-tile__cap small { display: none; }
+.ed-tile__cap strong { font-size: clamp(18px, 1.5vw, 22px); font-weight: 300; }
+.ed-tile__cap em { opacity: 1; transform: none; font-size: 11px; letter-spacing: .18em; border-bottom: 1px solid currentColor; padding-bottom: 2px; }
+@media (max-width: 767px) { .ed-tiles { padding-top: var(--s9); gap: var(--s4) var(--s2); } .ed-tile__cap strong { font-size: 16px; } }
+
+.ed-head { margin-bottom: var(--s6); }
+.ed-featured { padding-block: var(--s12); }
+.carousel__title, .section-head h2 { font-weight: 300; }
+.ed-brands a { font-size: clamp(20px, 2vw, 30px); }
+.ed-brands sup { font-size: 9px; }
+
+/* Redaktionelle kort */
+.feature h3 { font-size: 20px; margin-top: var(--s3); }
+.feature p { font-size: 15px; color: var(--grey); }
+.feature__media { background: var(--stage); }
+
+/* Filmisk vielsesrings-afsnit: lysere og roligere */
+.ed-cine h2 { font-size: clamp(34px, 4vw, 60px); }
+
+/* Mærkesider: billedet i fuld bredde, navn og tekst centreret under (Cartier "maison"-stil) */
+.bh { display: block; min-height: 0; color: var(--ink); background: var(--white); isolation: auto; }
+.bh__media { position: relative; inset: auto; z-index: auto; overflow: hidden; }
+.bh--photo .bh__media { aspect-ratio: 2400 / 880; }
+.bh--photo .bh__media::after { content: none; }
+.bh--photo .bh__media picture img { animation: kb 14s ease-out both; }
+.bh--stage .bh__media { height: min(62vh, 600px); display: grid; place-items: center; padding: 0; background: var(--stage); }
+.bh--stage .bh__packshot { max-height: 78%; max-width: 70vw; }
+.bh__word { color: rgba(31,28,26,.035); }
+.bh__text { margin: 0 auto; text-align: center; padding: var(--s8) var(--gutter) var(--s6); max-width: 760px; }
+.bh small { font-size: 11px; letter-spacing: .24em; color: var(--grey); margin-bottom: var(--s2); }
+.bh h1 { font-size: clamp(36px, 4.4vw, 64px); line-height: 1; }
+.bh p { margin: 0 auto var(--s5); font-size: 16px; color: var(--grey); opacity: 1; }
+.bh--photo h1, .bh--photo p, .bh--photo small { text-shadow: none; }
+.bh .btn-row { justify-content: center; }
+.bh .btn--light, .bh--stage .btn--light { background: var(--ink); color: #fff; border-color: var(--ink); }
+.bh .btn--light:hover { background: #000; color: #fff; }
+.bh__play { padding: 13px 24px; font-size: 12px; }
+.bh .bh__play:hover { background: var(--ink); color: #fff; }
+@media (max-width: 767px) { .bh--photo .bh__media { aspect-ratio: 1 / 1; } .bh--stage .bh__media { height: 64vw; } .bh__text { padding-top: var(--s5); } }
+
+/* Kollektionsfliser og underkategorier */
+.col-tile strong { font-weight: 300; }
+.subcats a { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; border-radius: 0; }
+
+/* Footer: lys, som Cartiers */
+.site-footer { background: var(--sand); color: var(--ink); font-size: 14px; }
+.site-footer a { color: var(--ink); }
+.site-footer a:hover { color: var(--ink); opacity: .6; text-decoration: none; }
+.site-footer h2 { color: var(--ink); font-size: 11px; letter-spacing: .2em; }
+.footer-logo { color: var(--ink); font-size: 24px; }
+.footer-brand { border-bottom-color: var(--sand-2); }
+.footer-brand p, .footer-muted { color: var(--grey); }
+.footer-bottom { border-top-color: var(--sand-2); color: var(--grey); }
+.site-footer .social a { border-color: var(--sand-2); }
+.ed-tile--photo .ed-tile__cap { color: var(--ink); text-shadow: none; }
+.ed-tile--photo::after { content: none; }
+.ed-welcome .ed-statement { font-size: clamp(20px, 2vw, 28px); letter-spacing: .12em; line-height: 1.5; max-width: 34ch; margin-bottom: var(--s5); }
+.nav__link { white-space: nowrap; }
+.nav--desktop { gap: clamp(14px, 1.8vw, 32px); }
+.ed-tiles { padding-top: var(--s6); }
+.rx-pos { padding-bottom: var(--s6); }
+.btn--light { background: #fff; color: var(--ink); border-color: #fff; }
+.btn--light:hover { background: transparent; color: #fff; border-color: #fff; }
+.btn--outline-light { background: transparent; color: #fff; border-color: #fff; }
+.btn--outline-light:hover { background: #fff; color: var(--ink); }
+.btn--outline { background: transparent; color: var(--ink); }
+.feature__media--type { background: var(--ink) !important; }
+.bh--stage .bh__packshot { max-height: min(50vh, 470px); max-width: 70vw; }
+@media (max-width: 767px) { .bh--stage .bh__packshot { max-height: 52vw; } }
+.cx__dots { padding-bottom: var(--s4); }

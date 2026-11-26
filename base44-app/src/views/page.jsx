@@ -1,14 +1,13 @@
 import Link from "@/lib/next/link";
-import { brands, brandHref, models, getBrand, modelHref, genderOf } from "@/data/catalog";
+import { brands, brandHref, models, getBrand, genderOf } from "@/data/catalog";
 import { pieces } from "@/data/jewellery";
 import { jewelleryCategories } from "@/data/categories";
 import { rolexAssets } from "@/data/rolex";
 import ModelCard from "@/components/ModelCard";
 import Carousel from "@/components/Carousel";
-import HeroSlides from "@/components/HeroSlides";
+import CampaignHero from "@/components/CampaignHero";
 import FeatureWatch from "@/components/FeatureWatch";
 import { CountUp, Words } from "@/components/Motion";
-import { formatPrice } from "@/lib/site";
 import Hours from "@/components/Hours";
 import { MapEmbed } from "@/components/Consent";
 import { business, rolexClockSrc } from "@/lib/site";
@@ -28,19 +27,18 @@ function RolexBanner({ s, eager }) {
     </Link>);
 }
 /** [Kundeanmeldelser fra Google eller Trustpilot: navn, dato og kilde leveres af Knud Pedersen] */
+const T = "/billeder/pics/_thumbs/";
+const campaigns = [
+    { brand: "Tudor", title: "Tudor Monarch", href: "/maerker/tudor", desktop: `${T}tudor-monarch-computer.w2400.h880.jpg`, mobile: `${T}tudor-monarch-mobil.w640.h640.jpg` },
+    { brand: "Grand Seiko", title: "Snowflake, inspireret af naturen", href: "/maerker/grand-seiko", desktop: `${T}GS_Snowflake_logo_Desktop_2400x1100.w2400.h880.jpg`, mobile: `${T}GS_Snowflake_logo_Mobile_640x640-1.w640.h640.jpg` },
+    { brand: "Marselis Jewellery", title: "Diamanter i 18 karat guld", href: "/smykker/marselis", desktop: `${T}0641-0554-4-Marselis--banner_desktop.w2400.h880.jpg`, mobile: `${T}0641-0554-4-Marselis--banner_mobile.w640.h640.jpg` },
+    { brand: "TAG Heuer", title: "Designed to win", href: "/maerker/tag-heuer", desktop: `${T}2400x1100px_TAGH-DTW26-HolidaySeason_NESE_KnudPedersen.w2400.h880.jpg`, mobile: `${T}640x640px_TAGH-DTW26-HolidaySeason_NESE_KnudPedersen.w640.h640.jpg` },
+    { brand: "Georg Jensen", title: "Sæsonens smykker", href: "/smykker/georg-jensen", desktop: `${T}GJ_AW26_JW_Seasonal-_WS-eCom-banner_2400x1100px-1.w2400.h880.jpg`, mobile: `${T}GJ_AW26_JW_Seasonal-_WS-eCom-banner_640x640px.w640.h640.jpg` },
+    { brand: "Gucci", title: "Interlocking G", href: "/maerker/gucci", desktop: `${T}Gucci_GUCCI_INTERLOCKING_BANGLE_2400x1100.w2400.h880.jpg`, mobile: `${T}Gucci_GUCCI_INTERLOCKING_BANGLE_640x640.w640.h640.jpg` },
+];
 const reviews = [];
 export default function Home() {
-    const heroWatch = pick("tudor", 1)[0];
     const byRef = (ref) => models.find((m) => m.ref === ref && m.image);
-    const slideModels = [
-        { m: heroWatch, kicker: "Officiel Tudor-forhandler" },
-        { m: byRef("SBGE283") ?? pick("grand-seiko")[0], kicker: "Grand Seiko" },
-        { m: byRef("1-39-11-06-80-70") ?? pick("glashutte-original")[0], kicker: "Glashütte Original" },
-        { m: byRef("210.30.42.20.04.001") ?? pick("omega")[0], kicker: "Omega" },
-    ].filter((x) => x.m);
-    const slides = slideModels.map(({ m, kicker }) => ({
-        href: modelHref(m), image: m.image, brand: getBrand(m.brand).name, name: m.name, ref: m.ref, price: formatPrice(m.price), kicker,
-    }));
     const focus = byRef("1-66-06-04-22-05") ?? pick("glashutte-original")[0];
     const featuredBrands = ["tudor", "omega", "breitling", "grand-seiko", "tag-heuer", "longines", "glashutte-original", "oris", "baume-mercier", "doxa", "chopard"];
     const featured = featuredBrands.flatMap((b) => pick(b, 1)).slice(0, 10);
@@ -48,8 +46,6 @@ export default function Home() {
     const jewel = pieces.find((p) => p.image?.includes("KP_Rainbow_1")) ?? pieces.find((p) => p.brand === "marselis" && p.image);
     const gs = pick("grand-seiko", 2)[1];
     const bridal = pieces.find((p) => p.image && /Aisling-Ring-Oval/.test(p.image)) ?? pieces.find((p) => p.image && p.type === "Ringe");
-    // Rolex-navnet bevæger sig ikke: Rolex' varemærke vises kun statisk
-    const marquee = ordered.filter((b) => !b.rolex).map((b) => b.name);
     const herre = models.find((m) => m.image && m.brand === "omega" && genderOf(m) === "Herre") ?? pick("omega")[0];
     const dame = models.find((m) => m.image && genderOf(m) === "Dame");
     const ring = pieces.find((p) => p.image && /ring/i.test(p.type) && p.brand !== "marselis") ?? pieces.find((p) => p.image && p !== jewel);
@@ -63,8 +59,9 @@ export default function Home() {
       {/* 1. Rolex-banner øverst på forsiden (Rolex' krav til officielle forhandlere) */}
       <section className="ed-bleed ed-bleed--first" aria-label="Rolex"><RolexBanner s={rolexAssets.slides[0]} eager/></section>
 
-      {/* 2. Hero: skiftende ure i stor størrelse */}
-      <HeroSlides slides={slides}/>
+      {/* 2. Hero: mærkernes officielle kampagnebilleder i fuld bredde */}
+      <h1 className="sr-only">Knud Pedersen, ure og smykker på Skt. Clemens Torv i Aarhus siden 1887</h1>
+      <CampaignHero slides={campaigns}/>
 
       {/* 3. Velkomst (Knud Pedersens egen tekst) */}
       <section className="ed-intro ed-welcome">
@@ -95,12 +92,6 @@ export default function Home() {
                     <img className="rx-pos__photo" src={POS_IMG} alt="Rolex-afdelingen hos Knud Pedersen på Skt. Clemens Torv" loading="lazy"/>
         </Link>
       </section>
-
-      {/* 3b. Mærkerne glider roligt forbi */}
-      <div className="ed-marquee" aria-label="Mærker hos Knud Pedersen">
-        <ul>{marquee.map((n) => <li key={n}>{n}</li>)}</ul>
-        <ul aria-hidden="true">{marquee.map((n) => <li key={n}>{n}</li>)}</ul>
-      </div>
 
       {/* 3b. Kategorier i stort format */}
       <section className="ed-tiles" aria-label="Kategorier">
