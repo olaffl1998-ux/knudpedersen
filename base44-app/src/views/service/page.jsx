@@ -1,0 +1,72 @@
+import Link from "@/lib/next/link";
+import { Breadcrumbs, JsonLd } from "@/components/Seo";
+import { SITE_URL } from "@/lib/site";
+export const metadata = {
+    title: "Urmager og service i Aarhus – reparation af ure og smykker",
+    description: "Faguddannede urmagere og guldsmede i Aarhus. Service og reparation af ure, smykkeservice og omtrækning af perlekæder. Autoriseret Rolex-servicecenter.",
+    alternates: { canonical: "/service" },
+};
+const services = [
+    { label: "Urmager", title: "Service og reparation af ure", text: "Fuld service, vandtæthedstest, nyt glas, batteriskift og justering af lænke på alle de mærker, vi fører." },
+    { label: "Guldsmed", title: "Smykkeservice", text: "Rensning, rhodinering, størrelsesændring af ringe og reparation af dine egne smykker." },
+    { label: "Perler", title: "Omtrækning af perlekæder", text: "Vi trækker din perlekæde om med ny tråd og en knude mellem hver perle." },
+];
+const steps = [
+    { t: "Aflevering", d: "Du afleverer uret eller smykket i butikken. Book gerne en tid, så sidder en fagperson klar." },
+    { t: "Vurdering", d: "Vi undersøger det og giver dig et prisoverslag, før vi går i gang. [Om overslaget er gratis bekræftes af Knud Pedersen]" },
+    { t: "Arbejdet", d: "Vores urmagere og guldsmede udfører arbejdet efter producentens retningslinjer." },
+    { t: "Afhentning", d: "Vi giver besked, når det er klar til afhentning. [Leveringstid pr. opgave leveres af Knud Pedersen]" },
+];
+export default function Service() {
+    return (<>
+      <JsonLd data={{ "@context": "https://schema.org", "@type": "Service", serviceType: "Urmager og guldsmed", provider: { "@id": `${SITE_URL}/#store` }, areaServed: "Aarhus" }}/>
+      <div className="container"><Breadcrumbs items={[{ name: "Service & reparation", href: "/service" }]}/></div>
+      <section className="container page-head">
+        <span className="label">Værkstedet</span>
+        <h1>Service og reparation</h1>
+        <p className="lead">Alle vores urmagere er faguddannede og følger producenternes træning og efteruddannelse, så vi er godkendt til at servicere de mærker, vi fører. Vi er også autoriseret Rolex-servicecenter.</p>
+        <p className="btn-row"><Link className="btn" href="/book-tid?formaal=service">Book tid til service</Link><a className="btn btn--outline" href="#proces">Sådan foregår det</a></p>
+      </section>
+
+      <section className="section section--sand">
+        <div className="container">
+          <div className="section-head"><div><span className="label">Ydelser</span><h2>Det hjælper vi med</h2></div></div>
+          <ul className="services services--3">
+            {services.map((s) => (<li key={s.title}><div className="ph" role="img" aria-label="Pladsholder">[Foto fra værkstedet: {s.label.toLowerCase()}]</div><span className="label">{s.label}</span><h3>{s.title}</h3><p>{s.text}</p></li>))}
+          </ul>
+        </div>
+      </section>
+
+      <section className="section" id="proces">
+        <div className="container">
+          <div className="section-head"><div><span className="label">Proces</span><h2>Sådan foregår det</h2></div></div>
+          <ol className="steps steps--list">
+            {steps.map((s, i) => <li key={s.t}><span className="label">Trin {i + 1}</span><h3>{s.t}</h3><p>{s.d}</p></li>)}
+          </ol>
+        </div>
+      </section>
+
+      <section className="section section--white">
+        <div className="container split">
+          <div className="split__media"><div className="ph" role="img" aria-label="Pladsholder">[Foto: urmager ved arbejdsbordet]</div></div>
+          <div className="split__text">
+            <span className="label">Priser</span>
+            <h2>Priseksempler</h2>
+            <p className="muted">[Priseksempler på fx batteriskift, rem- og lænkejustering og fuld service pr. mærke indsættes, når Knud Pedersen har leveret dem.]</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section section--dark">
+        <div className="container split split--rev">
+          <div className="split__media"><div className="ph ph--dark" role="img" aria-label="Pladsholder">[Rolex-servicebillede fra Rolex]</div></div>
+          <div className="split__text">
+            <span className="label label--brass">Rolex</span>
+            <h2>Autoriseret Rolex-servicecenter</h2>
+            <p>Har du en Rolex, kan du læse om Rolex’ serviceeftersyn og priser i Rolex-sektionen.</p>
+            <p><Link className="btn btn--light" href="/rolex/servicing">Serviceeftersyn af Rolex</Link></p>
+          </div>
+        </div>
+      </section>
+    </>);
+}
