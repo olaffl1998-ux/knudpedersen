@@ -1,160 +1,132 @@
 /**
  * Rolex-sektionen.
  *
- * Alt indhold her (tekster, billeder, modeldata og priser) SKAL komme fra Rolex Brand Centre
- * og bruges uændret. Vi skriver ikke selv Rolex-tekster. Felterne nedenfor svarer til Rolex'
- * "Technical Specifications"-fil, så filen kan importeres direkte (se scripts i README).
- *
- * Struktur og danske URL'er følger den danske Rolex-pakke, som også bruges af andre
- * officielle forhandlere i Danmark (fx /rolex/ure, /rolex/nye-ure-2026, /rolex/urmageri).
- * Endelig struktur bekræftes af Knud Pedersens Rolex Digital Officer.
+ * Alt Rolex-indhold (tekster, billeder, modeldata, priser) er hentet fra Knud Pedersens nuværende,
+ * Rolex-godkendte Rolex-sider og bruges uændret. Data ligger i ./rolex/content.json og genereres af
+ * scriptet tools/gen_rolex.py ud fra de nuværende sider. Når Rolex leverer nye filer via Brand Centre,
+ * opdateres content.json, og siderne følger automatisk med.
  */
+import content from "./rolex/content.json";
 
 export const RETAILER = { name: "Knud Pedersen", city: "Aarhus" };
+export const NEW_YEAR = 2026;
 
-/**
- * Rolex-billeder fra Knud Pedersens nuværende Rolex-sektion (Rolex Brand Centre-materiale, bruges uændret).
- * De ligger i dag på den gamle webshops billedserver og skal kopieres til det nye site før lancering.
- */
-// Rolex-materiale ligger uændret i public/billeder/pics/Rolex
+export type Img = { l?: string | null; p?: string | null };
+export type Block =
+  | { type: "h1" | "h2" | "h3" | "h4" | "p"; text: string; href?: string }
+  | { type: "image"; landscape?: string; portrait?: string; alt?: string; href?: string }
+  | { type: "img"; src: string; alt?: string; href?: string }
+  | { type: "cta"; href?: string; text: string }
+  | { type: "iframe" | "video"; src?: string };
+
+export type RolexModel = {
+  slug: string; rmc: string; family: string; collection: string; caseline: string; material: string;
+  price: number | null; specs: [string, string][]; brochure?: string | null;
+  top: Img; gallery: (string | null)[]; galleryL: (string | null)[];
+  features: { title: string; text: string; l?: string | null; p?: string | null }[];
+};
+export type RolexCollection = { slug: string; name: string; group: string; card: Img; blocks: Block[]; count: number };
+export type RolexAccessory = {
+  slug: string; title: string; name: string; material: string; rmc: string; price: number | null; packshot: string | null;
+  specs: [string, string][]; featureTitle: string; featureText: string | null; featureImg: Img | null;
+};
+
+export type PriceCard = { title: string; sub: string; img: Img; alt: string; rows: { families: string[]; price: string }[]; notes: string[] };
+export type ServicingPrices = { cover: Block; intro: Block[]; cards: PriceCard[]; modern: Block[]; vintage: Block[]; tail: Block[]; ref: Block[]; policy: string };
+
+const C = content as unknown as {
+  groups: { name: string; title: string; items: string[] }[];
+  collections: RolexCollection[];
+  models: RolexModel[];
+  accessories: RolexAccessory[];
+  pages: Record<string, Block[]>;
+  servicingPrices: ServicingPrices;
+};
+
+export const rolexGroups = C.groups;
+export const rolexCollections = C.collections;
+export const rolexModels = C.models;
+export const rolexAccessories = C.accessories;
+export const rolexPageBlocks = C.pages;
+export const servicingPrices = C.servicingPrices;
+
+export const getCollection = (slug: string) => rolexCollections.find((c) => c.slug === slug);
+export const getModel = (slug: string) => rolexModels.find((m) => m.slug === slug);
+export const modelsIn = (slug: string) => rolexModels.filter((m) => m.collection === slug);
+export const modelHref = (m: RolexModel) => `/rolex/${m.slug}`;
+/** Pakkebillede: portræt-udgaven, ellers liggende */
+export const packshot = (m: RolexModel) => m.top.p || m.top.l || m.gallery.find(Boolean) || "";
+
+/** Rolex-titel: "Rolex [Model] [Materiale], [Reference]" */
+export const modelTitle = (m: RolexModel) => `Rolex ${m.family} ${m.material}, ${m.rmc}`;
+
 const R = "/billeder/pics/Rolex/";
 const KE = R + "v7images/discover-rolex-page-assets/discover-rolex-page-assets-landscape/keep-exploring-landscape/";
-const DP = R + "v72026/discover-rolex-page/discover-rolex-page-assets/";
 export const rolexAssets = {
   plaque: R + "Rolex-retailer-plaque-120x60_da.jpg",
   crown: R + "v7images/rolex-global-cta-assets/png-buttons/crown-gold.png",
+  guarantee: {
+    l: R + "v72026/rolex-model-page/rolex-model-page-assets/rolex-model-page-editorial-assets-landscape/rolex-guarantee_elmt_2603fg_011-landscape.jpg",
+    p: R + "v72026/rolex-model-page/rolex-model-page-assets/rolex-model-page-editorial-assets-portrait/rolex-guarantee_elmt_2603fg_011-portrait.jpg",
+  },
   slides: [
-    { title: "En hyldest til følelserne", eyebrow: "Rolex", href: "/rolex/ure/oyster-perpetual", alt: "Rolex Oyster Perpetual",
+    { title: "En hyldest til følelserne", eyebrow: "Oyster Perpetual", href: "/rolex/oyster-perpetual", alt: "Rolex Oyster Perpetual",
       desktop: R + "v72026/banner/12_december/rolex/m126000-0016_2610uf_003_14492x6166px_desktop_1492x500-2.avif",
       mobile: R + "v72026/banner/12_december/rolex/m126000-0016_2610uf_003_14492x6166px_mobile_390x525-2.avif" },
-    { title: "Historien om Oyster", eyebrow: "Udvalg", href: "/rolex/oyster-story", alt: "Historien om Oyster",
+    { title: "Historien om Oyster", eyebrow: "Rolex' verden", href: "/rolex/world-of-rolex", alt: "Historien om Oyster",
       desktop: R + "v72026/banner/oyster_story/rolex/M126233-0015_First_Oyster_octagonal_1926_2604_0001_V3_eciRGB_1492x500.avif",
       mobile: R + "v72026/banner/oyster_story/rolex/M126233-0015_First_Oyster_octagonal_1926_2604_0001_V3_eciRGB_390x525.avif" },
-    { title: "Rolex-accessories", eyebrow: "Udvalg", href: "/rolex/accessories", alt: "Rolex-accessories",
-      desktop: R + "v72026/banner/02-a_februar/rolex/drp-cufflinks_A1018_BOM_OR18-BanGen-14492_6166-02D22_1492x500-2.avif",
-      mobile: R + "v72026/banner/02-a_februar/rolex/drp-cufflinks_A1018_BOM_OR18-BanGen-14492_6166-02D22_390x525-2.avif" },
-    { title: "Skabelsen af den højeste standard", eyebrow: "Rolex og urmageri", href: "/rolex/urmageri", alt: "Rolex og urmageri",
+    { title: "Skabelsen af den højeste standard", eyebrow: "Rolex og urmageri", href: "/rolex/watchmaking", alt: "Rolex og urmageri",
       desktop: R + "sliders/corners-rolex-watchmaking-cover_2023-watchmaking-features-manifesto-still_digital_master_rgb.avif",
       mobile: R + "sliders/corners-rolex-watchmaking-cover_2023-watchmaking-features-manifesto-still_digital_master_rgb-portrait.avif" },
   ],
-  tiles: {
-    watches: DP + "discover-rolex-page-assets-landscape/discover-rolex-watches-m126333_0010_1802jva_002-landscape.jpg.avif",
-    accessories: DP + "discover-rolex-page-assets-landscape/discover-rolex-accessories-rolexcufflinks_2403jva_001-landscape.avif",
-    contact: DP + "discover-rolex-page-assets-landscape/discover-rolex-message-elmt_2603fg_041landscape.avif",
-    oysterStory: R + "v72026/rolex-keep/discover-rolex-oyster-story-m126233-0015_first_oyster_octagonal_1926_2604_0001-landscape.avif",
-    watchmaking: R + "v7images/discover-rolex-page-assets/discover-rolex-page-assets-landscape/discover-rolex-watchmaking-b460356_rolex_mp_olv_watchmaking_manifesto_d_9x16_en-gb_75_25p_pp002.avif",
-    servicing: R + "v7images/discover-rolex-page-assets/discover-rolex-page-assets-landscape/discover-rolex-servicing-2-sav1910dh_005c.avif",
-  },
-  /** Billeder til "Fortsæt med at udforske" pr. side */
-  keepExploring: {
-    "/rolex": KE + "rolex-keep-exploring-discover-rolex-shoot_shop_geneva_retail_campaign_logo_pub-2-iso_01-landscape.jpg",
-    "/rolex/ure": KE + "rolex-keep-exploring-rolex-watches-1945_oyster_perpetual_datejust_1802jva_m126333_0010_1802jva_002-landscape.jpg",
-    "/rolex/nye-ure-2026": R + "v72026/new-watches-2026/keep-exploring-new-watches-2026.jpg",
-    "/rolex/accessories": R + "accessories/rolex-accessories-cover-rolexcufflinks_2403jva_001-portrait.jpg",
-    "/rolex/urmageri": KE + "rolex-keep-exploring-watchmaking-2023_watchmaking_features_manifesto_still_digital_master_rgb-landscape.jpg",
-    "/rolex/servicing": KE + "rolex-keep-exploring-servicing-2234_rolex-sav_retailers_176_controle-final_mise_heure_v2-landscape.jpg",
-    "/rolex/oyster-story": R + "v72026/rolex-keep/rolex-keep-exploring-discover-rolex-oyster-story-m126233-0015_first_oyster_octagonal_1926_2604_0001-landscape.jpg",
-    "/rolex/kontakt": KE + "rolex-keep-exploring-contact-us-A7404109-landscape.jpg",
-  } as Record<string, string>,
 };
 
-/** Rolex' menu i den rækkefølge, Rolex' guide kræver */
+/** Rolex' menu i den rækkefølge, Rolex' retningslinjer angiver */
 export const rolexNav = [
-  { href: "/rolex", label: "Udforsk Rolex" },
-  { href: "/rolex/ure", label: "Rolex-ure" },
-  { href: "/rolex/nye-ure-2026", label: "Nye ure 2026" },
-  { href: "/rolex/accessories", label: "Rolex-accessories" },
-  { href: "/rolex/urmageri", label: "Urmageri" },
+  { href: "/rolex/discover", label: "Udforsk Rolex" },
+  { href: "/rolex/watches", label: "Rolex-ure" },
+  { href: "/rolex/new-watches", label: `Nye ure ${NEW_YEAR}` },
+  { href: "/rolex/watchmaking", label: "Urmageri" },
   { href: "/rolex/servicing", label: "Serviceeftersyn" },
-  { href: "/rolex/serviceprocedure", label: "Serviceprocedure" },
-  { href: "/rolex/oyster-story", label: "Oyster Story" },
-  { href: "/rolex/knud-pedersen", label: "Rolex hos Knud Pedersen" },
-  { href: "/rolex/kontakt", label: "Kontakt os" },
+  { href: "/rolex/world-of-rolex", label: "Rolex' verden" },
+  { href: "/rolex/knud-pedersen", label: `Rolex hos ${RETAILER.name}` },
+  { href: "/rolex/contact-aarhus", label: "Kontakt os" },
 ] as const;
 
-export type RolexCollection = { slug: string; name: string; family: "Classic" | "Professional" | "Perpetual" };
-
-/** De 15 kollektioner fra Rolex' guide (2024–2025-kataloget). Opdateres fra Brand Centre. */
-export const rolexCollections: RolexCollection[] = [
-  { slug: "day-date", name: "Day-Date", family: "Classic" },
-  { slug: "datejust", name: "Datejust", family: "Classic" },
-  { slug: "lady-datejust", name: "Lady-Datejust", family: "Classic" },
-  { slug: "land-dweller", name: "Land-Dweller", family: "Classic" },
-  { slug: "sky-dweller", name: "Sky-Dweller", family: "Classic" },
-  { slug: "oyster-perpetual", name: "Oyster Perpetual", family: "Classic" },
-  { slug: "air-king", name: "Air-King", family: "Professional" },
-  { slug: "gmt-master-ii", name: "GMT-Master II", family: "Professional" },
-  { slug: "sea-dweller", name: "Sea-Dweller", family: "Professional" },
-  { slug: "submariner", name: "Submariner", family: "Professional" },
-  { slug: "cosmograph-daytona", name: "Cosmograph Daytona", family: "Professional" },
-  { slug: "yacht-master", name: "Yacht-Master", family: "Professional" },
-  { slug: "explorer", name: "Explorer", family: "Professional" },
-  { slug: "deepsea", name: "Deepsea", family: "Professional" },
-  { slug: "1908", name: "1908", family: "Perpetual" },
+/** "Fortsæt med at udforske": billede og tekst pr. side (billeder fra Rolex) */
+export const keepExploring: { href: string; label: string; img: string }[] = [
+  { href: "/rolex/discover", label: "Udforsk Rolex", img: KE + "rolex-keep-exploring-discover-rolex-shoot_shop_geneva_retail_campaign_logo_pub-2-iso_01-landscape.jpg" },
+  { href: "/rolex/watches", label: "Rolex-ure", img: KE + "rolex-keep-exploring-rolex-watches-1945_oyster_perpetual_datejust_1802jva_m126333_0010_1802jva_002-landscape.jpg" },
+  { href: "/rolex/new-watches", label: `Nye ure ${NEW_YEAR}`, img: R + "v72026/new-watches-2026/keep-exploring-new-watches-2026.jpg" },
+  { href: "/rolex/accessories", label: "Rolex-accessories", img: R + "accessories/rolex-accessories-cover-rolexcufflinks_2403jva_001-portrait.jpg" },
+  { href: "/rolex/watchmaking", label: "Urmageri", img: KE + "rolex-keep-exploring-watchmaking-2023_watchmaking_features_manifesto_still_digital_master_rgb-landscape.jpg" },
+  { href: "/rolex/servicing", label: "Serviceeftersyn", img: KE + "rolex-keep-exploring-servicing-2234_rolex-sav_retailers_176_controle-final_mise_heure_v2-landscape.jpg" },
+  { href: "/rolex/world-of-rolex", label: "Historien om Oyster", img: R + "v72026/rolex-keep/rolex-keep-exploring-discover-rolex-oyster-story-m126233-0015_first_oyster_octagonal_1926_2604_0001-landscape.jpg" },
+  { href: "/rolex/contact-aarhus", label: "Kontakt os", img: KE + "rolex-keep-exploring-contact-us-A7404109-landscape.jpg" },
 ];
 
-/** En række fra Rolex' Technical Specifications-fil (felterne udfyldes ved import) */
-export type RolexModel = {
-  rmc: string; // Rolex Master Code, fx M126613LB-0002
-  collection: string; // slug
-  modelName: string;
-  caseDescription: string; // fx "Oyster, 41 mm, Oystersteel og gult guld"
-  /** Rolex' maksimale vejledende udsalgspris i DKK. Vises kun for besøgende i Danmark. */
-  priceDkk?: number;
-  ranking: number;
-  specs: Record<string, string>;
-  images: string[]; // stier til billeder fra Brand Centre
-};
+/** Faste Rolex-tekster fra modelsiderne (uændret) */
+export const availabilityText = [
+  "Alle Rolex-ure er samlet i hånden med den største omhu for at sikre en enestående kvalitet. Sådanne høje standarder begrænser naturligvis Rolex’ produktionskapacitet, og sommetider overgår efterspørgslen efter Rolex-ure denne kapacitet.",
+  "Derfor kan visse modellers tilgængelighed være begrænset. Nye Rolex-ure sælges udelukkende af officielle Rolex-forhandlere, der modtager regelmæssige leverancer og uafhængigt administrerer allokering og salg af ure til kunder.",
+  `${RETAILER.name} er stolt af, at være en del af det verdensomspændende netværk af Officielle Rolex-forhandlere og kan give yderligere information om Rolex-urenes tilgængelighed.`,
+];
+export const catalogueNotice = [
+  "Rolex-urene nedenfor er fra det officielle katalog og repræsenterer ikke lagertilgængelighed.",
+  "Kontakt os venligst, hvis du gerne vil forhøre dig om et specifikt ur.",
+];
+export const guaranteeTexts = [
+  { title: "Rolex-garanti", text: "For at sikre det højeste niveau af præcision og pålidelighed underkaster Rolex hvert ur en bred vifte af de strengeste tests efter samling. Alle nye Rolex-ure, der er købt hos en af mærkets officielle forhandlere, leveres med fem års international garanti. Når du køber et Rolex-ur, udfylder og daterer den officielle forhandler Rolex’ garantikort, som bekræfter urets autenticitet." },
+  { title: "Det grønne segl", text: "Den femårige garanti, som gælder for alle Rolex-modeller, er forbundet med det grønne segl – symbolet på dets status som Superlative Chronometer. Denne eksklusive betegnelse vidner om, at uret med succes har gennemgået en række specifikke slutkontroller udført af Rolex i mærkets egne laboratorier i henhold til dets egne kriterier, ud over den officielle COSC-certificering af dets urværk." },
+  { title: "Rolex' repræsentationsæske", text: "Hvert Rolex-ur leveres i en smuk grøn præsentationsæske, som både tjener som beskytter og opbevarer af den juvel, der gemmer sig indeni. Præsentationsæsken er også er et symbol på at give – derfor er det vigtigt, hvis du køber uret som gave, at modtagerens første møde med Rolex sætter scenen for den store afsløring af æskens indhold." },
+];
+export const messageIntro = "Tak for din interesse for Rolex ure. Indtast venligst din besked nedenfor og vi vil glæde os til at servicere dig.";
 
-/** Tom indtil Rolex' datafil er importeret. Siden viser pladsholdere imens. */
-export const rolexModels: RolexModel[] = [];
+/** Pris pr. RMC (bruges kun af prisruten, som tjekker at besøgende er i Danmark) */
+export const rolexPriceFor = (rmc: string) =>
+  rolexModels.find((m) => m.rmc.toLowerCase() === rmc.toLowerCase())?.price ??
+  rolexAccessories.find((a) => a.rmc.toLowerCase() === rmc.toLowerCase())?.price ?? null;
 
-export const getCollection = (slug: string) => rolexCollections.find((c) => c.slug === slug);
-export const modelsInCollection = (slug: string) =>
-  rolexModels.filter((m) => m.collection === slug).sort((a, b) => b.ranking - a.ranking);
-
-/** Statiske Rolex-sider (ud over ure/kollektioner/modeller) */
-export const rolexPages: Record<string, { title: string; h1: string; description: string; content: string }> = {
-  "nye-ure-2026": {
-    title: `Rolex nye ure 2026 | ${RETAILER.name}`,
-    h1: `Rolex nye ure 2026 – ${RETAILER.name}`,
-    description: `${RETAILER.name} præsenterer den nyeste kollektion af schweiziske luksusure fra Rolex.`,
-    content: "Siden for årets nye ure. Rolex leverer enten en iFrame på lanceringsdagen eller billeder og tekster til at bygge siden selv.",
-  },
-  accessories: {
-    title: `Rolex-accessories | ${RETAILER.name}`,
-    h1: "Rolex-accessories",
-    description: `Se Rolex-accessories hos ${RETAILER.name}, en officiel Rolex-forhandler i ${RETAILER.city}.`,
-    content: "Rolex-accessories med billeder og tekster fra Rolex Brand Centre.",
-  },
-  urmageri: {
-    title: `Rolex urmageri | ${RETAILER.name}`,
-    h1: "Rolex urmageri",
-    description: `Oplev Rolex' tilgang til urmageri hos ${RETAILER.name} i ${RETAILER.city}.`,
-    content: "Forsidebillede, introtekst og højdepunkter om urmageri i den rækkefølge, Rolex' skabelon angiver. Ingen tilpasninger.",
-  },
-  servicing: {
-    title: `Serviceeftersyn af din Rolex | ${RETAILER.name}`,
-    h1: `Serviceeftersyn og reparation af Rolex hos ${RETAILER.name}`,
-    description: `${RETAILER.name} er stolt af at være en del af Rolex' netværk af officielle forhandlere med uddannede urmagere.`,
-    content: "Rolex' tekst om serviceeftersyn. Kun forhandlerens navn indsættes.",
-  },
-  serviceprocedure: {
-    title: `Rolex serviceprocedure | ${RETAILER.name}`,
-    h1: `Rolex serviceprocedure hos ${RETAILER.name}`,
-    description: `Sådan foregår et Rolex-serviceeftersyn hos ${RETAILER.name}, officielt Rolex-servicecenter i ${RETAILER.city}.`,
-    content: "Kun for forhandlere med Rolex-servicecenter (det har Knud Pedersen). Video, procedure-trin og billeder fra Rolex.",
-  },
-  "oyster-story": {
-    title: `Oyster Story | ${RETAILER.name}`,
-    h1: "Oyster Story",
-    description: `Historien om Rolex Oyster, fortalt hos ${RETAILER.name} i ${RETAILER.city}.`,
-    content: "Artikel fra Rolex Brand Centre med publiceringsdato. Artikler vises nyeste først.",
-  },
-  "knud-pedersen": {
-    title: `Rolex i ${RETAILER.city} | ${RETAILER.name}`,
-    h1: `Rolex hos ${RETAILER.name}`,
-    description: `Mød ${RETAILER.name}, officiel Rolex-forhandler på Skt. Clemens Torv i ${RETAILER.city}.`,
-    content: "Vores historie, vores hold og vores showroom. Teksterne skrives af Knud Pedersen og godkendes af Rolex Digital Officer før udgivelse.",
-  },
-};
+/** I forhåndsvisningen (statisk, uden server) sendes prisen med til siden. I drift hentes den via /api/rolex-price. */
+export const previewPrice = (n: number | null) => (process.env.NEXT_PUBLIC_ROLEX_PRICE_PREVIEW === "true" ? n : undefined);

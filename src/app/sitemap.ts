@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/site";
 import { models, nonRolexBrands } from "@/data/catalog";
 import { jewelleryBrandList, pieces } from "@/data/jewellery";
-import { rolexCollections, rolexModels, rolexPages } from "@/data/rolex";
+import { rolexAccessories, rolexCollections, rolexModels } from "@/data/rolex";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const paths = [
@@ -11,10 +11,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...models.map((m) => `/ure/${m.brand}/${m.slug}`),
     ...jewelleryBrandList.map((b) => `/smykker/${b.slug}`),
     ...pieces.map((p) => `/smykker/${p.brand}/${p.slug}`),
-    "/rolex", "/rolex/ure", "/rolex/kontakt",
-    ...Object.keys(rolexPages).map((p) => `/rolex/${p}`),
-    ...rolexCollections.map((c) => `/rolex/ure/${c.slug}`),
-    ...rolexModels.map((m) => `/rolex/ure/${m.collection}/${m.rmc.toLowerCase()}`),
+    ...["discover", "watches", "new-watches", "watchmaking", "servicing", "servicing-procedure", "servicing-prices", "world-of-rolex", "knud-pedersen", "contact-aarhus", "accessories"].map((p) => `/rolex/${p}`),
+    ...rolexCollections.map((c) => `/rolex/${c.slug}`),
+    ...rolexModels.map((m) => `/rolex/${m.slug}`),
+    ...rolexAccessories.map((a) => `/rolex/accessories/${a.slug}`),
   ];
   return paths.map((p) => ({ url: `${SITE_URL}${p === "/" ? "" : p}`, changeFrequency: "weekly" }));
 }

@@ -1,10 +1,11 @@
 import type { NextConfig } from "next";
 import { pieces } from "./src/data/jewellery";
 import { models } from "./src/data/catalog";
+import { rolexAccessories, rolexCollections, rolexModels } from "./src/data/rolex";
 
 /** 301-omdirigeringer fra den gamle ScanNet-side, så placeringer i Google bevares */
 const shopBrand: Record<string, string> = {
-  "20-rolex": "/rolex",
+  "20-rolex": "/rolex/discover",
   "21-tudor": "/ure/tudor",
   "17-glashutte-original": "/ure/glashutte-original",
   "24-chopard-watches--jewellery": "/ure/chopard",
@@ -28,6 +29,15 @@ const shopBrand: Record<string, string> = {
 
 const pages: Record<string, string> = {
   "/historie": "/om-os",
+  "/rolex": "/rolex/discover",
+  "/rolex-kollektion": "/rolex/watches",
+  "/rolex-ure-kollektioner": "/rolex/watches",
+  "/nye-ure-2026": "/rolex/new-watches",
+  "/rolex-urmageri": "/rolex/watchmaking",
+  "/servicere-dit-rolex": "/rolex/servicing",
+  "/rolex-service-procedure": "/rolex/servicing-procedure",
+  "/rolex-serviceeftersyn-priser": "/rolex/servicing-prices",
+  "/rolex-send-en-besked": "/rolex/contact-aarhus#besked",
   "/kontakt1": "/kontakt",
   "/kontakt-os": "/kontakt",
   "/nyheder": "/om-os",
@@ -41,8 +51,7 @@ const pages: Record<string, string> = {
   "/chopard-history": "/ure/chopard",
   "/ole-mathiesen": "/ure/ole-mathiesen",
   "/marc-harit": "/smykker",
-  "/rolex-kollektion-oyster-perpetual": "/rolex/ure/oyster-perpetual",
-  "/oyster-story": "/rolex/oyster-story",
+    "/oyster-story": "/rolex/world-of-rolex",
   "/rolex-accessories": "/rolex/accessories",
   "/shop": "/ure",
 };
@@ -51,6 +60,12 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   async redirects() {
     return [
+      // Gamle Rolex-adresser (/rolex-kollektion-x/, /rolex-model-mXXXX/, /rolex-accessories-x/) til de nye
+      ...rolexCollections.map((c) => ({ source: `/rolex-kollektion-${c.slug}`, destination: `/rolex/${c.slug}`, permanent: true })),
+      ...rolexModels.map((m) => ({ source: `/rolex-${m.slug}`, destination: `/rolex/${m.slug}`, permanent: true })),
+      ...rolexAccessories.map((a) => ({ source: `/rolex-accessories-${a.slug}`, destination: `/rolex/accessories/${a.slug}`, permanent: true })),
+      { source: "/rolex/ure", destination: "/rolex/watches", permanent: true },
+      { source: "/rolex/kontakt", destination: "/rolex/contact-aarhus", permanent: true },
       ...Object.entries(pages).map(([source, destination]) => ({ source, destination, permanent: true })),
       // Hvert gammelt produkt (/shop/<kategori>/<id>-<varenr>/) sendes til samme ur på den nye side
       ...pieces.map((p) => ({ source: `/shop/:cat/:product(${p.oldId}-[^/]*)/:rest*`, destination: `/smykker/${p.brand}/${p.slug}`, permanent: true })),
