@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { brands, brandHref, models, getBrand, modelHref } from "@/data/catalog";
+import { brands, brandHref, models, getBrand, modelHref, genderOf } from "@/data/catalog";
 import { pieces } from "@/data/jewellery";
 import { rolexAssets } from "@/data/rolex";
 import ModelCard from "@/components/ModelCard";
@@ -35,53 +35,70 @@ export default function Home() {
   const tudor = pick("tudor", 3)[2] ?? pick("tudor")[0];
   const gs = pick("grand-seiko", 2)[1];
   const jewelTypes = ["Ringe", "Øreringe", "Halskæder", "Armbånd"];
+  const herre = models.find((m) => m.image && m.brand === "omega" && genderOf(m) === "Herre") ?? pick("omega")[0];
+  const dame = models.find((m) => m.image && genderOf(m) === "Dame");
+  const ring = pieces.find((p) => p.image && /ring/i.test(p.type) && p.brand !== "marselis") ?? pieces.find((p) => p.image && p !== jewel);
+  const tiles = [
+    { href: "/ure?koen=herre", eyebrow: "Ure", title: "Herreure", img: herre?.image, zoom: false },
+    { href: "/ure?koen=dame", eyebrow: "Ure", title: "Dameure", img: dame?.image, zoom: false },
+    { href: "/smykker", eyebrow: "Smykker", title: "Smykker og ringe", img: ring?.image ?? jewel?.image, zoom: true },
+    { href: "/service", eyebrow: "Værkstedet", title: "Service og reparation", img: undefined, zoom: false },
+  ];
 
   return (
     <>
-      {/* 1. Hero */}
-      <section className="hero" aria-labelledby="hero-h">
-        <div className="hero__media">
-          {/* [Hero-foto: butikken på Skt. Clemens Torv, fuld bredde] erstatter urscenen, når fotoet er leveret */}
-          {heroWatch && (
-            <Link className="hero-stage" href={modelHref(heroWatch)} aria-label={`${getBrand(heroWatch.brand)!.name} ${heroWatch.name}`}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={heroWatch.image} alt={`${getBrand(heroWatch.brand)!.name} ${heroWatch.name}, reference ${heroWatch.ref}`} fetchPriority="high" />
-              <span className="hero-stage__cap"><small>{getBrand(heroWatch.brand)!.name}</small>{heroWatch.name} · {heroWatch.ref}</span>
-            </Link>
-          )}
-        </div>
-        <div className="container">
-          <div className="hero__content">
-            <span className="label">Skt. Clemens Torv · Aarhus · Siden 1887</span>
-            <h1 id="hero-h">Ure og smykker, valgt med omhu</h1>
-            <p className="lead">Officiel Rolex-forhandler og eget urmagerværksted midt i Aarhus. Book et møde, så står urene klar, når du kommer.</p>
-            <div className="btn-row">
-              <Link className="btn btn--light" href="/book-tid">Book et møde</Link>
-              <Link className="btn btn--outline-light" href="/ure">Se urene</Link>
-            </div>
+      {/* 1. Hero: lys scene i fuld bredde med ét ur i stor størrelse */}
+      <section className="ed-hero" aria-labelledby="hero-h">
+        {/* [Hero-foto eller -film: butikken på Skt. Clemens Torv] kan erstatte urscenen, når det er leveret */}
+        <div className="ed-hero__text">
+          <span className="label label--brass">Skt. Clemens Torv · Aarhus · Siden 1887</span>
+          <h1 id="hero-h">Ure og smykker,<br />valgt med omhu</h1>
+          <p className="lead">Officiel Rolex- og Tudor-forhandler med eget urmagerværksted midt i Aarhus.</p>
+          <div className="btn-row">
+            <Link className="btn" href="/book-tid">Book et møde</Link>
+            <Link className="link-arrow" href="/ure">Se alle ure</Link>
           </div>
         </div>
+        {heroWatch && (
+          <Link className="ed-hero__watch" href={modelHref(heroWatch)} aria-label={`${getBrand(heroWatch.brand)!.name} ${heroWatch.name}`}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={heroWatch.image} alt={`${getBrand(heroWatch.brand)!.name} ${heroWatch.name}, reference ${heroWatch.ref}`} fetchPriority="high" />
+            <span className="ed-hero__cap"><small>{getBrand(heroWatch.brand)!.name}</small>{heroWatch.name}<em>Ref. {heroWatch.ref}</em></span>
+          </Link>
+        )}
       </section>
 
       {/* 2. Rolex-banner #1 */}
-      <section className="container section--tight" aria-label="Rolex"><RolexBanner s={rolexAssets.slides[0]} /></section>
+      <section className="ed-bleed" aria-label="Rolex"><RolexBanner s={rolexAssets.slides[0]} /></section>
 
-      {/* 3. Trust-bar */}
-      <section className="trust" aria-label="Derfor Knud Pedersen">
+      {/* 3. Indledning */}
+      <section className="ed-intro">
         <div className="container">
-          <ul>
-            <li><strong>Siden 1887</strong><span>Rødder i Vestergade i Aarhus</span></li>
-            <li><strong>Officiel Rolex-forhandler</strong><span>Og officiel Tudor-forhandler</span></li>
-            <li><strong>Eget værksted</strong><span>Autoriseret Rolex-servicecenter</span></li>
-            <li><strong>{brands.length} mærker</strong><span>Fuld fabriksgaranti</span></li>
+          <p className="ed-statement">Siden 1887 har vi hjulpet Aarhus med at finde det ur eller smykke, der skal følge med resten af livet. Og med at passe på det bagefter.</p>
+          <ul className="ed-facts">
+            <li><strong>1887</strong><span>Grundlagt i Aarhus</span></li>
+            <li><strong>{brands.length}</strong><span>Mærker med fabriksgaranti</span></li>
+            <li><strong>Rolex</strong><span>Autoriseret servicecenter</span></li>
           </ul>
         </div>
       </section>
 
+      {/* 3b. Kategorier i stort format */}
+      <section className="ed-tiles" aria-label="Kategorier">
+        {tiles.map((t) => (
+          <Link key={t.href} href={t.href} className={`ed-tile${t.img ? "" : " ed-tile--type"}${t.zoom ? " ed-tile--zoom" : ""}`}>
+            <span className="ed-tile__media">
+              {t.img ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={t.img} alt="" loading="lazy" /> : <span aria-hidden="true">KP</span>}
+            </span>
+            <span className="ed-tile__cap"><small>{t.eyebrow}</small><strong>{t.title}</strong><em>Udforsk</em></span>
+          </Link>
+        ))}
+      </section>
+
       {/* 4. Udvalgte ure (ikke Rolex) */}
-      <section className="section">
+      <section className="section ed-featured">
         <div className="container">
-          <Carousel title="Ure, vi holder af lige nu" action={<Link className="link-arrow" href="/ure">Alle ure</Link>}>
+          <Carousel title="Udvalgt lige nu" action={<Link className="link-arrow" href="/ure">Alle ure</Link>}>
             {featured.map((m) => <li key={m.brand + m.slug}><ModelCard model={m} /></li>)}
           </Carousel>
         </div>
@@ -117,19 +134,21 @@ export default function Home() {
       {/* 6. Mærkegrid */}
       <section className="section">
         <div className="container">
-          <div className="section-head"><div><span className="label">Mærker</span><h2>{brands.length} mærker under ét tag</h2></div><Link className="link-arrow" href="/maerker">Alle mærker</Link></div>
-          <ul className="brand-grid">
+          <div className="ed-head"><span className="label">Mærker</span><h2>{brands.length} mærker under ét tag</h2><Link className="link-arrow" href="/maerker">Alle mærker</Link></div>
+          <ul className="ed-brands">
             {ordered.map((b) => (
-              <li key={b.slug}><Link href={brandHref(b)}><strong>{b.name}</strong><span>{b.rolex ? "Officiel forhandler" : b.slug === "tudor" ? "Officiel forhandler" : b.kind}</span></Link></li>
+              <li key={b.slug}><Link href={brandHref(b)}>{b.name}{(b.rolex || b.slug === "tudor") && <sup>Officiel forhandler</sup>}</Link></li>
             ))}
           </ul>
         </div>
       </section>
 
       {/* 7. Rolex-banner #2 og point of sale-banner */}
-      <section className="container" aria-label="Rolex hos Knud Pedersen">
+      <section className="ed-bleed" aria-label="Rolex hos Knud Pedersen">
         <RolexBanner s={rolexAssets.slides[2]} />
-        <div className="ph ph--banner" style={{ marginTop: 24 }}>[Rolex point of sale-banner: foto af Rolex-afdelingen hos Knud Pedersen, leveres og godkendes af Rolex]</div>
+      </section>
+      <section className="container section--tight">
+        <div className="ph ph--banner">[Rolex point of sale-banner: foto af Rolex-afdelingen hos Knud Pedersen, leveres og godkendes af Rolex]</div>
       </section>
 
       {/* 8. Smykker */}
