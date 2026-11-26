@@ -111,8 +111,35 @@ export const nonRolexBrands = brands.filter((b) => !b.rolex);
 export const getBrand = (slug: string) => brands.find((b) => b.slug === slug);
 export const getModelsForBrand = (slug: string) => models.filter((m) => m.brand === slug);
 export const getModel = (brand: string, slug: string) => models.find((m) => m.brand === brand && m.slug === slug);
-export const brandHref = (b: Brand) => (b.rolex ? "/rolex" : `/ure/${b.slug}`);
-export const modelHref = (m: Model) => `/ure/${m.brand}/${m.slug}`;
+export const brandHref = (b: Brand) => (b.rolex ? "/rolex/discover" : `/maerker/${b.slug}`);
+/** Produktadresse: /ur/[mærke]-[model]-[reference] */
+export const modelKey = (m: Model) => `${m.brand}-${m.slug}`;
+export const modelHref = (m: Model) => `/ur/${modelKey(m)}`;
+export const getModelByKey = (key: string) => models.find((m) => modelKey(m) === key);
+
+/** Filtre til /ure. Køn er afledt af navn og størrelse og skal gennemgås før lancering. */
+export function genderOf(m: Model): "Dame" | "Herre" | "Unisex" {
+  if (/lady|ladies|dame|women|femme|\bmini\b/i.test(`${m.name} ${m.collection ?? ""}`)) return "Dame";
+  const d = parseFloat((m.size || "").replace(",", "."));
+  if (!d) return "Unisex";
+  if (d <= 34) return "Dame";
+  if (d >= 39) return "Herre";
+  return "Unisex";
+}
+export function sizeOf(m: Model): string | null {
+  const d = parseFloat((m.size || "").replace(",", "."));
+  if (!d) return null;
+  if (d < 34) return "Under 34 mm";
+  if (d < 39) return "34–38 mm";
+  if (d < 42) return "39–41 mm";
+  return "42 mm og derover";
+}
+export const priceBands = [
+  { key: "0-15000", label: "Under 15.000 kr.", min: 0, max: 15000 },
+  { key: "15000-30000", label: "15.000–30.000 kr.", min: 15000, max: 30000 },
+  { key: "30000-60000", label: "30.000–60.000 kr.", min: 30000, max: 60000 },
+  { key: "60000-", label: "Over 60.000 kr.", min: 60000, max: Infinity },
+];
 
 // Billederne er kopieret fra den gamle webshop til public/billeder (konverteret til webp, maks. 1000 px).
 const OLD_HOST = "https://shop16933.sfstatic.io/upload_dir/";

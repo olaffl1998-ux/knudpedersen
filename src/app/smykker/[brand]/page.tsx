@@ -24,25 +24,25 @@ export default async function BrandPage({ params }: P) {
   if (!b) notFound();
   const list = piecesFor(b.slug);
   return (
-    <section className="section tight-top">
-      <div className="wrap stack-lg">
-        <Breadcrumbs items={[{ name: "Smykker", href: "/smykker" }, { name: b.name, href: `/smykker/${b.slug}` }]} />
-        <div className="section-head">
-          <p className="eyebrow">Smykker</p>
-          <h1>{b.name}</h1>
-          <p className="measure muted">{b.intro}</p>
-        </div>
+    <>
+      <div className="container"><Breadcrumbs items={[{ name: "Smykker", href: "/smykker" }, { name: b.name, href: `/smykker/${b.slug}` }]} /></div>
+      <section className="container page-head">
+        <span className="label">Smykker</span>
+        <h1>{b.name}</h1>
+        <p className="lead">{b.intro}</p>
+      </section>
+      <div className="container" style={{ paddingBottom: 120 }}>
         {pieceTypes.map((t) => {
           const group = list.filter((p) => p.type === t);
           if (!group.length) return null;
           return (
-            <div key={t} className="stack">
-              <h2 className="collection-head">{t}</h2>
-              <div className="models">{group.map((p) => <PieceCard key={p.slug} piece={p} />)}</div>
-            </div>
+            <section key={t} style={{ marginBottom: 72 }} aria-labelledby={`t-${t}`}>
+              <h2 id={`t-${t}`}>{t}</h2>
+              <ul className="cards">{group.map((p) => <li key={p.slug}><PieceCard piece={p} /></li>)}</ul>
+            </section>
           );
         })}
       </div>
-    </section>
+    </>
   );
 }

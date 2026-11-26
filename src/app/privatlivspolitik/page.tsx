@@ -6,8 +6,8 @@ export const metadata: Metadata = { title: "Privatlivspolitik", alternates: { ca
 
 export default function Privatliv() {
   return (
-    <section className="section tight-top">
-      <div className="wrap">
+    <section className="section">
+      <div className="container container--narrow">
         <Breadcrumbs items={[{ name: "Privatlivspolitik", href: "/privatlivspolitik" }]} />
         <div className="prose">
           <p className="tag">Udkast – skal gennemgås før lancering</p>

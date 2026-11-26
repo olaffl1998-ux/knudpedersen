@@ -13,8 +13,8 @@ const rows = [
 
 export default function Cookies() {
   return (
-    <section className="section tight-top">
-      <div className="wrap">
+    <section className="section">
+      <div className="container container--narrow">
         <Breadcrumbs items={[{ name: "Cookiepolitik", href: "/cookiepolitik" }]} />
         <div className="prose">
           <p className="tag">Udkast – opdateres med den endelige cookieliste før lancering</p>

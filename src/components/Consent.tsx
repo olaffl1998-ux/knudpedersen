@@ -42,30 +42,33 @@ export function ConsentProvider({ children }: { children: ReactNode }) {
       {children}
       {show && (
         <div className="cookie" role="dialog" aria-label="Cookie-indstillinger">
-          <div className="wrap">
-            <p>
-              <strong>Vi bruger cookies.</strong> Nødvendige cookies får siden til at virke. Med dit samtykke bruger vi også
+          <div>
+            <h2>Cookies</h2>
+            <p> Nødvendige cookies får siden til at virke. Med dit samtykke bruger vi også
               cookies til statistik og marketing, og vi viser indhold fra Google Maps. Du kan altid ændre dit valg nederst på siden.{" "}
               <Link href="/cookiepolitik">Læs cookiepolitikken</Link>.
             </p>
             {custom && (
               <fieldset>
                 <legend className="note">Vælg kategorier</legend>
-                <label className="check"><input type="checkbox" checked disabled /> Nødvendige</label>
+                <label className="check"><input type="checkbox" checked disabled /> <span>Nødvendige (altid aktive)</span></label>
                 <label className="check"><input id="c-stat" type="checkbox" checked={draft.statistics} onChange={(e) => setDraft({ ...draft, statistics: e.target.checked })} /> Statistik</label>
                 <label className="check"><input id="c-mark" type="checkbox" checked={draft.marketing} onChange={(e) => setDraft({ ...draft, marketing: e.target.checked })} /> Marketing</label>
                 <label className="check"><input id="c-ext" type="checkbox" checked={draft.external} onChange={(e) => setDraft({ ...draft, external: e.target.checked })} /> Eksternt indhold (kort)</label>
               </fieldset>
             )}
-            <div className="cta-row">
-              <button className="btn ghost" type="button" onClick={() => save({ statistics: false, marketing: false, external: false })}>Kun nødvendige</button>
-              {custom ? (
-                <button className="btn ghost" type="button" onClick={() => save(draft)}>Gem valg</button>
-              ) : (
-                <button className="btn ghost" type="button" onClick={() => setCustom(true)}>Tilpas</button>
-              )}
-              <button className="btn" type="button" onClick={() => save({ statistics: true, marketing: true, external: true })}>Acceptér alle</button>
+            {/* "Afvis alle" og "Accepter alle" er lige synlige og lige lette at vælge */}
+            <div className="btn-row">
+              <button className="btn" type="button" onClick={() => save({ statistics: false, marketing: false, external: false })}>Afvis alle</button>
+              <button className="btn" type="button" onClick={() => save({ statistics: true, marketing: true, external: true })}>Accepter alle</button>
             </div>
+            <p style={{ marginTop: 16, marginBottom: 0 }}>
+              {custom ? (
+                <button className="linklike" type="button" onClick={() => save(draft)}>Gem mine valg</button>
+              ) : (
+                <button className="linklike" type="button" onClick={() => setCustom(true)}>Tilpas valg</button>
+              )}
+            </p>
           </div>
         </div>
       )}
@@ -95,7 +98,7 @@ export function MapEmbed({ query, label }: { query: string; label: string }) {
   return (
     <div className="map" role="img" aria-label={label}>
       <b>Skt. Clemens Torv 6, Aarhus</b>
-      <button type="button" className="btn ghost" onClick={() => save({ ...(consent ?? { statistics: false, marketing: false }), external: true })}>
+      <button type="button" className="btn btn--outline" onClick={() => save({ ...(consent ?? { statistics: false, marketing: false }), external: true })}>
         Vis kort (Google Maps sætter cookies)
       </button>
     </div>

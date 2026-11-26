@@ -30,6 +30,7 @@ export async function POST(req: Request) {
     email: clean(body.email, 200),
     message: clean(body.message),
     subject: clean(body.subject, 200),
+    brand: clean(body.brand, 100),
   };
   if (!data.name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email) || !body.consent) {
     return NextResponse.json({ error: "Manglende felter" }, { status: 422 });

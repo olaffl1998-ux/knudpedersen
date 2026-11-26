@@ -6,8 +6,8 @@ export const metadata: Metadata = { title: "Tilgængelighedserklæring", alterna
 
 export default function Tilgaengelighed() {
   return (
-    <section className="section tight-top">
-      <div className="wrap">
+    <section className="section">
+      <div className="container container--narrow">
         <Breadcrumbs items={[{ name: "Tilgængelighedserklæring", href: "/tilgaengelighed" }]} />
         <div className="prose">
           <h1>Tilgængelighedserklæring</h1>

@@ -81,7 +81,7 @@ export default function StrapPicker({ model, straps, brandName }: Props) {
 
       <div className="strap-info">
         <div>
-          <p className="eyebrow">Valgt rem eller lænke</p>
+          <p className="label">Valgt rem eller lænke</p>
           <h2 style={{ fontSize: "1.25rem" }}>{current.name}</h2>
         </div>
         <p className="note">

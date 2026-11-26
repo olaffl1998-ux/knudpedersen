@@ -24,12 +24,11 @@ export const business = {
 } as const;
 
 export const mainNav = [
-  { href: "/rolex", label: "Rolex", key: "rolex" },
-  { href: "/ure", label: "Ure", key: "ure" },
+  { href: "/ure", label: "Ure", key: "ure", mega: "ure" },
   { href: "/smykker", label: "Smykker", key: "smykker" },
-  { href: "/service", label: "Service", key: "service" },
+  { href: "/maerker", label: "Mærker", key: "maerker", mega: "maerker" },
+  { href: "/service", label: "Service & reparation", key: "service" },
   { href: "/om-os", label: "Om os", key: "om-os" },
-  { href: "/kontakt", label: "Kontakt", key: "kontakt" },
 ] as const;
 
 export const formatPrice = (n: number) => `${n.toLocaleString("da-DK")} kr.`;

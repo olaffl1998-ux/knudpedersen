@@ -1,24 +1,26 @@
 import Link from "next/link";
-import { getBrand, modelHref, straps, type Model } from "@/data/catalog";
+import { getBrand, modelHref, modelKey, type Model } from "@/data/catalog";
 import { formatPrice } from "@/lib/site";
-import { WatchSvg } from "./WatchArt";
+import { HeartButton } from "./Wishlist";
 
-export default function ModelCard({ model }: { model: Model }) {
+export default function ModelCard({ model, eager }: { model: Model; eager?: boolean }) {
   const brand = getBrand(model.brand)!;
+  const label = `${brand.name} ${model.name}`;
   return (
-    <Link className="model-card" href={modelHref(model)}>
-      <div className="img">
+    <article className="card">
+      <div className="card__media">
         {model.image ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={model.image} alt={`${brand.name} ${model.name} ${model.ref}`} loading="lazy" decoding="async" />
-        ) : (
-          <WatchSvg model={model} strap={straps[model.straps[0]]} />
-        )}
+          <img src={model.image} alt={`${label}, reference ${model.ref}`} loading={eager ? "eager" : "lazy"} decoding="async" />
+        ) : <div className="ph">[Produktbillede]</div>}
+        <HeartButton id={`ur:${modelKey(model)}`} label={label} />
       </div>
-      <p className="eyebrow">{brand.name}</p>
-      <h3>{model.name}</h3>
-      <p className="ref">{model.ref}{model.size && ` · ${model.size}`}</p>
-      <p className="price"><small>Vejl. pris</small>{formatPrice(model.price)} {model.example && <span className="tag">Eksempel</span>}</p>
-    </Link>
+      <div className="card__body">
+        <span className="card__brand">{brand.name}</span>
+        <Link className="card__name" href={modelHref(model)}>{model.name}</Link>
+        <span className="card__meta">{model.ref}{model.size && ` · ${model.size}`}</span>
+        <span className="card__price"><small>Vejl. pris</small>{formatPrice(model.price)}</span>
+      </div>
+    </article>
   );
 }

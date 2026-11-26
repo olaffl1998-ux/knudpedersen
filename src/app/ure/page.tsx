@@ -1,34 +1,37 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { brands, brandHref, models } from "@/data/catalog";
-import ModelCard from "@/components/ModelCard";
+import Catalog, { type Item } from "@/components/Catalog";
+import { getBrand, genderOf, models, priceBands, sizeOf } from "@/data/catalog";
 import { Breadcrumbs } from "@/components/Seo";
 
 export const metadata: Metadata = {
-  title: "Ure i Aarhus – Rolex, Tudor, Omega, Grand Seiko og flere",
-  description: "Se ure fra 15 anerkendte mærker hos Knud Pedersen i Aarhus. Vejledende priser online, rådgivning og prøvning i butikken på Skt. Clemens Torv.",
+  title: "Ure i Aarhus – Tudor, Omega, Breitling, Grand Seiko og flere",
+  description: "Se ure fra Tudor, Omega, Breitling, Grand Seiko, TAG Heuer, Longines og flere hos Knud Pedersen i Aarhus. Filtrér efter mærke, størrelse, materiale og pris.",
   alternates: { canonical: "/ure" },
 };
 
-/** Første ur fra hvert mærke */
-const featured = brands.flatMap((b) => models.find((m) => m.brand === b.slug) ?? []);
-
-export default function Ure() {
+export default function Watches() {
+  // Rolex vises ikke her (Rolex' krav). Rolex har sin egen sektion.
+  const items: Item[] = models.map((m, order) => ({
+    m, order,
+    brandName: getBrand(m.brand)!.name,
+    gender: genderOf(m),
+    size: sizeOf(m),
+    material: m.specs.Kasse ?? "",
+    movement: m.specs["Urværk"] ?? "",
+    band: priceBands.find((b) => m.price >= b.min && m.price < b.max)!.label,
+  }));
   return (
-    <section className="section tight-top">
-      <div className="wrap stack-lg">
-        <Breadcrumbs items={[{ name: "Ure", href: "/ure" }]} />
-        <div className="stack">
-          <p className="eyebrow">Alle mærker</p>
-          <h1>Ure hos Knud Pedersen</h1>
-          <p className="measure muted">Se modellerne her, og kom forbi og prøv dem. Alle ure viser vejledende udsalgspris. Ure kan ikke købes online.</p>
-        </div>
-        <div className="brand-grid">
-          {brands.map((b) => <Link key={b.slug} href={brandHref(b)}>{b.name}<small>{b.kind}</small></Link>)}
-        </div>
-        <h2>Udvalgte modeller</h2>
-        <div className="models">{featured.map((m) => <ModelCard key={`${m.brand}-${m.slug}`} model={m} />)}</div>
-      </div>
-    </section>
+    <>
+      <div className="container"><Breadcrumbs items={[{ name: "Ure", href: "/ure" }]} /></div>
+      <section className="container page-head">
+        <span className="label">Ure</span>
+        <h1>Ure</h1>
+        <p className="lead">{models.length} ure fra {new Set(models.map((m) => m.brand)).size} mærker. Vejledende priser. Urene kan ikke købes online. Book et møde, så har vi dem klar. Rolex finder du i <Link href="/rolex/discover">Rolex-sektionen</Link>.</p>
+      </section>
+      <section className="container" style={{ paddingBottom: 120 }}>
+        <Catalog items={items} bandOrder={priceBands.map((b) => b.label)} />
+      </section>
+    </>
   );
 }
