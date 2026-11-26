@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
+import ScrollFX from "@/components/ScrollFX";
 import { ConsentProvider } from "@/components/Consent";
 import { JsonLd, storeJsonLd } from "@/components/Seo";
 import { SITE_URL, SHOW_PREVIEW_BANNER } from "@/lib/site";
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main id="indhold">{children}</main>
           <Footer />
           <Reveal />
+          <ScrollFX />
         </ConsentProvider>
         <JsonLd data={storeJsonLd} />
       </body>

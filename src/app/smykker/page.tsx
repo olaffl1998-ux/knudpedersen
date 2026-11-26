@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { jewelleryBrandList, piecesFor } from "@/data/jewellery";
+import { jewelleryBrandList, piecesFor, pieces } from "@/data/jewellery";
 import { Breadcrumbs } from "@/components/Seo";
 
 export const metadata: Metadata = {
@@ -40,7 +40,7 @@ export default function Smykker() {
       </section>
       <section className="section">
         <div className="container split">
-          <div className="split__media"><div className="ph" aria-hidden="true">[Foto: smykker i vinduet på Skt. Clemens Torv]</div></div>
+          <div className="split__media">{/* [Foto: smykker i vinduet på Skt. Clemens Torv] */}{(() => { const r = pieces.find((p) => p.image && /Aisling-Ring-Oval/.test(p.image)); return r ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={r.image} alt={r.name} loading="lazy" className="on-stage" /> : null; })()}</div>
           <div className="split__text">
             <span className="label">Værkstedet</span>
             <h2>Vielsesringe, omtrækning og tilpasning</h2>

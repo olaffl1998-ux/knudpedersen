@@ -41,10 +41,11 @@ export default function OmOs() {
       <section className="section" aria-labelledby="historie">
         <div className="container">
           <div className="section-head"><div><span className="label">Historie</span><h2 id="historie">Vores historie</h2>{intro && <p className="lead">{intro.text}</p>}</div></div>
-          <ol className="timeline">
+          <ol className="timeline timeline--text">
             {ch.map((c) => (<li key={c.title + c.year}>
-                                {c.img ? <img src={c.img} alt={`Knud Pedersen, ${c.title} ${c.year}`} loading="lazy"/> : <div className="ph" aria-hidden="true">[Billede: {c.title} {c.year}]</div>}
-                <div><span className="year">{c.year}</span><h3>{c.title}</h3><p>{c.text}</p></div>
+                {/* [Historisk foto: {c.title} {c.year}. Filerne fra den gamle side mangler og vises her, når de er lagt ind] */}
+                <span className="year">{c.year}</span>
+                <div><h3>{c.title}</h3><p>{c.text}</p></div>
               </li>))}
           </ol>
         </div>
@@ -61,7 +62,7 @@ export default function OmOs() {
 
       <section className="section" id="vaerksted">
         <div className="container split">
-          <div className="split__media"><div className="ph" aria-hidden="true">[Foto fra værkstedet]</div></div>
+          <div className="split__media">{/* [Foto fra værkstedet] */}<div className="type-panel" aria-hidden="true"><small>Værkstedet</small><span>Urmagere og guldsmede under samme tag</span></div></div>
           <div className="split__text">
             <span className="label">Værkstedet</span>
             <h2>Eget værksted</h2>

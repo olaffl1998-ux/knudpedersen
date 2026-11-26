@@ -46,9 +46,12 @@ export default function Home() {
   const featuredBrands = ["tudor", "omega", "breitling", "grand-seiko", "tag-heuer", "longines", "glashutte-original", "oris", "baume-mercier", "doxa", "chopard"];
   const featured = featuredBrands.flatMap((b) => pick(b, 1)).slice(0, 10);
   const ordered = [...brands.filter((b) => b.slug === "rolex" || b.slug === "tudor"), ...brands.filter((b) => b.slug !== "rolex" && b.slug !== "tudor")];
-  const jewel = pieces.find((p) => p.brand === "marselis" && p.image);
+  const jewel = pieces.find((p) => p.image?.includes("KP_Rainbow_1")) ?? pieces.find((p) => p.brand === "marselis" && p.image);
   const tudor = pick("tudor", 3)[2] ?? pick("tudor")[0];
   const gs = pick("grand-seiko", 2)[1];
+  const bridal = pieces.find((p) => p.image && /Aisling-Ring-Oval/.test(p.image)) ?? pieces.find((p) => p.image && p.type === "Ringe");
+  // Rolex-navnet bevæger sig ikke: Rolex' varemærke vises kun statisk
+  const marquee = ordered.filter((b) => !b.rolex).map((b) => b.name);
   const jewelTypes = ["Ringe", "Øreringe", "Halskæder", "Armbånd"];
   const herre = models.find((m) => m.image && m.brand === "omega" && genderOf(m) === "Herre") ?? pick("omega")[0];
   const dame = models.find((m) => m.image && genderOf(m) === "Dame");
@@ -79,6 +82,12 @@ export default function Home() {
           </ul>
         </div>
       </section>
+
+      {/* 3a. Mærkerne glider roligt forbi */}
+      <div className="ed-marquee" aria-label="Mærker hos Knud Pedersen">
+        <ul>{marquee.map((n) => <li key={n}>{n}</li>)}</ul>
+        <ul aria-hidden="true">{marquee.map((n) => <li key={n}>{n}</li>)}</ul>
+      </div>
 
       {/* 3b. Kategorier i stort format */}
       <section className="ed-tiles" aria-label="Kategorier">
@@ -167,6 +176,25 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* 8b. Vielsesringe: filmisk afsnit med centreret tekst */}
+      {bridal?.image && (
+        <section className="ed-cine" aria-labelledby="cine-title">
+          <div className="ed-cine__media" aria-hidden="true">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={bridal.image} alt="" loading="lazy" />
+          </div>
+          <div className="ed-cine__text">
+            <small>Vielsesringe og forlovelsesringe</small>
+            <h2 id="cine-title">Til det store ja</h2>
+            <p>Prøv ringe i ro og mag. Book en tid, så sætter vi tid af til jer.</p>
+            <div className="btn-row">
+              <Link className="btn btn--outline" href="/book-tid?formaal=vielsesringe">Book tid</Link>
+              <Link className="link-arrow" href="/vielsesringe">Se vielsesringe</Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* 9. Værksted og services */}
       <section className="section section--dark">

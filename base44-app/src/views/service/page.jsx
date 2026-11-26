@@ -32,7 +32,7 @@ export default function Service() {
         <div className="container">
           <div className="section-head"><div><span className="label">Ydelser</span><h2>Det hjælper vi med</h2></div></div>
           <ul className="services services--3">
-            {services.map((s) => (<li key={s.title}><div className="ph" aria-hidden="true">[Foto fra værkstedet: {s.label.toLowerCase()}]</div><span className="label">{s.label}</span><h3>{s.title}</h3><p>{s.text}</p></li>))}
+            {services.map((s) => (<li key={s.title}>{/* [Foto fra værkstedet: {s.label}] */}<span className="label">{s.label}</span><h3>{s.title}</h3><p>{s.text}</p></li>))}
           </ul>
         </div>
       </section>
@@ -48,7 +48,7 @@ export default function Service() {
 
       <section className="section section--white">
         <div className="container split">
-          <div className="split__media"><div className="ph" aria-hidden="true">[Foto: urmager ved arbejdsbordet]</div></div>
+          <div className="split__media">{/* [Foto: urmager ved arbejdsbordet] */}<div className="type-panel" aria-hidden="true"><small>Værkstedet</small><span>Altid et prisoverslag, før vi går i gang</span></div></div>
           <div className="split__text">
             <span className="label">Priser</span>
             <h2>Priseksempler</h2>

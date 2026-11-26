@@ -63,13 +63,20 @@ export default function Header() {
   const [mega, setMega] = useState<string | null>(null);
   const [menu, setMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [today, setToday] = useState("");
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => { setMega(null); setMenu(false); }, [path]);
   useEffect(() => {
     setToday(todayText());
-    const on = () => setScrolled(window.scrollY > 24);
+    let last = window.scrollY;
+    // Headeren glider væk, når man scroller ned, og kommer igen, så snart man scroller op
+    const on = () => {
+      const y = window.scrollY;
+      setScrolled(y > 24);
+      if (Math.abs(y - last) > 6) { setHidden(y > 520 && y > last); last = y; }
+    };
     on();
     window.addEventListener("scroll", on, { passive: true });
     return () => window.removeEventListener("scroll", on);
@@ -95,7 +102,7 @@ export default function Header() {
           </span>
         </div>
       </div>
-      <header ref={ref} className={`site-header${scrolled ? " is-scrolled" : ""}`}>
+      <header ref={ref} className={`site-header${scrolled ? " is-scrolled" : ""}${hidden && !mega && !menu ? " is-hidden" : ""}`}>
         <div className="container site-header__in">
           <button className="burger" type="button" aria-label="Åbn menu" aria-expanded={menu} onClick={() => setMenu(true)}><span /><span /><span /></button>
           <nav className="nav nav--desktop" aria-label="Hovedmenu">
