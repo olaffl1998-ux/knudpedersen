@@ -1,6 +1,7 @@
 import Link from "@/lib/next/link";
 import { jewelleryBrandList, piecesFor, pieces } from "@/data/jewellery";
 import { Breadcrumbs } from "@/components/Seo";
+import { jewelleryCategories } from "@/data/categories";
 export const metadata = {
     title: "Smykker i Aarhus – Marselis, Georg Jensen, Chopard og Gucci",
     description: "Smykker i ædle metaller med certificerede diamanter hos Knud Pedersen i Aarhus. Ringe, øreringe, armbånd og halskæder samt omtrækning af perlekæder.",
@@ -13,6 +14,7 @@ export default function Smykker() {
         <span className="label">Smykker</span>
         <h1>Smykker i ædle metaller</h1>
         <p className="lead">Ringe, armbånd, øreringe og halskæder med certificerede diamanter. Smykkerne kan ikke købes online. Book et møde, så finder vi dem frem til dig.</p>
+        <nav className="subcats" aria-label="Smykketyper"><ul>{jewelleryCategories.map((c) => <li key={c.slug}><Link href={`/smykker/${c.slug}`}>{c.label}</Link></li>)}<li><Link href="/vielsesringe">Vielsesringe</Link></li></ul></nav>
       </section>
       <section className="container" aria-label="Smykkemærker">
         <ul className="features" style={{ listStyle: "none", margin: 0, padding: 0, gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>

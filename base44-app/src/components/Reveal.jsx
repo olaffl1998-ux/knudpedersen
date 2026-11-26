@@ -3,7 +3,7 @@ import { usePathname } from "@/lib/next/navigation";
 import { useEffect } from "react";
 const SELECTOR = [
     ".section-head", ".ed-head", ".ed-statement", ".ed-facts li", ".ed-tile", ".cards > li", ".feature",
-    ".ed-brands li", ".services li", ".ed-cine", ".split__media", ".split__text", ".fx__media", ".fx__text", ".visit > *", ".page-head", ".timeline li", ".footer-brand > *",
+    ".ed-brands li", ".services li", ".ed-cine", ".split__media", ".split__text", ".fx__media", ".fx__text", ".visit > *", ".page-head", ".timeline li", ".footer-brand > *", ".col-tiles li",
 ].join(",");
 /** Elementer glider blødt ind, når de kommer til syne. Uden JavaScript eller med reduceret bevægelse vises alt med det samme. */
 export default function Reveal() {

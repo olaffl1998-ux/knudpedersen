@@ -1108,3 +1108,17 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
 .bh--stage .bh__media { background: radial-gradient(50% 60% at 70% 50%, #fbf8f3 0%, var(--stage) 60%, var(--stage-2) 100%); }
 .bh--stage .bh__packshot { max-height: min(64vh, 620px); }
 @media (max-width: 1023px) { .bh--stage .bh__packshot { max-height: 44vh; } }
+
+/* Rolex point of sale-banner: grønt felt med Rolex-uret og foto af Rolex-afdelingen. Ingen animation (Rolex' krav). */
+.rx-pos { padding: 0 var(--gutter) var(--s12); }
+.rx-pos__in { display: grid; grid-template-columns: minmax(260px, 1fr) 3fr; max-width: var(--max); margin: 0 auto; text-decoration: none; color: #fff; box-shadow: 0 20px 50px -30px rgba(0,0,0,.4); }
+.rx-pos__panel { display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 20px; padding: 32px 24px; background: linear-gradient(160deg, #127749 0%, #0b5d37 55%, #08472a 100%); font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; text-align: center; }
+.rx-pos__clock { width: 160px; height: 160px; border: 0; pointer-events: none; }
+.rx-pos__txt { display: grid; gap: 6px; }
+.rx-pos__txt small { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; opacity: .85; }
+.rx-pos__txt strong { font-size: 20px; font-weight: 700; }
+.rx-pos__txt em { font-style: normal; font-weight: 700; font-size: 14px; margin-top: 6px; text-decoration: underline; text-underline-offset: 4px; }
+.rx-pos__plaque { width: 120px; height: 60px; }
+.rx-pos__photo { width: 100%; height: 100%; min-height: 360px; object-fit: cover; display: block; }
+.rx-pos, .rx-pos * { animation: none !important; transition: none !important; }
+@media (max-width: 767px) { .rx-pos__in { grid-template-columns: 1fr; } .rx-pos__photo { min-height: 0; aspect-ratio: 4 / 3; } }

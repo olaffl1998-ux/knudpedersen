@@ -7,6 +7,14 @@ export const metadata = {
     description: "Knud Pedersens historie fra 1949 til i dag, vores værksted og ledige stillinger. Ur- og smykkeforretning på Skt. Clemens Torv i Aarhus.",
     alternates: { canonical: "/om-os" },
 };
+/** Historiske fotos fra Knud Pedersens nuværende hjemmeside */
+const HISTORY_PHOTOS = {
+    "1949": "/billeder/historie/1949.jpg",
+    "1958": "/billeder/historie/1958.jpg",
+    "1967": "/billeder/historie/1967.jpg",
+    "2017": "/billeder/historie/2017.jpg",
+    "2019": "/billeder/historie/2019.jpg",
+};
 /** Historien er Knud Pedersens egen tekst fra den nuværende hjemmeside */
 function chapters() {
     const b = rolexPageBlocks.history.filter((x) => x.type !== "h1");
@@ -43,9 +51,9 @@ export default function OmOs() {
           <div className="section-head"><div><span className="label">Historie</span><h2 id="historie">Vores historie</h2>{intro && <p className="lead">{intro.text}</p>}</div></div>
           <ol className="timeline timeline--text">
             {ch.map((c) => (<li key={c.title + c.year}>
-                {/* [Historisk foto: {c.title} {c.year}. Filerne fra den gamle side mangler og vises her, når de er lagt ind] */}
                 <span className="year">{c.year}</span>
                 <div><h3>{c.title}</h3><p>{c.text}</p></div>
+                                {HISTORY_PHOTOS[c.year] ? <img className="timeline__photo" src={HISTORY_PHOTOS[c.year]} alt={`Knud Pedersen, ${c.title} ${c.year}`} loading="lazy"/> : <span />}
               </li>))}
           </ol>
         </div>

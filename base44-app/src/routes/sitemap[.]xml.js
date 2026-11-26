@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SITE_URL } from "@/lib/site";
-import { modelHref, models, nonRolexBrands } from "@/data/catalog";
+import { collectionSlug, getModelsForBrand, modelHref, models, nonRolexBrands } from "@/data/catalog";
+import { jewelleryCategories, watchCategories } from "@/data/categories";
 import { jewelleryBrandList, pieces } from "@/data/jewellery";
 import { rolexAccessories, rolexCollections, rolexModels } from "@/data/rolex";
 
@@ -9,6 +10,9 @@ function sitemap() {
     "/", "/ure", "/maerker", "/smykker", "/vielsesringe", "/brugte-ure", "/service", "/om-os", "/kontakt", "/book-tid",
     "/handelsbetingelser", "/privatlivspolitik", "/cookiepolitik", "/tilgaengelighed",
     ...nonRolexBrands.map((b) => `/maerker/${b.slug}`),
+    ...nonRolexBrands.flatMap((b) => Array.from(new Set(getModelsForBrand(b.slug).map((m) => m.collection).filter(Boolean))).map((c) => `/maerker/${b.slug}/${collectionSlug(c)}`)),
+    ...watchCategories.map((c) => `/ure/${c.slug}`),
+    ...jewelleryCategories.map((c) => `/smykker/${c.slug}`),
     ...models.map(modelHref),
     ...jewelleryBrandList.map((b) => `/smykker/${b.slug}`),
     ...pieces.map((p) => `/smykker/${p.brand}/${p.slug}`),

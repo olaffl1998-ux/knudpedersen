@@ -1,6 +1,7 @@
 import Link from "@/lib/next/link";
 import { brands, brandHref, models, getBrand, modelHref, genderOf } from "@/data/catalog";
 import { pieces } from "@/data/jewellery";
+import { jewelleryCategories } from "@/data/categories";
 import { rolexAssets } from "@/data/rolex";
 import ModelCard from "@/components/ModelCard";
 import Carousel from "@/components/Carousel";
@@ -10,7 +11,12 @@ import { CountUp, Words } from "@/components/Motion";
 import { formatPrice } from "@/lib/site";
 import Hours from "@/components/Hours";
 import { MapEmbed } from "@/components/Consent";
-import { business } from "@/lib/site";
+import { business, rolexClockSrc } from "@/lib/site";
+/** Fotos fra Knud Pedersens nuværende hjemmeside */
+const WORKSHOP = "/billeder/pics/Service_billede_forside.jpg";
+const VIGNET = "/billeder/pics/KP_logo_vignet.png";
+/** Foto af Rolex-afdelingen hos Knud Pedersen (fra den nuværende hjemmeside) */
+const POS_IMG = "/billeder/pics/rolex-afdeling-knud-pedersen.jpg";
 const pick = (brand, n = 1) => models.filter((m) => m.brand === brand && m.image).slice(0, n);
 function RolexBanner({ s, eager }) {
     return (<Link href={s.href} className="rolex-banner">
@@ -40,20 +46,18 @@ export default function Home() {
     const featured = featuredBrands.flatMap((b) => pick(b, 1)).slice(0, 10);
     const ordered = [...brands.filter((b) => b.slug === "rolex" || b.slug === "tudor"), ...brands.filter((b) => b.slug !== "rolex" && b.slug !== "tudor")];
     const jewel = pieces.find((p) => p.image?.includes("KP_Rainbow_1")) ?? pieces.find((p) => p.brand === "marselis" && p.image);
-    const tudor = pick("tudor", 3)[2] ?? pick("tudor")[0];
     const gs = pick("grand-seiko", 2)[1];
     const bridal = pieces.find((p) => p.image && /Aisling-Ring-Oval/.test(p.image)) ?? pieces.find((p) => p.image && p.type === "Ringe");
     // Rolex-navnet bevæger sig ikke: Rolex' varemærke vises kun statisk
     const marquee = ordered.filter((b) => !b.rolex).map((b) => b.name);
-    const jewelTypes = ["Ringe", "Øreringe", "Halskæder", "Armbånd"];
     const herre = models.find((m) => m.image && m.brand === "omega" && genderOf(m) === "Herre") ?? pick("omega")[0];
     const dame = models.find((m) => m.image && genderOf(m) === "Dame");
     const ring = pieces.find((p) => p.image && /ring/i.test(p.type) && p.brand !== "marselis") ?? pieces.find((p) => p.image && p !== jewel);
     const tiles = [
-        { href: "/ure?koen=herre", eyebrow: "Ure", title: "Herreure", img: herre?.image, zoom: false },
-        { href: "/ure?koen=dame", eyebrow: "Ure", title: "Dameure", img: dame?.image, zoom: false },
+        { href: "/ure/herreure", eyebrow: "Ure", title: "Herreure", img: herre?.image, zoom: false },
+        { href: "/ure/dameure", eyebrow: "Ure", title: "Dameure", img: dame?.image, zoom: false },
         { href: "/smykker", eyebrow: "Smykker", title: "Smykker og ringe", img: ring?.image ?? jewel?.image, zoom: true },
-        { href: "/service", eyebrow: "Værkstedet", title: "Service og reparation", img: undefined, zoom: false },
+        { href: "/service", eyebrow: "Værkstedet", title: "Service og reparation", img: WORKSHOP, zoom: false, photo: true },
     ];
     return (<>
       {/* 1. Rolex-banner øverst på forsiden (Rolex' krav til officielle forhandlere) */}
@@ -62,10 +66,16 @@ export default function Home() {
       {/* 2. Hero: skiftende ure i stor størrelse */}
       <HeroSlides slides={slides}/>
 
-      {/* 3. Indledning */}
-      <section className="ed-intro">
+      {/* 3. Velkomst (Knud Pedersens egen tekst) */}
+      <section className="ed-intro ed-welcome">
         <div className="container">
-          <p className="ed-statement"><Words text="Siden 1887 har vi hjulpet Aarhus med at finde det ur eller smykke, der skal følge med resten af livet. Og med at passe på det bagefter."/></p>
+                    <img className="ed-welcome__vignet" src={VIGNET} alt="" width={56} height={64}/>
+          <h2 className="ed-statement"><Words text="Velkommen til vores eksklusive ur- og smykkeforretning i hjertet af Aarhus"/></h2>
+          <div className="ed-welcome__text">
+            <p>Vi er stolte over at kunne præsentere en række af de mest anerkendte urmærker i verden. Vi vejleder med stor passion vores kunder i et kvalitativt og vigtigt valg af ur. Vores urkollektioner er nøje udvalgt til forretningen, så du kan få opfyldt dine drømme og ønsker.</p>
+            <p>I butikken finder du et stort og eksklusivt udvalg af smykker i ædle metaller og med certificerede diamanter. Vi kan vejlede og guide dig i køb og investering af nye eksklusive smykker, hvor du også kan være med til at sætte dit eget personlige præg på smykket. Vi tilbyder også service og reparation af egne smykker og omtrækning af perlekæder.</p>
+            <p className="ed-welcome__sign">Velkommen til Knud Pedersen.</p>
+          </div>
           <ul className="ed-facts">
             <li><strong><CountUp from={1800} to={1887}/></strong><span>Grundlagt i Aarhus</span></li>
             <li><strong><CountUp to={brands.length} ms={1200}/></strong><span>Mærker med fabriksgaranti</span></li>
@@ -74,7 +84,19 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3a. Mærkerne glider roligt forbi */}
+      {/* 3a. Rolex point of sale-banner: Rolex-uret og Rolex-afdelingen i butikken (uden animation) */}
+      <section className="rx-pos" aria-label="Rolex hos Knud Pedersen">
+        <Link href="/rolex/knud-pedersen" className="rx-pos__in">
+          <span className="rx-pos__panel">
+            <iframe className="rx-pos__clock" title="Rolex-ur" src={rolexClockSrc()} scrolling="no" tabIndex={-1}/>
+            <span className="rx-pos__txt"><small>Officiel Rolex-forhandler</small><strong>Rolex hos Knud Pedersen</strong><em>Opdag mere</em></span>
+                        <img className="rx-pos__plaque" src={rolexAssets.plaque} alt="Officiel Rolex-forhandler" width={120} height={60}/>
+          </span>
+                    <img className="rx-pos__photo" src={POS_IMG} alt="Rolex-afdelingen hos Knud Pedersen på Skt. Clemens Torv" loading="lazy"/>
+        </Link>
+      </section>
+
+      {/* 3b. Mærkerne glider roligt forbi */}
       <div className="ed-marquee" aria-label="Mærker hos Knud Pedersen">
         <ul>{marquee.map((n) => <li key={n}>{n}</li>)}</ul>
         <ul aria-hidden="true">{marquee.map((n) => <li key={n}>{n}</li>)}</ul>
@@ -82,7 +104,7 @@ export default function Home() {
 
       {/* 3b. Kategorier i stort format */}
       <section className="ed-tiles" aria-label="Kategorier">
-        {tiles.map((t) => (<Link key={t.href} href={t.href} className={`ed-tile${t.img ? "" : " ed-tile--type"}${t.zoom ? " ed-tile--zoom" : ""}`}>
+        {tiles.map((t) => (<Link key={t.href} href={t.href} className={`ed-tile${t.img ? "" : " ed-tile--type"}${t.zoom ? " ed-tile--zoom" : ""}${"photo" in t && t.photo ? " ed-tile--photo" : ""}`}>
             <span className="ed-tile__media">
               {t.img ?  <img src={t.img} alt="" loading="lazy"/> : <span aria-hidden="true">KP</span>}
             </span>
@@ -107,17 +129,17 @@ export default function Home() {
         <div className="container">
           <div className="section-head"><div><span className="label">Historier</span><h2>Fra butikken og værkstedet</h2></div></div>
           <div className="features">
-            <Link href="/maerker/tudor" className="feature">
-              <span className="feature__media">{tudor?.image &&  <img src={tudor.image} alt={`${getBrand("tudor").name} ${tudor.name}`} loading="lazy" className="on-stage"/>}</span>
-              <h3>Officiel Tudor-forhandler</h3>
-              <p>Se Black Bay, Pelagos og resten af Tudors kollektioner hos os på Skt. Clemens Torv.</p>
-              <span className="link-arrow">Se Tudor</span>
-            </Link>
             <Link href="/service" className="feature">
-              <span className="feature__media feature__media--type" aria-hidden="true"><span><small>Værkstedet</small>Autoriseret<br />Rolex-<br />servicecenter</span></span>
-              <h3>Service i eget værksted</h3>
-              <p>Vores urmagere servicerer dit ur efter producentens standarder. Vi er autoriseret Rolex-servicecenter.</p>
+              <span className="feature__media feature__media--photo"><img src={WORKSHOP} alt="Urmager servicerer et ur i Knud Pedersens værksted" loading="lazy"/></span>
+              <h3>Ultimativ professionel service</h3>
+              <p>Alle vores faguddannede urmagere følger urproducenternes træning og efteruddannelse, så vi er godkendt til at varetage service.</p>
               <span className="link-arrow">Læs om service</span>
+            </Link>
+            <Link href="/rolex/servicing" className="feature">
+              <span className="feature__media feature__media--type" aria-hidden="true"><span><small>Værkstedet</small>Autoriseret<br />Rolex-<br />servicecenter</span></span>
+              <h3>Autoriseret Rolex-servicecenter</h3>
+              <p>Vores Rolex-oplærte urmagere servicerer dit Rolex-ur efter Rolex' egne standarder.</p>
+              <span className="link-arrow">Rolex-serviceeftersyn</span>
             </Link>
             <Link href="/maerker/grand-seiko" className="feature">
               <span className="feature__media">{gs?.image &&  <img src={gs.image} alt={`Grand Seiko ${gs.name}`} loading="lazy" className="on-stage"/>}</span>
@@ -156,7 +178,7 @@ export default function Home() {
             <span className="label">Smykker</span>
             <h2>Smykker i ædle metaller</h2>
             <p className="muted">Marselis Jewellery, Georg Jensen, Chopard og Gucci. Ringe, øreringe, halskæder og armbånd med certificerede diamanter.</p>
-            <ul className="cat-list">{jewelTypes.map((t) => <li key={t}><Link href="/smykker">{t}</Link></li>)}<li><Link href="/vielsesringe">Vielsesringe</Link></li></ul>
+            <ul className="cat-list">{jewelleryCategories.slice(0, 4).map((c) => <li key={c.slug}><Link href={`/smykker/${c.slug}`}>{c.label}</Link></li>)}<li><Link href="/vielsesringe">Vielsesringe</Link></li></ul>
             <p style={{ marginTop: 24 }}><a className="link-arrow" href="https://marselis.lovable.app/" target="_blank" rel="noopener">Besøg Marselis Jewellery</a></p>
           </div>
         </div>

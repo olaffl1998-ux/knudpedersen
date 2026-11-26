@@ -52,6 +52,7 @@ const brandStrapOptions = {
     chopard: ["steel", "alligator-brown", "rubber-black"],
     gucci: ["steel", "leather-black"],
 };
+export const collectionSlug = (c) => c.toLowerCase().replace(/æ/g, "ae").replace(/ø/g, "oe").replace(/å/g, "aa").replace(/ü/g, "u").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 export const nonRolexBrands = brands.filter((b) => !b.rolex);
 export const getBrand = (slug) => brands.find((b) => b.slug === slug);
 export const getModelsForBrand = (slug) => models.filter((m) => m.brand === slug);

@@ -11,11 +11,13 @@ import { CountUp, Words } from "@/components/Motion";
 import { formatPrice } from "@/lib/site";
 import Hours from "@/components/Hours";
 import { MapEmbed } from "@/components/Consent";
-import { business } from "@/lib/site";
+import { business, rolexClockSrc } from "@/lib/site";
 
 /** Fotos fra Knud Pedersens nuværende hjemmeside */
 const WORKSHOP = "/billeder/pics/Service_billede_forside.jpg";
 const VIGNET = "/billeder/pics/KP_logo_vignet.png";
+/** Foto af Rolex-afdelingen hos Knud Pedersen (fra den nuværende hjemmeside) */
+const POS_IMG = "/billeder/pics/rolex-afdeling-knud-pedersen.jpg";
 
 const pick = (brand: string, n = 1) => models.filter((m) => m.brand === brand && m.image).slice(0, n);
 
@@ -93,7 +95,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3a. Mærkerne glider roligt forbi */}
+      {/* 3a. Rolex point of sale-banner: Rolex-uret og Rolex-afdelingen i butikken (uden animation) */}
+      <section className="rx-pos" aria-label="Rolex hos Knud Pedersen">
+        <Link href="/rolex/knud-pedersen" className="rx-pos__in">
+          <span className="rx-pos__panel">
+            <iframe className="rx-pos__clock" title="Rolex-ur" src={rolexClockSrc()} scrolling="no" tabIndex={-1} />
+            <span className="rx-pos__txt"><small>Officiel Rolex-forhandler</small><strong>Rolex hos Knud Pedersen</strong><em>Opdag mere</em></span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="rx-pos__plaque" src={rolexAssets.plaque} alt="Officiel Rolex-forhandler" width={120} height={60} />
+          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="rx-pos__photo" src={POS_IMG} alt="Rolex-afdelingen hos Knud Pedersen på Skt. Clemens Torv" loading="lazy" />
+        </Link>
+      </section>
+
+      {/* 3b. Mærkerne glider roligt forbi */}
       <div className="ed-marquee" aria-label="Mærker hos Knud Pedersen">
         <ul>{marquee.map((n) => <li key={n}>{n}</li>)}</ul>
         <ul aria-hidden="true">{marquee.map((n) => <li key={n}>{n}</li>)}</ul>
