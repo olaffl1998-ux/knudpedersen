@@ -7,7 +7,6 @@ function Card({ it }) {
     const label = `${it.brand} ${it.name}`;
     return (<article className="card">
       <div className="card__media">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         {it.image ? <img src={it.image} alt={it.ref ? `${label}, reference ${it.ref}` : label} loading="lazy" decoding="async"/> : <div className="ph">[Produktbillede]</div>}
         <HeartButton id={it.id} label={label}/>
       </div>

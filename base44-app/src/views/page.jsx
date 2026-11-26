@@ -12,7 +12,6 @@ function RolexBanner({ s }) {
     return (<Link href={s.href} className="rolex-banner">
       <picture>
         <source media="(max-width: 767px)" srcSet={s.mobile}/>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={s.desktop} alt={s.alt} loading="lazy"/>
       </picture>
       <span className="rolex-banner__cap"><small>{s.eyebrow}</small><strong>{s.title}</strong><em>Opdag</em></span>
@@ -52,7 +51,6 @@ export default function Home() {
           </div>
         </div>
         {heroWatch && (<Link className="ed-hero__watch" href={modelHref(heroWatch)} aria-label={`${getBrand(heroWatch.brand).name} ${heroWatch.name}`}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={heroWatch.image} alt={`${getBrand(heroWatch.brand).name} ${heroWatch.name}, reference ${heroWatch.ref}`} fetchPriority="high"/>
             <span className="ed-hero__cap"><small>{getBrand(heroWatch.brand).name}</small>{heroWatch.name}<em>Ref. {heroWatch.ref}</em></span>
           </Link>)}
@@ -77,7 +75,6 @@ export default function Home() {
       <section className="ed-tiles" aria-label="Kategorier">
         {tiles.map((t) => (<Link key={t.href} href={t.href} className={`ed-tile${t.img ? "" : " ed-tile--type"}${t.zoom ? " ed-tile--zoom" : ""}`}>
             <span className="ed-tile__media">
-              {t.img ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={t.img} alt="" loading="lazy"/> : <span aria-hidden="true">KP</span>}
             </span>
             <span className="ed-tile__cap"><small>{t.eyebrow}</small><strong>{t.title}</strong><em>Udforsk</em></span>
           </Link>))}
@@ -98,7 +95,6 @@ export default function Home() {
           <div className="section-head"><div><span className="label">Historier</span><h2>Fra butikken og værkstedet</h2></div></div>
           <div className="features">
             <Link href="/maerker/tudor" className="feature">
-              <span className="feature__media">{tudor?.image && /* eslint-disable-next-line @next/next/no-img-element */ <img src={tudor.image} alt={`${getBrand("tudor").name} ${tudor.name}`} loading="lazy" className="on-stage"/>}</span>
               <h3>Officiel Tudor-forhandler</h3>
               <p>Se Black Bay, Pelagos og resten af Tudors kollektioner hos os på Skt. Clemens Torv.</p>
               <span className="link-arrow">Se Tudor</span>
@@ -110,7 +106,6 @@ export default function Home() {
               <span className="link-arrow">Læs om service</span>
             </Link>
             <Link href="/maerker/grand-seiko" className="feature">
-              <span className="feature__media">{gs?.image && /* eslint-disable-next-line @next/next/no-img-element */ <img src={gs.image} alt={`Grand Seiko ${gs.name}`} loading="lazy" className="on-stage"/>}</span>
               <h3>Grand Seiko</h3>
               <p>{getBrand("grand-seiko").intro}</p>
               <span className="link-arrow">Se Grand Seiko</span>
@@ -142,7 +137,6 @@ export default function Home() {
         <div className="container split split--rev">
           <div className="split__media">
             {jewel?.image ? (
-        // eslint-disable-next-line @next/next/no-img-element
         <img src={jewel.image} alt={`Marselis Jewellery ${jewel.name}`} loading="lazy" className="on-stage"/>) : <div className="ph">[Smykkefoto]</div>}
           </div>
           <div className="split__text">

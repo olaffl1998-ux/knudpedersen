@@ -15,7 +15,7 @@ function write(ids) {
     try {
         localStorage.setItem(KEY, JSON.stringify(ids));
     }
-    catch { }
+    catch { /* ignoreres */ }
     window.dispatchEvent(new Event(EVT));
 }
 export function useWishlist() {

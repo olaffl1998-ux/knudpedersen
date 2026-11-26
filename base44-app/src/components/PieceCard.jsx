@@ -8,7 +8,6 @@ export default function PieceCard({ piece }) {
     return (<article className="card">
       <div className="card__media">
         {piece.image ? (
-        // eslint-disable-next-line @next/next/no-img-element
         <img src={piece.image} alt={label} loading="lazy" decoding="async"/>) : <div className="ph">[Produktbillede]</div>}
         <HeartButton id={`smykke:${piece.brand}/${piece.slug}`} label={label}/>
       </div>

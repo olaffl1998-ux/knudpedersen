@@ -45,7 +45,6 @@ export default function StrapPicker({ model, straps, brandName }) {
             </button>))}
           <div className="slot is-watch" aria-live="polite">
             {model.image ? (
-        // eslint-disable-next-line @next/next/no-img-element
         <img src={model.image} alt={`${brandName} ${model.name} ${model.ref}`}/>) : (<WatchSvg model={model} strap={current}/>)}
           </div>
           {right.map(({ s, i }) => (<button key={s.key} type="button" className="slot" onClick={() => go(i)} aria-label={`Vis uret på ${s.name}`}>

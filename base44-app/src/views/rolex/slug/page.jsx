@@ -44,7 +44,6 @@ export default function RolexSlug({ params }) {
 function ModelCard({ m }) {
     return (<li>
       <Link href={modelHref(m)} className="rx-model-card">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={packshot(m)} alt={`Rolex ${m.family}, ${m.caseline}`} loading="lazy"/>
         <span className="rx-eyebrow">Rolex</span>
         <strong>{m.family}</strong>

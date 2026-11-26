@@ -23,7 +23,6 @@ function RolexClock() {
       <iframe className="rolex-clock" title="Rolex-ur" src={`https://static.rolex.com/retailers/clock/?colour=gold&apiKey=${ROLEX_CLOCK_KEY}&lang=da`} scrolling="no" style={{ pointerEvents: "none" }}/>
     </Link>) : (<Link className="rolex-clock-slot" href="/rolex/discover" aria-label="Officiel Rolex-forhandler, Udforsk Rolex">
       {/* [Rolex-ur fra Rolex vises her, når API-nøglen er leveret] */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={rolexAssets.plaque} alt="Officiel Rolex-forhandler" width={120} height={60}/>
     </Link>);
 }

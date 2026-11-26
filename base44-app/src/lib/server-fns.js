@@ -3,6 +3,7 @@ import { getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { rolexPriceFor } from "@/data/rolex";
 
+// eslint-disable-next-line no-control-regex
 const clean = (v, max = 2000) => String(v ?? "").replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, max);
 const KNOWN = { mode: 20, variant: 20, purpose: 100, date: 20, time: 10, name: 200, phone: 40, email: 200, message: 4000, subject: 200, brand: 100 };
 

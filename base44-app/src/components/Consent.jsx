@@ -17,7 +17,7 @@ export function ConsentProvider({ children }) {
                 return;
             }
         }
-        catch { }
+        catch { /* ignoreres */ }
         setShow(true);
     }, []);
     const save = (c) => {
@@ -27,7 +27,7 @@ export function ConsentProvider({ children }) {
         try {
             localStorage.setItem(KEY, JSON.stringify({ ...c, date: new Date().toISOString() }));
         }
-        catch { }
+        catch { /* ignoreres */ }
     };
     return (<ConsentCtx.Provider value={{ consent, save, open: () => { setDraft(consent ?? draft); setShow(true); } }}>
       {children}

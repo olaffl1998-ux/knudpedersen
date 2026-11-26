@@ -13,7 +13,6 @@ export function RolexBar() {
     return (<div className="rx-bar">
       <div className="rx-wrap rx-bar-in">
         <Link className="rx-plaque" href="/rolex/discover" aria-label="Officiel Rolex-forhandler, Udforsk Rolex">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={rolexAssets.plaque} alt="Officiel Rolex-forhandler" width={120} height={60}/>
         </Link>
         <button className="rx-menu-btn" type="button" aria-expanded={open} aria-controls="rx-menu" onClick={() => setOpen(!open)}>
@@ -68,7 +67,6 @@ export function RolexGallery({ images, alt }) {
       <ul className="rx-gallery">
         {images.map((src, k) => (<li key={src}>
             <button type="button" onClick={() => setI(k)} aria-label={`Vis billede ${k + 1} af ${n} i fuld størrelse`}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={src} alt={`${alt}, billede ${k + 1}`} loading="lazy"/>
             </button>
           </li>))}
@@ -82,7 +80,6 @@ export function RolexGallery({ images, alt }) {
                 setI((i - 1 + n) % n);
         }} aria-label="Billedgalleri">
         {i !== null && (<>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={images[i]} alt={`${alt}, billede ${i + 1}`}/>
             <div className="rx-lb-ctrl">
               <button type="button" onClick={() => setI((i - 1 + n) % n)} aria-label="Forrige billede">‹</button>
@@ -108,7 +105,6 @@ export function RolexCarousel({ slides }) {
       {slides.map((s, i) => (<Link key={s.href} href={s.href} className={`rx-slide${i === k ? " on" : ""}`} aria-hidden={i !== k} tabIndex={i === k ? 0 : -1}>
           <picture>
             <source media="(max-width: 767px)" srcSet={s.mobile}/>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={s.desktop} alt={s.alt} loading={i === 0 ? "eager" : "lazy"}/>
           </picture>
           <span className="rx-slide-cap"><small>{s.eyebrow}</small><strong>{s.title}</strong><em>Opdag</em></span>

@@ -10,7 +10,6 @@ export function RImg({ img, alt, className, eager, sizes }) {
         return null;
     return (<picture className={className}>
       {p !== l && <source media="(max-width: 767px)" srcSet={p}/>}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={l} alt={alt} loading={eager ? "eager" : "lazy"} decoding="async" sizes={sizes}/>
     </picture>);
 }
@@ -38,7 +37,6 @@ export function Blocks({ blocks, skipH1 = true }) {
                     return b.href && !b.href.startsWith("#") ? <Link key={i} href={b.href} className="rx-media-link">{pic}</Link> : <div key={i}>{pic}</div>;
                 }
                 case "img":
-                    // eslint-disable-next-line @next/next/no-img-element
                     return <img key={i} className="rx-media" src={b.src} alt={b.alt?.trim() || ""} loading="lazy"/>;
                 case "iframe":
                     return b.src && /youtube/.test(b.src) ? (<div key={i} className="rx-video">
@@ -72,14 +70,12 @@ export function KeepExploring({ current }) {
       <ul>
         {links.map((n) => (<li key={n.href}>
             <Link href={n.href}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={n.img} alt="" loading="lazy"/>
               <span>{n.label}</span>
             </Link>
           </li>))}
       </ul>
       <a className="rx-top" href="#indhold">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={rolexAssets.crown} alt="" width={22} height={24}/>
         <span>Tilbage til toppen</span>
       </a>

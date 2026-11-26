@@ -20,7 +20,6 @@ export default function Accessories() {
         <ul className="rx-grid">
           {rolexAccessories.map((a) => (<li key={a.slug}>
               <Link href={`/rolex/accessories/${a.slug}`} className="rx-model-card">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 {a.packshot && <img src={a.packshot} alt={a.title} loading="lazy"/>}
                 <span className="rx-eyebrow">Rolex</span>
                 <strong>{a.name}</strong>

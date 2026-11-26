@@ -21,7 +21,6 @@ export default function Smykker() {
             return (<li key={b.slug}>
                 <Link href={`/smykker/${b.slug}`} className="feature">
                   <span className="feature__media" style={{ background: "var(--white)" }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     {first && <img src={first.image} alt={`${b.name} smykke`} loading="lazy" style={{ objectFit: "contain", padding: "10%" }}/>}
                   </span>
                   <h2 className="h3" style={{ marginTop: 24 }}>{b.name}</h2>
