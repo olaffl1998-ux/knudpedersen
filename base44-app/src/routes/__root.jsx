@@ -4,6 +4,7 @@ import { AuthProvider } from "@/lib/AuthContext";
 import { Base44Scripts } from "base44:document";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Reveal from "@/components/Reveal";
 import { ConsentProvider } from "@/components/Consent";
 import { JsonLd, storeJsonLd } from "@/components/Seo";
 import NotFoundPage from "@/views/not-found";
@@ -56,6 +57,7 @@ function RootComponent() {
           <Outlet />
         </main>
         <Footer />
+        <Reveal />
       </ConsentProvider>
       <JsonLd data={storeJsonLd} />
     </AuthProvider>

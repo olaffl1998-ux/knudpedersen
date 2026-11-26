@@ -16,7 +16,7 @@ export default function ContactForm() {
   const show = (k: string) => touched[k] && errors[k];
   const a = (k: string) => ({ id: `c-${k}`, value: v[k] || "", onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setV({ ...v, [k]: e.target.value }), onBlur: () => setTouched({ ...touched, [k]: true }), "aria-invalid": !!show(k) || undefined, "aria-describedby": show(k) ? `c-${k}-err` : undefined });
 
-  if (state === "done") return <div className="ok-box" role="status"><h2>Tak for din besked</h2><p>Vi svarer hurtigst muligt, normalt inden for en hverdag. [Svartid bekræftes]</p></div>;
+  if (state === "done") return <div className="ok-box" role="status"><h2>Tak for din besked</h2><p>Vi svarer hurtigst muligt, normalt inden for en hverdag.</p></div>;
 
   return (
     <form className="form" noValidate onSubmit={async (e) => {

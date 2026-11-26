@@ -59,7 +59,7 @@ export default async function WatchPage({ params }: P) {
                 </dl>
               </div>
             </details>
-            <details><summary>Garanti og service</summary><div><p>Alle nye ure leveres med producentens internationale garanti. Vores eget værksted servicerer uret efter producentens krav. [Garantiperiode pr. mærke bekræftes]</p></div></details>
+            <details><summary>Garanti og service</summary><div><p>Alle nye ure leveres med producentens internationale garanti. Vores eget værksted servicerer uret efter producentens krav. Garantiperioden afhænger af mærket, og vi fortæller gerne mere i butikken.</p></div></details>
             <details><summary>Remme og lænker</summary><div><p>Uret vises på den rem eller lænke, det leveres på. De øvrige typer er dem, {b.name} tilbyder til kollektionen. Vi bekræfter pasformen, når du besøger os.</p></div></details>
           </div>
         </div>

@@ -35,7 +35,7 @@ export default async function PiecePage({ params }: P) {
       <section className="container pdp">
         <div className="pdp__media">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          {p.image ? <img src={p.image} alt={subject} fetchPriority="high" /> : <div className="ph">[Produktbillede]</div>}
+          {p.image ? <img src={p.image} alt={subject} fetchPriority="high" /> : <div className="ph" aria-hidden="true">[Produktbillede]</div>}
         </div>
         <div>
           <span className="label">{b.name}</span>

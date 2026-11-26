@@ -13,9 +13,9 @@ const services = [
 ];
 const steps = [
     { t: "Aflevering", d: "Du afleverer uret eller smykket i butikken. Book gerne en tid, så sidder en fagperson klar." },
-    { t: "Vurdering", d: "Vi undersøger det og giver dig et prisoverslag, før vi går i gang. [Om overslaget er gratis bekræftes af Knud Pedersen]" },
+    { t: "Vurdering", d: "Vi undersøger det og giver dig et prisoverslag, før vi går i gang." },
     { t: "Arbejdet", d: "Vores urmagere og guldsmede udfører arbejdet efter producentens retningslinjer." },
-    { t: "Afhentning", d: "Vi giver besked, når det er klar til afhentning. [Leveringstid pr. opgave leveres af Knud Pedersen]" },
+    { t: "Afhentning", d: "Vi giver besked, når det er klar til afhentning. Vi fortæller dig den forventede tid, når du afleverer." },
 ];
 export default function Service() {
     return (<>
@@ -32,7 +32,7 @@ export default function Service() {
         <div className="container">
           <div className="section-head"><div><span className="label">Ydelser</span><h2>Det hjælper vi med</h2></div></div>
           <ul className="services services--3">
-            {services.map((s) => (<li key={s.title}><div className="ph" role="img" aria-label="Pladsholder">[Foto fra værkstedet: {s.label.toLowerCase()}]</div><span className="label">{s.label}</span><h3>{s.title}</h3><p>{s.text}</p></li>))}
+            {services.map((s) => (<li key={s.title}><div className="ph" aria-hidden="true">[Foto fra værkstedet: {s.label.toLowerCase()}]</div><span className="label">{s.label}</span><h3>{s.title}</h3><p>{s.text}</p></li>))}
           </ul>
         </div>
       </section>
@@ -48,18 +48,18 @@ export default function Service() {
 
       <section className="section section--white">
         <div className="container split">
-          <div className="split__media"><div className="ph" role="img" aria-label="Pladsholder">[Foto: urmager ved arbejdsbordet]</div></div>
+          <div className="split__media"><div className="ph" aria-hidden="true">[Foto: urmager ved arbejdsbordet]</div></div>
           <div className="split__text">
             <span className="label">Priser</span>
             <h2>Priseksempler</h2>
-            <p className="muted">[Priseksempler på fx batteriskift, rem- og lænkejustering og fuld service pr. mærke indsættes, når Knud Pedersen har leveret dem.]</p>
+            <p className="muted">Prisen afhænger af ur, mærke og opgave. Du får altid et prisoverslag, før vi går i gang, og mindre opgaver som batteriskift og lænkejustering klarer vi ofte, mens du venter.</p><p><Link className="link-arrow" href="/book-tid?formaal=service">Book tid til service</Link></p>
           </div>
         </div>
       </section>
 
       <section className="section section--dark">
         <div className="container split split--rev">
-          <div className="split__media"><div className="ph ph--dark" role="img" aria-label="Pladsholder">[Rolex-servicebillede fra Rolex]</div></div>
+          <div className="split__media"><div className="ph ph--dark" aria-hidden="true">[Rolex-servicebillede fra Rolex]</div></div>
           <div className="split__text">
             <span className="label label--brass">Rolex</span>
             <h2>Autoriseret Rolex-servicecenter</h2>

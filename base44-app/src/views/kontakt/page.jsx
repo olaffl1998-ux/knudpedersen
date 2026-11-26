@@ -29,7 +29,7 @@ export default function Kontakt() {
             <p><a href={`tel:${business.phoneE164}`}>Tlf. {business.phone}</a><br /><a href={`mailto:${business.email}`}>{business.email}</a></p>
             <h3 className="label">Åbningstider</h3>
             <Hours />
-            <p className="muted">[Parkering og offentlig transport: tekst leveres af Knud Pedersen]</p>
+            <p className="muted">Butikken ligger ved Aarhus Domkirke midt i gågadenettet. Der er parkeringshuse i gåafstand, og busserne holder tæt ved.</p>
           </aside>
         </div>
       </section>

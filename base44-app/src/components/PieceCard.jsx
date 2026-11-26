@@ -8,7 +8,7 @@ export default function PieceCard({ piece }) {
     return (<article className="card">
       <div className="card__media">
         {piece.image ? (
-        <img src={piece.image} alt={label} loading="lazy" decoding="async"/>) : <div className="ph">[Produktbillede]</div>}
+        <img src={piece.image} alt={label} loading="lazy" decoding="async"/>) : <div className="ph" aria-hidden="true">[Produktbillede]</div>}
         <HeartButton id={`smykke:${piece.brand}/${piece.slug}`} label={label}/>
       </div>
       <div className="card__body">

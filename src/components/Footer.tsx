@@ -15,7 +15,7 @@ export default function Footer() {
         </div>
         <div className="newsletter footer-newsletter">
           <h2>Nyhedsbrev</h2>
-          <p className="footer-muted">Hør først om nye ure, smykker og arrangementer i butikken. [Hvor ofte nyhedsbrevet udsendes]</p>
+          <p className="footer-muted">Hør først om nye ure, smykker og arrangementer i butikken.</p>
           <Newsletter dark id="footer-nyhedsbrev" />
         </div>
       </div>

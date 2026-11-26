@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
-const S = "/home/claude/port/stage", O = path.join(S, "out"), A = "/home/claude/port/app";
-fs.rmSync(A, { recursive: true, force: true });
+const S = path.resolve(process.argv[2]), O = path.join(S, "out"), A = path.resolve(process.argv[3]);
+fs.rmSync(path.join(A, "src"), { recursive: true, force: true });
+
 const cp = (a, b) => { fs.mkdirSync(path.dirname(b), { recursive: true }); fs.cpSync(a, b, { recursive: true }); };
 cp(path.join(O, "components"), `${A}/src/components`);
 cp(path.join(O, "data"), `${A}/src/data`);

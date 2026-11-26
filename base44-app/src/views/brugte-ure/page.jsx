@@ -11,11 +11,11 @@ export default function BrugteUre() {
       <section className="container page-head">
         <span className="label">Brugte ure</span>
         <h1>Brugte ure</h1>
-        <p className="lead">[Tekst om brugte ure hos Knud Pedersen: hvordan urene kontrolleres, hvilken garanti der gives, og om I tager ure i bytte. Leveres af Knud Pedersen.]</p>
+        <p className="lead">Udvalget af brugte ure skifter løbende. Spørg os om stand, papirer og garanti på det enkelte ur.</p>
       </section>
       <section className="container" style={{ paddingBottom: 120 }}>
         <div className="empty">
-          <p>[Det aktuelle udvalg af brugte ure vises her, når listen er klar.]</p>
+          <p>Ring eller skriv til os, så fortæller vi, hvilke brugte ure vi har lige nu.</p>
           <p className="btn-row" style={{ justifyContent: "center" }}><Link className="btn" href="/kontakt">Spørg til udvalget</Link><Link className="btn btn--outline" href="/rolex-certified-pre-owned">Rolex Certified Pre-Owned</Link></p>
         </div>
       </section>

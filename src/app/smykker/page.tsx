@@ -40,7 +40,7 @@ export default function Smykker() {
       </section>
       <section className="section">
         <div className="container split">
-          <div className="split__media"><div className="ph">[Foto: smykker i vinduet på Skt. Clemens Torv]</div></div>
+          <div className="split__media"><div className="ph" aria-hidden="true">[Foto: smykker i vinduet på Skt. Clemens Torv]</div></div>
           <div className="split__text">
             <span className="label">Værkstedet</span>
             <h2>Vielsesringe, omtrækning og tilpasning</h2>

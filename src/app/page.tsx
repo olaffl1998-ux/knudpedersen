@@ -4,6 +4,9 @@ import { pieces } from "@/data/jewellery";
 import { rolexAssets } from "@/data/rolex";
 import ModelCard from "@/components/ModelCard";
 import Carousel from "@/components/Carousel";
+import HeroSlides, { type Slide } from "@/components/HeroSlides";
+import FeatureWatch from "@/components/FeatureWatch";
+import { formatPrice } from "@/lib/site";
 import Hours from "@/components/Hours";
 import { MapEmbed } from "@/components/Consent";
 import { business } from "@/lib/site";
@@ -28,6 +31,17 @@ const reviews: { text: string; name: string; date: string; source: string }[] = 
 
 export default function Home() {
   const heroWatch = pick("tudor", 1)[0];
+  const byRef = (ref: string) => models.find((m) => m.ref === ref && m.image);
+  const slideModels = [
+    { m: heroWatch, kicker: "Officiel Tudor-forhandler" },
+    { m: byRef("SBGE283") ?? pick("grand-seiko")[0], kicker: "Grand Seiko" },
+    { m: byRef("1-39-11-06-80-70") ?? pick("glashutte-original")[0], kicker: "Glashütte Original" },
+    { m: byRef("210.30.42.20.04.001") ?? pick("omega")[0], kicker: "Omega" },
+  ].filter((x) => x.m);
+  const slides: Slide[] = slideModels.map(({ m, kicker }) => ({
+    href: modelHref(m!), image: m!.image!, brand: getBrand(m!.brand)!.name, name: m!.name, ref: m!.ref, price: formatPrice(m!.price), kicker,
+  }));
+  const focus = byRef("1-66-06-04-22-05") ?? pick("glashutte-original")[0];
   const featuredBrands = ["tudor", "omega", "breitling", "grand-seiko", "tag-heuer", "longines", "glashutte-original", "oris", "baume-mercier", "doxa", "chopard"];
   const featured = featuredBrands.flatMap((b) => pick(b, 1)).slice(0, 10);
   const ordered = [...brands.filter((b) => b.slug === "rolex" || b.slug === "tudor"), ...brands.filter((b) => b.slug !== "rolex" && b.slug !== "tudor")];
@@ -47,26 +61,8 @@ export default function Home() {
 
   return (
     <>
-      {/* 1. Hero: lys scene i fuld bredde med ét ur i stor størrelse */}
-      <section className="ed-hero" aria-labelledby="hero-h">
-        {/* [Hero-foto eller -film: butikken på Skt. Clemens Torv] kan erstatte urscenen, når det er leveret */}
-        <div className="ed-hero__text">
-          <span className="label label--brass">Skt. Clemens Torv · Aarhus · Siden 1887</span>
-          <h1 id="hero-h">Ure og smykker,<br />valgt med omhu</h1>
-          <p className="lead">Officiel Rolex- og Tudor-forhandler med eget urmagerværksted midt i Aarhus.</p>
-          <div className="btn-row">
-            <Link className="btn" href="/book-tid">Book et møde</Link>
-            <Link className="link-arrow" href="/ure">Se alle ure</Link>
-          </div>
-        </div>
-        {heroWatch && (
-          <Link className="ed-hero__watch" href={modelHref(heroWatch)} aria-label={`${getBrand(heroWatch.brand)!.name} ${heroWatch.name}`}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={heroWatch.image} alt={`${getBrand(heroWatch.brand)!.name} ${heroWatch.name}, reference ${heroWatch.ref}`} fetchPriority="high" />
-            <span className="ed-hero__cap"><small>{getBrand(heroWatch.brand)!.name}</small>{heroWatch.name}<em>Ref. {heroWatch.ref}</em></span>
-          </Link>
-        )}
-      </section>
+      {/* 1. Hero: skiftende ure i stor størrelse */}
+      <HeroSlides slides={slides} />
 
       {/* 2. Rolex-banner #1 */}
       <section className="ed-bleed" aria-label="Rolex"><RolexBanner s={rolexAssets.slides[0]} /></section>
@@ -103,6 +99,9 @@ export default function Home() {
           </Carousel>
         </div>
       </section>
+
+      {/* 4b. Ét ur i fokus */}
+      {focus && <FeatureWatch model={focus} kicker="I fokus" text="Saksisk urmageri fra Glashütte. Kom forbi og se det asymmetriske Pano-design og det håndoptrukne urværk på nært hold." />}
 
       {/* 5. Redaktionelle features */}
       <section className="section section--white">
@@ -147,9 +146,7 @@ export default function Home() {
       <section className="ed-bleed" aria-label="Rolex hos Knud Pedersen">
         <RolexBanner s={rolexAssets.slides[2]} />
       </section>
-      <section className="container section--tight">
-        <div className="ph ph--banner">[Rolex point of sale-banner: foto af Rolex-afdelingen hos Knud Pedersen, leveres og godkendes af Rolex]</div>
-      </section>
+      {/* [Rolex point of sale-banner: foto af Rolex-afdelingen hos Knud Pedersen, leveres og godkendes af Rolex] */}
 
       {/* 8. Smykker */}
       <section className="section">
@@ -176,7 +173,7 @@ export default function Home() {
           <ul className="services">
             <li><h3>Serviceeftersyn</h3><p>Komplet eftersyn af urværk, kasse og lænke efter producentens krav.</p></li>
             <li><h3>Rolex-service</h3><p>Autoriseret Rolex-servicecenter med Rolex-oplærte urmagere.</p></li>
-            <li><h3>Batteri og rem</h3><p>Batteriskift, tætningstest og ny rem eller lænke, mens du venter. [Ventetid bekræftes]</p></li>
+            <li><h3>Batteri og rem</h3><p>Batteriskift, tætningstest og ny rem eller lænke, ofte mens du venter.</p></li>
             <li><h3>Smykkeservice</h3><p>Omtrækning af perlekæder, rensning og tilpasning af ringe.</p></li>
           </ul>
         </div>
@@ -219,7 +216,7 @@ export default function Home() {
             <p>{business.postalCode} {business.city}, lige ved Aarhus Domkirke.</p>
             <Hours />
             <h3 className="h4">Parkering</h3>
-            <p className="muted">[Nærmeste parkeringshuse og gåafstand bekræftes af butikken]</p>
+            <p className="muted">Butikken ligger ved Domkirken midt i Aarhus. Der er parkeringshuse i gåafstand.</p>
             <div className="btn-row"><Link className="btn" href="/kontakt">Kontakt og rutevejledning</Link></div>
           </div>
         </div>

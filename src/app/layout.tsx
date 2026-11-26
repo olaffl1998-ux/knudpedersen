@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Reveal from "@/components/Reveal";
 import { ConsentProvider } from "@/components/Consent";
 import { JsonLd, storeJsonLd } from "@/components/Seo";
 import { SITE_URL, SHOW_PREVIEW_BANNER } from "@/lib/site";
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main id="indhold">{children}</main>
           <Footer />
+          <Reveal />
         </ConsentProvider>
         <JsonLd data={storeJsonLd} />
       </body>

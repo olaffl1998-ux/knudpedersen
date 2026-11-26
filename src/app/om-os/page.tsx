@@ -49,7 +49,7 @@ export default function OmOs() {
             {ch.map((c) => (
               <li key={c.title + c.year}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                {c.img ? <img src={c.img} alt={`Knud Pedersen, ${c.title} ${c.year}`} loading="lazy" /> : <div className="ph" role="img" aria-label="Pladsholder">[Billede: {c.title} {c.year}]</div>}
+                {c.img ? <img src={c.img} alt={`Knud Pedersen, ${c.title} ${c.year}`} loading="lazy" /> : <div className="ph" aria-hidden="true">[Billede: {c.title} {c.year}]</div>}
                 <div><span className="year">{c.year}</span><h3>{c.title}</h3><p>{c.text}</p></div>
               </li>
             ))}
@@ -59,16 +59,16 @@ export default function OmOs() {
 
       <section className="section section--sand" id="hold">
         <div className="container">
-          <div className="section-head"><div><span className="label">Holdet</span><h2>Mød os</h2><p className="muted">[Fotos, navne og roller for salgsrådgivere, urmagere og guldsmede leveres af Knud Pedersen]</p></div></div>
+          <div className="section-head"><div><span className="label">Holdet</span><h2>Mød os</h2><p className="muted">Salgsrådgivere, urmagere og guldsmede under samme tag. Kom forbi butikken og sig hej.</p></div></div>
           <ul className="services services--3">
-            {["Salgsrådgiver", "Urmager", "Guldsmed"].map((r) => <li key={r}><div className="ph" role="img" aria-label="Pladsholder">[Portræt]</div><span className="label">{r}</span><h3>[Navn]</h3></li>)}
+            {[["Salgsrådgiver", "Rådgivning om ure og smykker, i ro og mag og uden forpligtelser."], ["Urmager", "Service og reparation af ure i vores eget værksted."], ["Guldsmed", "Rensning, tilpasning og reparation af smykker."]].map(([r, t]) => <li key={r}><span className="label">{r}</span><h3>{r === "Salgsrådgiver" ? "I butikken" : "I værkstedet"}</h3><p>{t}</p></li>)}
           </ul>
         </div>
       </section>
 
       <section className="section" id="vaerksted">
         <div className="container split">
-          <div className="split__media"><div className="ph" role="img" aria-label="Pladsholder">[Foto fra værkstedet]</div></div>
+          <div className="split__media"><div className="ph" aria-hidden="true">[Foto fra værkstedet]</div></div>
           <div className="split__text">
             <span className="label">Værkstedet</span>
             <h2>Eget værksted</h2>
@@ -82,7 +82,7 @@ export default function OmOs() {
         <div className="container container--narrow center">
           <span className="label">Job</span>
           <h2>Arbejd hos os</h2>
-          <p>[Ledige stillinger vises her.] Uopfordrede ansøgninger er velkomne på <a href={`mailto:${business.email}`}>{business.email}</a>.</p>
+          <p>Uopfordrede ansøgninger er velkomne på <a href={`mailto:${business.email}`}>{business.email}</a>.</p>
         </div>
       </section>
     </>

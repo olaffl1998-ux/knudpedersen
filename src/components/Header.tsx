@@ -95,7 +95,7 @@ export default function Header() {
           </span>
         </div>
       </div>
-      <header ref={ref} className={`site-header${scrolled ? " is-scrolled" : ""}`}>
+      <header ref={ref} className={`site-header${scrolled ? " is-scrolled" : ""}${path === "/" && !scrolled && !mega ? " is-over-hero" : ""}`}>
         <div className="container site-header__in">
           <button className="burger" type="button" aria-label="Åbn menu" aria-expanded={menu} onClick={() => setMenu(true)}><span /><span /><span /></button>
           <nav className="nav nav--desktop" aria-label="Hovedmenu">

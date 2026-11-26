@@ -12,7 +12,7 @@ export default function ModelCard({ model, eager }: { model: Model; eager?: bool
         {model.image ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={model.image} alt={`${label}, reference ${model.ref}`} loading={eager ? "eager" : "lazy"} decoding="async" />
-        ) : <div className="ph">[Produktbillede]</div>}
+        ) : <div className="ph" aria-hidden="true">[Produktbillede]</div>}
         <HeartButton id={`ur:${modelKey(model)}`} label={label} />
       </div>
       <div className="card__body">

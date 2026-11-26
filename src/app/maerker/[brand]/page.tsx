@@ -44,7 +44,7 @@ export default async function BrandPage({ params }: P) {
       {tudor && (
         <section className="container" style={{ paddingBottom: 72 }}>
           <div className="split">
-            <div className="split__media"><div className="ph">[Tudor-billede fra Tudor Retailer Portal]</div></div>
+            <div className="split__media">{list[0]?.image ? <img src={list[0].image} alt={`Tudor ${list[0].name}`} loading="lazy" className="on-stage" /> : <div className="ph" aria-hidden="true" />}</div>
             <div className="split__text">
               <span className="label">Tudor hos Knud Pedersen</span>
               <h2>Kollektionerne</h2>
@@ -54,7 +54,7 @@ export default async function BrandPage({ params }: P) {
         </section>
       )}
       <div className="container" style={{ paddingBottom: 120 }}>
-        {list.length === 0 && <div className="ph">[Ure fra {b.name} tilføjes. Kontakt os for at se udvalget i butikken.]</div>}
+        {list.length === 0 && <div className="empty"><p>Kontakt os for at se udvalget fra {b.name} i butikken.</p><p className="btn-row" style={{ justifyContent: "center" }}><Link className="btn" href={`/book-tid?maerke=${b.slug}`}>Book et møde</Link></p></div>}
         {(collections.length > 1 ? collections : [null]).map((c) => {
           const g = c ? list.filter((m) => m.collection === c) : list;
           return (
