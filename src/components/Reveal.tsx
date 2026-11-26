@@ -13,20 +13,27 @@ export default function Reveal() {
   const path = usePathname();
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
-    const io = new IntersectionObserver((entries) => {
-      for (const e of entries) if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }
-    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
-    const els = Array.from(document.querySelectorAll<HTMLElement>(SELECTOR)).filter((el) => !el.closest(".rx") && !el.classList.contains("is-in"));
-    const groups = new Map<Element | null, number>();
-    for (const el of els) {
-      const parent = el.parentElement;
-      const k = groups.get(parent) ?? 0;
-      groups.set(parent, k + 1);
-      el.style.setProperty("--rv-delay", `${Math.min(k, 6) * 70}ms`);
-      el.classList.add("rv");
-      io.observe(el);
-    }
-    return () => io.disconnect();
+    let io: IntersectionObserver | null = null;
+    // Vent til siden er hydreret, så klasserne ikke kolliderer med den server-renderede HTML
+    const start = () => {
+      io = new IntersectionObserver((entries) => {
+        for (const e of entries) if (e.isIntersecting) { e.target.classList.add("is-in"); io?.unobserve(e.target); }
+      }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+      const vh = window.innerHeight;
+      const els = Array.from(document.querySelectorAll<HTMLElement>(SELECTOR))
+        .filter((el) => !el.closest(".rx") && !el.classList.contains("rv") && el.getBoundingClientRect().top > vh * 0.9);
+      const groups = new Map<Element | null, number>();
+      for (const el of els) {
+        const k = groups.get(el.parentElement) ?? 0;
+        groups.set(el.parentElement, k + 1);
+        el.style.setProperty("--rv-delay", `${Math.min(k, 6) * 70}ms`);
+        el.classList.add("rv");
+        io.observe(el);
+      }
+    };
+    const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number; cancelIdleCallback?: (id: number) => void };
+    const t = window.setTimeout(() => { if (w.requestIdleCallback) w.requestIdleCallback(start, { timeout: 1200 }); else start(); }, 400);
+    return () => { window.clearTimeout(t); io?.disconnect(); };
   }, [path]);
   return null;
 }
