@@ -23,7 +23,7 @@ function RolexClock() {
       <iframe className="rolex-clock" title="Rolex-ur" src={`https://static.rolex.com/retailers/clock/?colour=gold&apiKey=${ROLEX_CLOCK_KEY}&lang=da`} scrolling="no" style={{ pointerEvents: "none" }}/>
     </Link>) : (<Link className="rolex-clock-slot" href="/rolex/discover" aria-label="Officiel Rolex-forhandler, Udforsk Rolex">
       {/* [Rolex-ur fra Rolex vises her, når API-nøglen er leveret] */}
-      <img src={rolexAssets.plaque} alt="Officiel Rolex-forhandler" width={120} height={60}/>
+            <img src={rolexAssets.plaque} alt="Officiel Rolex-forhandler" width={120} height={60}/>
     </Link>);
 }
 function Mega({ id, onClose }) {
@@ -76,7 +76,7 @@ export default function Header() {
           </span>
         </div>
       </div>
-      <header ref={ref} className={`site-header${scrolled ? " is-scrolled" : ""}${path === "/" && !scrolled && !mega ? " is-over-hero" : ""}`}>
+      <header ref={ref} className={`site-header${scrolled ? " is-scrolled" : ""}`}>
         <div className="container site-header__in">
           <button className="burger" type="button" aria-label="Åbn menu" aria-expanded={menu} onClick={() => setMenu(true)}><span /><span /><span /></button>
           <nav className="nav nav--desktop" aria-label="Hovedmenu">

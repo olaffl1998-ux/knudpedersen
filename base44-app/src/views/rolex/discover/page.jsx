@@ -51,7 +51,7 @@ export default function DiscoverRolex() {
         <h2>Udforsk Rolex</h2>
         <div className="rx-tiles">
           {exploreImgs.map((e, i) => (<Link key={e.src} href={exploreHref[i]} className="rx-tile">
-              <img src={e.src} alt={e.alt || exploreText[i]} loading="lazy"/>
+                            <img src={e.src} alt={e.alt || exploreText[i]} loading="lazy"/>
               <span className="rx-eyebrow">Udforsk</span>
               <strong>{exploreText[i]}</strong>
             </Link>))}

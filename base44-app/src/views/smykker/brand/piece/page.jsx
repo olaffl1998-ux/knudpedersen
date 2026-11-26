@@ -33,7 +33,7 @@ export default function PiecePage({ params }) {
       <div className="container"><Breadcrumbs items={[{ name: "Smykker", href: "/smykker" }, { name: b.name, href: `/smykker/${b.slug}` }, { name: p.name, href: `/smykker/${b.slug}/${p.slug}` }]}/></div>
       <section className="container pdp">
         <div className="pdp__media">
-          {p.image ? <img src={p.image} alt={subject} fetchPriority="high"/> : <div className="ph" aria-hidden="true">[Produktbillede]</div>}
+                    {p.image ? <img src={p.image} alt={subject} fetchPriority="high"/> : <div className="ph" aria-hidden="true">[Produktbillede]</div>}
         </div>
         <div>
           <span className="label">{b.name}</span>

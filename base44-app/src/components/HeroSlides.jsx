@@ -34,9 +34,13 @@ export default function HeroSlides({ slides }) {
           <Link className="link-arrow" href="/ure">Se alle ure</Link>
         </div>
       </div>
-      <div className="hx__stage">
+      <div className="hx__stage" onMouseMove={(e) => {
+            const r = e.currentTarget.getBoundingClientRect();
+            e.currentTarget.style.setProperty("--mx", String((e.clientX - r.left) / r.width - 0.5));
+            e.currentTarget.style.setProperty("--my", String((e.clientY - r.top) / r.height - 0.5));
+        }} onMouseLeave={(e) => { e.currentTarget.style.setProperty("--mx", "0"); e.currentTarget.style.setProperty("--my", "0"); }}>
         {slides.map((x, k) => (<Link key={x.href} href={x.href} className={`hx__watch${k === i ? " is-on" : ""}`} aria-hidden={k !== i} tabIndex={k === i ? 0 : -1} aria-label={`${x.brand} ${x.name}, reference ${x.ref}`}>
-            <img src={x.image} alt="" fetchPriority={k === 0 ? "high" : "low"} loading={k === 0 ? "eager" : "lazy"}/>
+                        <img src={x.image} alt="" fetchPriority={k === 0 ? "high" : "low"} loading={k === 0 ? "eager" : "lazy"}/>
           </Link>))}
         <div className="hx__cap" aria-live="polite">
           <small>{s.kicker}</small>

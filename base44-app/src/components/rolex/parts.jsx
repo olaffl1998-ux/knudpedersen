@@ -10,7 +10,7 @@ export function RImg({ img, alt, className, eager, sizes }) {
         return null;
     return (<picture className={className}>
       {p !== l && <source media="(max-width: 767px)" srcSet={p}/>}
-      <img src={l} alt={alt} loading={eager ? "eager" : "lazy"} decoding="async" sizes={sizes}/>
+            <img src={l} alt={alt} loading={eager ? "eager" : "lazy"} decoding="async" sizes={sizes}/>
     </picture>);
 }
 const isExternal = (h) => !!h && /^https?:/.test(h);
@@ -70,13 +70,13 @@ export function KeepExploring({ current }) {
       <ul>
         {links.map((n) => (<li key={n.href}>
             <Link href={n.href}>
-              <img src={n.img} alt="" loading="lazy"/>
+                            <img src={n.img} alt="" loading="lazy"/>
               <span>{n.label}</span>
             </Link>
           </li>))}
       </ul>
       <a className="rx-top" href="#indhold">
-        <img src={rolexAssets.crown} alt="" width={22} height={24}/>
+                <img src={rolexAssets.crown} alt="" width={22} height={24}/>
         <span>Tilbage til toppen</span>
       </a>
     </section>);

@@ -20,7 +20,7 @@ export default function Accessory({ params }) {
     return (<RolexPage crumbs={[{ name: "Rolex-ure", href: "/rolex/watches" }, { name: "Rolex-accessories", href: "/rolex/accessories" }, { name: a.name, href: `/rolex/accessories/${a.slug}` }]} current="/rolex/accessories">
       <section className="rx-product">
         <div className="rx-packshot">
-          {a.packshot && <img src={a.packshot} alt={a.title}/>}
+                    {a.packshot && <img src={a.packshot} alt={a.title}/>}
         </div>
         <div className="rx-product-info">
           <p className="rx-eyebrow">Rolex</p>

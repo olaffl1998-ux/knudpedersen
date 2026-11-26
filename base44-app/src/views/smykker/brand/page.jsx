@@ -27,6 +27,9 @@ export default function BrandPage({ params }) {
         <span className="label">Smykker</span>
         <h1>{b.name}</h1>
         <p className="lead">{b.intro}</p>
+        {b.website && (<p className="btn-row" style={{ marginTop: 24 }}>
+            <a className="btn btn--outline" href={b.website} target="_blank" rel="noopener">Besøg {b.name}s hjemmeside</a>
+          </p>)}
       </section>
       <div className="container" style={{ paddingBottom: 120 }}>
         {pieceTypes.map((t) => {

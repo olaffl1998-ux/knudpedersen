@@ -8,7 +8,7 @@ export default function FeatureWatch({ model, kicker, text }) {
     return (<section className="fx" aria-labelledby="fx-h">
       <div className="fx__media">
         <span className="fx__glow" aria-hidden="true"/>
-        <img src={model.image} alt={`${b.name} ${model.name}, reference ${model.ref}`} loading="lazy"/>
+                <img src={model.image} alt={`${b.name} ${model.name}, reference ${model.ref}`} loading="lazy"/>
       </div>
       <div className="fx__text">
         <span className="label">{kicker}</span>

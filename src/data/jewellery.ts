@@ -1,13 +1,13 @@
 import { JEWELLERY_RAW } from "./jewellery.raw";
 
-export type JewelleryBrand = { slug: string; name: string; intro: string };
+export type JewelleryBrand = { slug: string; name: string; intro: string; website?: string };
 export type Piece = {
   slug: string; brand: string; name: string; ref: string; price: number;
   image?: string; type: string; metal?: string; oldId: string;
 };
 
 export const jewelleryBrandList: JewelleryBrand[] = [
-  { slug: "marselis", name: "Marselis Jewellery", intro: "Smykker med certificerede diamanter i 18 karat guld: Eternity, Flower, Rainbow Sapphire og tennisarmbånd." },
+  { slug: "marselis", name: "Marselis Jewellery", website: "https://marselis.lovable.app/", intro: "Smykker med certificerede diamanter i 18 karat guld: Eternity, Flower, Rainbow Sapphire og tennisarmbånd." },
   { slug: "georg-jensen", name: "Georg Jensen", intro: "Dansk sølv- og guldsmedekunst siden 1904. Mercy, Offspring, Moonlight Grapes, Reflect, Fusion og Torun." },
   { slug: "chopard", name: "Chopard", intro: "Happy Diamonds, Happy Hearts og Ice Cube: Chopards smykker med de frit bevægelige diamanter og etisk guld." },
   { slug: "gucci", name: "Gucci", intro: "Smykker i 18 karat guld fra Gucci: Interlocking G, Horsebit, Link to Love og Icon." },

@@ -22,6 +22,8 @@ cd "$ROOT"
 node base44-app/scripts/assemble.mjs "$STAGE" base44-app
 rm -f base44-app/src/views/layout.jsx
 cp -r base44-app/overlay/src/. base44-app/src/
-grep -rl "eslint-disable-next-line @next/next/no-img-element" base44-app/src | xargs -r sed -i '/eslint-disable-next-line @next\/next\/no-img-element/d'
+# Fjern Next-specifikke eslint-kommentarer uden at fjerne koden på samme linje
+grep -rl "@next/next/no-img-element" base44-app/src | xargs -r perl -0pi -e 's{\{/\*\s*eslint-disable-next-line \@next/next/no-img-element\s*\*/\}\n?}{}g; s{/\*\s*eslint-disable-next-line \@next/next/no-img-element\s*\*/}{}g; s{^[ \t]*// eslint-disable-next-line \@next/next/no-img-element[ \t]*\n}{}mg'
+if grep -rn "@next/next" base44-app/src; then echo "Next-kommentarer tilbage" >&2; exit 1; fi
 grep -rl "catch { }" base44-app/src | xargs -r sed -i 's/catch { }/catch { \/* ignoreres *\/ }/g'
 echo "Færdig: base44-app/src"

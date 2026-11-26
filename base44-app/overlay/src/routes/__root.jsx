@@ -12,6 +12,8 @@ import { SHOW_PREVIEW_BANNER } from "@/lib/site";
 import globalsCss from "@/styles/globals.css?url";
 import rolexCss from "@/styles/rolex.css?url";
 
+const TAILWIND_PREVIEW_FIX = "if(window.tailwind){window.tailwind.config={corePlugins:{preflight:false,container:false}}}";
+
 const FONTS = "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap";
 
 export const Route = createRootRoute({
@@ -73,6 +75,9 @@ function RootDocument({ children }) {
       <body data-react-root="true">
         {children}
         <Base44Scripts />
+        {/* Base44's forhåndsvisning indlæser Tailwind til visuel redigering. Dens nulstilling (preflight) og
+            .container må ikke overskrive sidens eget design. Gælder kun i editoren, ikke på den udgivne side. */}
+        <script dangerouslySetInnerHTML={{ __html: TAILWIND_PREVIEW_FIX }} />
         <Scripts />
       </body>
     </html>

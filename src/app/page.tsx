@@ -6,6 +6,7 @@ import ModelCard from "@/components/ModelCard";
 import Carousel from "@/components/Carousel";
 import HeroSlides, { type Slide } from "@/components/HeroSlides";
 import FeatureWatch from "@/components/FeatureWatch";
+import { CountUp, Words } from "@/components/Motion";
 import { formatPrice } from "@/lib/site";
 import Hours from "@/components/Hours";
 import { MapEmbed } from "@/components/Consent";
@@ -13,15 +14,15 @@ import { business } from "@/lib/site";
 
 const pick = (brand: string, n = 1) => models.filter((m) => m.brand === brand && m.image).slice(0, n);
 
-function RolexBanner({ s }: { s: (typeof rolexAssets.slides)[number] }) {
+function RolexBanner({ s, eager }: { s: (typeof rolexAssets.slides)[number]; eager?: boolean }) {
   return (
     <Link href={s.href} className="rolex-banner">
       <picture>
         <source media="(max-width: 767px)" srcSet={s.mobile} />
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={s.desktop} alt={s.alt} loading="lazy" />
+        <img src={s.desktop} alt={s.alt} loading={eager ? "eager" : "lazy"} fetchPriority={eager ? "high" : undefined} />
       </picture>
-      <span className="rolex-banner__cap"><small>{s.eyebrow}</small><strong>{s.title}</strong><em>Opdag</em></span>
+      <span className="rolex-banner__cap"><small>Rolex</small><strong>{s.title}</strong><em>Opdag</em></span>
     </Link>
   );
 }
@@ -61,19 +62,19 @@ export default function Home() {
 
   return (
     <>
-      {/* 1. Hero: skiftende ure i stor størrelse */}
-      <HeroSlides slides={slides} />
+      {/* 1. Rolex-banner øverst på forsiden (Rolex' krav til officielle forhandlere) */}
+      <section className="ed-bleed ed-bleed--first" aria-label="Rolex"><RolexBanner s={rolexAssets.slides[0]} eager /></section>
 
-      {/* 2. Rolex-banner #1 */}
-      <section className="ed-bleed" aria-label="Rolex"><RolexBanner s={rolexAssets.slides[0]} /></section>
+      {/* 2. Hero: skiftende ure i stor størrelse */}
+      <HeroSlides slides={slides} />
 
       {/* 3. Indledning */}
       <section className="ed-intro">
         <div className="container">
-          <p className="ed-statement">Siden 1887 har vi hjulpet Aarhus med at finde det ur eller smykke, der skal følge med resten af livet. Og med at passe på det bagefter.</p>
+          <p className="ed-statement"><Words text="Siden 1887 har vi hjulpet Aarhus med at finde det ur eller smykke, der skal følge med resten af livet. Og med at passe på det bagefter." /></p>
           <ul className="ed-facts">
-            <li><strong>1887</strong><span>Grundlagt i Aarhus</span></li>
-            <li><strong>{brands.length}</strong><span>Mærker med fabriksgaranti</span></li>
+            <li><strong><CountUp from={1800} to={1887} /></strong><span>Grundlagt i Aarhus</span></li>
+            <li><strong><CountUp to={brands.length} ms={1200} /></strong><span>Mærker med fabriksgaranti</span></li>
             <li><strong>Rolex</strong><span>Autoriseret servicecenter</span></li>
           </ul>
         </div>
@@ -162,6 +163,7 @@ export default function Home() {
             <h2>Smykker i ædle metaller</h2>
             <p className="muted">Marselis Jewellery, Georg Jensen, Chopard og Gucci. Ringe, øreringe, halskæder og armbånd med certificerede diamanter.</p>
             <ul className="cat-list">{jewelTypes.map((t) => <li key={t}><Link href="/smykker">{t}</Link></li>)}<li><Link href="/vielsesringe">Vielsesringe</Link></li></ul>
+            <p style={{ marginTop: 24 }}><a className="link-arrow" href="https://marselis.lovable.app/" target="_blank" rel="noopener">Besøg Marselis Jewellery</a></p>
           </div>
         </div>
       </section>
