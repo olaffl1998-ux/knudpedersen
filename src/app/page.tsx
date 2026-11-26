@@ -1,11 +1,10 @@
 import Link from "next/link";
-import { brands, brandHref, models, getBrand } from "@/data/catalog";
+import { brands, brandHref, models, getBrand, modelHref } from "@/data/catalog";
 import { pieces } from "@/data/jewellery";
 import { rolexAssets } from "@/data/rolex";
 import ModelCard from "@/components/ModelCard";
 import Carousel from "@/components/Carousel";
 import Hours from "@/components/Hours";
-import Newsletter from "@/components/Newsletter";
 import { MapEmbed } from "@/components/Consent";
 import { business } from "@/lib/site";
 
@@ -24,8 +23,11 @@ function RolexBanner({ s }: { s: (typeof rolexAssets.slides)[number] }) {
   );
 }
 
+/** [Kundeanmeldelser fra Google eller Trustpilot: navn, dato og kilde leveres af Knud Pedersen] */
+const reviews: { text: string; name: string; date: string; source: string }[] = [];
+
 export default function Home() {
-  const hero = [...pick("tudor"), ...pick("omega"), ...pick("grand-seiko")];
+  const heroWatch = pick("tudor", 1)[0];
   const featuredBrands = ["tudor", "omega", "breitling", "grand-seiko", "tag-heuer", "longines", "glashutte-original", "oris", "baume-mercier", "doxa", "chopard"];
   const featured = featuredBrands.flatMap((b) => pick(b, 1)).slice(0, 10);
   const ordered = [...brands.filter((b) => b.slug === "rolex" || b.slug === "tudor"), ...brands.filter((b) => b.slug !== "rolex" && b.slug !== "tudor")];
@@ -39,13 +41,14 @@ export default function Home() {
       {/* 1. Hero */}
       <section className="hero" aria-labelledby="hero-h">
         <div className="hero__media">
-          <div className="ph ph--dark" style={{ alignItems: "flex-start", paddingTop: 24 }}>[Hero-foto: butikken på Skt. Clemens Torv, fuld bredde]</div>
-          <div className="hero-watches" aria-hidden="true">
-            {hero.map((m) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img key={m.slug} src={m.image} alt="" fetchPriority="high" />
-            ))}
-          </div>
+          {/* [Hero-foto: butikken på Skt. Clemens Torv, fuld bredde] erstatter urscenen, når fotoet er leveret */}
+          {heroWatch && (
+            <Link className="hero-stage" href={modelHref(heroWatch)} aria-label={`${getBrand(heroWatch.brand)!.name} ${heroWatch.name}`}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={heroWatch.image} alt={`${getBrand(heroWatch.brand)!.name} ${heroWatch.name}, reference ${heroWatch.ref}`} fetchPriority="high" />
+              <span className="hero-stage__cap"><small>{getBrand(heroWatch.brand)!.name}</small>{heroWatch.name} · {heroWatch.ref}</span>
+            </Link>
+          )}
         </div>
         <div className="container">
           <div className="hero__content">
@@ -90,19 +93,19 @@ export default function Home() {
           <div className="section-head"><div><span className="label">Historier</span><h2>Fra butikken og værkstedet</h2></div></div>
           <div className="features">
             <Link href="/maerker/tudor" className="feature">
-              <span className="feature__media">{tudor?.image && /* eslint-disable-next-line @next/next/no-img-element */ <img src={tudor.image} alt={`${getBrand("tudor")!.name} ${tudor.name}`} loading="lazy" style={{ objectFit: "contain", padding: "12%", background: "var(--cream)" }} />}</span>
+              <span className="feature__media">{tudor?.image && /* eslint-disable-next-line @next/next/no-img-element */ <img src={tudor.image} alt={`${getBrand("tudor")!.name} ${tudor.name}`} loading="lazy" className="on-stage" />}</span>
               <h3>Officiel Tudor-forhandler</h3>
               <p>Se Black Bay, Pelagos og resten af Tudors kollektioner hos os på Skt. Clemens Torv.</p>
               <span className="link-arrow">Se Tudor</span>
             </Link>
             <Link href="/service" className="feature">
-              <span className="feature__media"><span className="ph" style={{ height: "100%" }}>[Foto: urmager ved arbejdsbordet]</span></span>
+              <span className="feature__media feature__media--type" aria-hidden="true"><span><small>Værkstedet</small>Autoriseret<br />Rolex-<br />servicecenter</span></span>
               <h3>Service i eget værksted</h3>
               <p>Vores urmagere servicerer dit ur efter producentens standarder. Vi er autoriseret Rolex-servicecenter.</p>
               <span className="link-arrow">Læs om service</span>
             </Link>
             <Link href="/maerker/grand-seiko" className="feature">
-              <span className="feature__media">{gs?.image && /* eslint-disable-next-line @next/next/no-img-element */ <img src={gs.image} alt={`Grand Seiko ${gs.name}`} loading="lazy" style={{ objectFit: "contain", padding: "12%", background: "var(--cream)" }} />}</span>
+              <span className="feature__media">{gs?.image && /* eslint-disable-next-line @next/next/no-img-element */ <img src={gs.image} alt={`Grand Seiko ${gs.name}`} loading="lazy" className="on-stage" />}</span>
               <h3>Grand Seiko</h3>
               <p>{getBrand("grand-seiko")!.intro}</p>
               <span className="link-arrow">Se Grand Seiko</span>
@@ -126,7 +129,7 @@ export default function Home() {
       {/* 7. Rolex-banner #2 og point of sale-banner */}
       <section className="container" aria-label="Rolex hos Knud Pedersen">
         <RolexBanner s={rolexAssets.slides[2]} />
-        <div className="ph" style={{ marginTop: 24, minHeight: 280 }}>[Rolex point of sale-banner: foto af Rolex-afdelingen hos Knud Pedersen, leveres/godkendes af Rolex]</div>
+        <div className="ph ph--banner" style={{ marginTop: 24 }}>[Rolex point of sale-banner: foto af Rolex-afdelingen hos Knud Pedersen, leveres og godkendes af Rolex]</div>
       </section>
 
       {/* 8. Smykker */}
@@ -135,7 +138,7 @@ export default function Home() {
           <div className="split__media">
             {jewel?.image ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={jewel.image} alt={`Marselis Jewellery ${jewel.name}`} loading="lazy" style={{ objectFit: "contain", background: "var(--white)", padding: "10%" }} />
+              <img src={jewel.image} alt={`Marselis Jewellery ${jewel.name}`} loading="lazy" className="on-stage" />
             ) : <div className="ph">[Smykkefoto]</div>}
           </div>
           <div className="split__text">
@@ -173,20 +176,19 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 11. Anmeldelser (pladsholder, ingen opdigtede anmeldelser) */}
-      <section className="section">
-        <div className="container">
-          <div className="section-head"><div><span className="label">Anmeldelser</span><h2>Det siger vores kunder</h2></div></div>
-          <div className="reviews">
-            {[1, 2, 3].map((i) => (
-              <figure key={i} className="review">
-                <blockquote>[Kundeanmeldelse {i} fra Google eller Trustpilot]</blockquote>
-                <figcaption className="muted">[Navn, dato og kilde]</figcaption>
-              </figure>
-            ))}
+      {/* 11. Anmeldelser: vises først, når rigtige anmeldelser er leveret (ingen opdigtede anmeldelser) */}
+      {reviews.length > 0 && (
+        <section className="section">
+          <div className="container">
+            <div className="section-head"><div><span className="label">Anmeldelser</span><h2>Det siger vores kunder</h2></div></div>
+            <div className="reviews">
+              {reviews.map((r) => (
+                <figure key={r.name + r.date} className="review"><blockquote>{r.text}</blockquote><figcaption className="muted">{r.name}, {r.date} · {r.source}</figcaption></figure>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* 12. Besøg butikken */}
       <section className="section section--white" aria-labelledby="besoeg">
@@ -204,13 +206,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 13. Nyhedsbrev */}
-      <section className="section section--dark">
-        <div className="container newsletter">
-          <div><span className="label">Nyhedsbrev</span><h2>Hør først om nyheder og arrangementer</h2><p className="muted">Få besked om nye ure, smykker og arrangementer i butikken. [Hvor ofte nyhedsbrevet udsendes]</p></div>
-          <Newsletter dark />
-        </div>
-      </section>
+      {/* 13. Nyhedsbrev: ligger i footeren lige under */}
     </>
   );
 }

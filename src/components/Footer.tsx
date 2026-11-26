@@ -8,6 +8,17 @@ import BackToTop from "./BackToTop";
 export default function Footer() {
   return (
     <footer className="site-footer">
+      <div className="container footer-brand">
+        <div>
+          <span className="footer-logo">KNUD PEDERSEN</span>
+          <p>Ure og smykker på Skt. Clemens Torv i Aarhus. Officiel Rolex-forhandler og autoriseret Rolex-servicecenter.</p>
+        </div>
+        <div className="newsletter footer-newsletter">
+          <h2>Nyhedsbrev</h2>
+          <p className="footer-muted">Hør først om nye ure, smykker og arrangementer i butikken. [Hvor ofte nyhedsbrevet udsendes]</p>
+          <Newsletter dark id="footer-nyhedsbrev" />
+        </div>
+      </div>
       <div className="container footer-top">
         <div>
           <h2>Butik</h2>
@@ -52,9 +63,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="footer-news">
-          <span className="footer-logo">KNUD PEDERSEN</span>
-          <h2>Nyhedsbrev</h2>
-          <Newsletter dark id="footer-nyhedsbrev" />
+          <h2>Officiel forhandler</h2>
           <Link className="footer-rolex" href="/rolex/discover" aria-label="Officiel Rolex-forhandler, Udforsk Rolex">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={rolexAssets.plaque} alt="Officiel Rolex-forhandler" width={120} height={60} loading="lazy" />

@@ -73,28 +73,72 @@ export function WatchSvg({ model, strap }: { model: Model; strap: Strap }) {
   );
 }
 
+/** Rem eller lænke tegnet som "flat lay": to remdele lodret, med spænde, huller og syninger */
 export function StrapSvg({ strap }: { strap: Strap }) {
+  const id = `g-${strap.key}`;
   const metal = strap.type === "steel" || strap.type === "bicolor";
-  const band = metal ? (strap.type === "bicolor" ? "#C9A55A" : "#D0D3D7") : strap.color;
+  const base = metal ? "#C9CDD2" : strap.color;
+  const stitch = isLight(base) ? "rgba(31,28,26,.28)" : "rgba(255,255,255,.32)";
+  // Remdele: øverste (spændeside) og nederste (hulside), let tilspidset
+  const upper = "M38 22 H82 V118 Q82 132 76 136 H44 Q38 132 38 118 Z";
+  const lower = "M38 176 H82 V282 Q82 300 60 306 Q38 300 38 282 Z";
   return (
-    <svg viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label={strap.name}>
-      <ellipse cx={120} cy={100} rx={92} ry={52} fill="none" stroke={band} strokeWidth={34} />
-      {metal && <ellipse cx={120} cy={100} rx={92} ry={52} fill="none" stroke="#9EA3A8" strokeWidth={34} strokeDasharray="3 9" opacity={0.55} />}
-      {strap.type === "nato" && <ellipse cx={120} cy={100} rx={92} ry={52} fill="none" stroke="rgba(255,255,255,.08)" strokeWidth={30} strokeDasharray="1 3" />}
-      {strap.type === "leather" && <ellipse cx={120} cy={100} rx={92} ry={52} fill="none" stroke="rgba(255,255,255,.3)" strokeWidth={1} strokeDasharray="3 3" />}
+    <svg viewBox="0 0 120 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label={strap.name}>
+      <defs>
+        <linearGradient id={id} x1="0" x2="1">
+          <stop offset="0" stopColor="#000" stopOpacity=".18" />
+          <stop offset=".22" stopColor="#fff" stopOpacity=".10" />
+          <stop offset=".5" stopColor="#fff" stopOpacity="0" />
+          <stop offset="1" stopColor="#000" stopOpacity=".22" />
+        </linearGradient>
+      </defs>
+      <ellipse cx="60" cy="312" rx="30" ry="4" fill="rgba(31,28,26,.10)" />
       {metal ? (
-        <rect x={98} y={134} width={44} height={30} rx={4} fill="#B7BBC0" />
+        <g>
+          {[upper, lower].map((d, k) => (
+            <g key={k}>
+              <clipPath id={`${id}-c${k}`}><path d={d} /></clipPath>
+              <g clipPath={`url(#${id}-c${k})`}>
+                <rect x="30" y="0" width="60" height="320" fill="#B9BEC4" />
+                {Array.from({ length: 22 }, (_, i) => (
+                  <g key={i}>
+                    <rect x="38" y={20 + i * 14} width="13" height="12.5" rx="2" fill="#D5D9DD" />
+                    <rect x="52" y={20 + i * 14} width="16" height="12.5" rx="2" fill={strap.type === "bicolor" ? "#CDA85E" : "#E4E7EA"} />
+                    <rect x="69" y={20 + i * 14} width="13" height="12.5" rx="2" fill="#D5D9DD" />
+                  </g>
+                ))}
+                <rect x="30" y="0" width="60" height="320" fill={`url(#${id})`} />
+              </g>
+            </g>
+          ))}
+          <rect x="42" y="134" width="36" height="46" rx="5" fill="#C3C8CD" stroke="#A9AEB4" />
+          <rect x="47" y="140" width="26" height="34" rx="3" fill="none" stroke="#A9AEB4" />
+        </g>
       ) : (
-        <>
-          <rect x={96} y={132} width={48} height={34} rx={5} fill="none" stroke="#B7BBC0" strokeWidth={5} />
-          <line x1={120} y1={132} x2={120} y2={166} stroke="#B7BBC0" strokeWidth={4} />
-        </>
-      )}
-      {strap.type === "nato" && (
-        <>
-          <rect x={30} y={80} width={10} height={40} rx={3} fill="#C9CCD0" />
-          <rect x={200} y={80} width={10} height={40} rx={3} fill="#C9CCD0" />
-        </>
+        <g>
+          <path d={upper} fill={base} />
+          <path d={upper} fill={`url(#${id})`} />
+          <path d={lower} fill={base} />
+          <path d={lower} fill={`url(#${id})`} />
+          {strap.type === "nato" && Array.from({ length: 40 }, (_, i) => <line key={i} x1="38" x2="82" y1={26 + i * 7} y2={26 + i * 7} stroke="rgba(255,255,255,.07)" />)}
+          {strap.type === "rubber" && <><rect x="55" y="30" width="10" height="96" rx="5" fill="rgba(0,0,0,.12)" /><rect x="55" y="184" width="10" height="100" rx="5" fill="rgba(0,0,0,.12)" /></>}
+          {(strap.type === "leather" || strap.type === "nato") && (
+            <>
+              <path d="M42.5 26 V117 Q42.5 128 47 131 H73 Q77.5 128 77.5 117 V26" fill="none" stroke={stitch} strokeWidth="1" strokeDasharray="3 3" />
+              <path d="M42.5 180 V281 Q42.5 296 60 301 Q77.5 296 77.5 281 V180" fill="none" stroke={stitch} strokeWidth="1" strokeDasharray="3 3" />
+            </>
+          )}
+          {/* holdere */}
+          <rect x="36" y="100" width="48" height="7" rx="2" fill={base} stroke="rgba(0,0,0,.18)" />
+          {/* spænde */}
+          <rect x="40" y="128" width="40" height="26" rx="6" fill="none" stroke="#B9BEC4" strokeWidth="4" />
+          <line x1="60" y1="128" x2="60" y2="152" stroke="#9EA3A8" strokeWidth="3" strokeLinecap="round" />
+          {/* huller */}
+          {[214, 230, 246, 262, 278].map((y) => <circle key={y} cx="60" cy={y} r="2.6" fill="rgba(0,0,0,.45)" />)}
+          {/* fjederstifter i toppen */}
+          <rect x="34" y="18" width="52" height="5" rx="2.5" fill="#B9BEC4" />
+          <rect x="34" y="172" width="52" height="5" rx="2.5" fill="#B9BEC4" />
+        </g>
       )}
     </svg>
   );

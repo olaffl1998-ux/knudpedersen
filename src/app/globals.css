@@ -522,3 +522,120 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
 .services--3 li { border-top: 0; padding-top: 0; }
 .timeline h3 { margin-top: var(--s1); }
 @media (max-width: 560px) { .steps li { flex: 1 1 calc(50% - var(--s1)); } }
+
+/* ============================================================
+   Finish: roligere flader, ens produktscene, strammere detaljer
+   ============================================================ */
+:root { --stage: #ebe4da; --stage-2: #e2d9cd; }
+
+/* Produktfotos har hvid baggrund: "multiply" lader dem smelte ind i en ens, varm scene */
+.on-stage, .card__media img, .pdp__media img, .slot.is-watch img, .hero-stage img { mix-blend-mode: multiply; }
+.card__media, .pdp__media, .track { background: var(--stage); }
+.card__media img { padding: 12%; }
+.card__media::after { content: ""; position: absolute; left: 18%; right: 18%; bottom: 9%; height: 14px; border-radius: 50%; background: radial-gradient(closest-side, rgba(31,28,26,.10), transparent); pointer-events: none; }
+.card__body { padding-top: var(--s2); display: grid; gap: 2px; }
+.card__brand { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--grey); }
+.card__name { font-family: var(--font-display); font-size: 23px; line-height: 1.2; text-decoration: none; }
+.card__name::before { content: ""; position: absolute; inset: 0; z-index: 1; }
+.card .heart { z-index: 3; background: transparent; }
+.card .heart:hover { background: rgba(255,253,250,.7); }
+.card__meta { font-size: 14px; color: var(--grey); }
+.card__price { margin-top: 6px; font-size: 15px; }
+.card__price small { color: var(--grey); margin-right: 6px; font-size: 13px; }
+.on-stage { background: var(--stage) !important; object-fit: contain !important; padding: 14% !important; }
+.feature__media { background: var(--stage); }
+.split__media img.on-stage { aspect-ratio: 4 / 3; }
+
+/* Hero: tekst til venstre på antracit, uret stort på en lys scene til højre */
+.hero { min-height: min(820px, calc(100svh - var(--header-h) - 36px)); background: var(--ink); }
+.hero::after { display: none; }
+.hero__media { position: absolute; inset: 0; background: radial-gradient(120% 90% at 0% 100%, #2b2622 0%, var(--ink) 60%); }
+.hero-stage { position: absolute; top: 0; right: 0; bottom: 0; width: 48%; background: radial-gradient(70% 60% at 50% 46%, #f3ede5 0%, var(--stage) 70%, var(--stage-2) 100%); display: flex; align-items: center; justify-content: center; text-decoration: none; color: var(--ink); z-index: 1; }
+.hero .hero__media .hero-stage img { width: auto; height: auto; min-height: 0; max-width: 62%; max-height: 74%; object-fit: contain; transition: transform .6s var(--ease); }
+.hero-stage:hover img { transform: scale(1.03); }
+.hero-stage__cap { position: absolute; left: var(--s5); bottom: var(--s5); font-size: 14px; color: var(--grey); display: grid; gap: 2px; }
+.hero-stage__cap small { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--brass-ink); }
+.hero .container { width: 100%; }
+.hero__content { max-width: 46%; padding-block: var(--s15); }
+.hero h1 { font-size: clamp(44px, 5.4vw, 84px); line-height: 1.02; margin-bottom: var(--s4); }
+.hero .label { color: var(--brass); }
+@media (max-width: 1023px) {
+  .hero { min-height: 0; display: block; }
+  .hero__media { position: relative; height: auto; }
+  .hero-stage { position: relative; width: 100%; height: 58vh; min-height: 360px; }
+  .hero .hero__media .hero-stage img { max-width: 70%; max-height: 80%; }
+  .hero-stage__cap { left: var(--gutter); bottom: var(--s3); }
+  .hero__content { max-width: none; padding-block: var(--s6) var(--s9); }
+}
+
+/* Pladsholdere: rolige, bevidste felter i stedet for skraveringer */
+.ph { background: linear-gradient(160deg, var(--stage) 0%, var(--stage-2) 100%); border: 0; position: relative; flex-direction: column; gap: var(--s2); font-size: 13px; letter-spacing: .02em; color: #8a8079; }
+.ph::before { content: "KP"; font-family: var(--font-display); font-size: 34px; letter-spacing: .3em; color: rgba(31,28,26,.16); padding-left: .3em; }
+.ph--dark { background: linear-gradient(160deg, #2a2522 0%, #231f1c 100%); color: #8f857b; }
+.ph--dark::before { color: rgba(244,239,232,.14); }
+.ph--banner { aspect-ratio: 1492 / 500; min-height: 0; }
+@media (max-width: 767px) { .ph--banner { aspect-ratio: 390 / 300; } }
+
+/* Typografisk feature-kort (bruges til værkstedet, indtil der er foto) */
+.feature__media--type { background: var(--ink); color: var(--cream); display: flex; align-items: flex-end; padding: var(--s5); }
+.feature__media--type span { font-family: var(--font-display); font-size: clamp(34px, 3.2vw, 48px); line-height: 1.04; font-weight: 300; }
+.feature__media--type small { display: block; font-family: var(--font-body); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--brass); margin-bottom: var(--s3); }
+.feature:hover .feature__media--type { background: #2a2522; }
+
+/* Rolex-bannere: fast format, så de aldrig klapper sammen, mens billedet hentes */
+.rolex-banner picture, .rolex-banner img { display: block; width: 100%; aspect-ratio: 1492 / 500; object-fit: cover; background: #e9e6e1; }
+@media (max-width: 767px) { .rolex-banner picture, .rolex-banner img { aspect-ratio: 390 / 525; } }
+
+/* Header: Rolex-plaketten indtil Rolex-uret er leveret */
+.rolex-clock-slot { width: auto; height: auto; border: 0; }
+.rolex-clock-slot img { width: 96px; height: auto; }
+.site-header.is-scrolled .rolex-clock-slot img { width: 80px; }
+
+/* Forhåndsvisningsmærke: diskret */
+.preview-flag { background: #2a2522; color: #b8ada1; font-size: 12px; letter-spacing: .04em; padding: 5px 16px; }
+
+/* Sektionsoverskrifter */
+.section-head .label { margin-bottom: var(--s2); }
+.section-head { margin-bottom: var(--s8); }
+.brand-grid a { min-height: 156px; }
+.brand-grid a:hover strong { color: var(--brass-ink); }
+
+/* Footer */
+.footer-brand { display: grid; grid-template-columns: 5fr 6fr; gap: var(--s8); padding-block: var(--s12) var(--s8); border-bottom: 1px solid #3a3430; align-items: start; }
+.footer-brand p { color: #a89c8f; max-width: 42ch; }
+.footer-logo { white-space: nowrap; font-size: clamp(30px, 3vw, 44px); font-weight: 300; letter-spacing: .24em; margin-bottom: var(--s3); }
+.footer-muted { color: #a89c8f; font-size: 15px; }
+.footer-newsletter .row input { background: transparent; border: 1px solid #5a524b; color: var(--cream); min-height: 48px; padding: 0 16px; }
+.footer-newsletter .field label { color: #c9bfb3; font-size: 14px; }
+.footer-newsletter .check label { color: #a89c8f; font-size: 13px; }
+.footer-newsletter .check label a { color: #d8cfc4; }
+.footer-top { grid-template-columns: repeat(4, 1fr) auto; padding-block: var(--s8); }
+.footer-news img { width: 120px; }
+@media (max-width: 1023px) { .footer-brand { grid-template-columns: 1fr; gap: var(--s5); } }
+
+/* Knapper: blødere overgange */
+.btn { transition: background-color .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease); }
+@media (max-width: 767px) { .card__name { font-size: 20px; } }
+.feature__media .on-stage, .split__media .on-stage { background: transparent !important; }
+.split__media:has(.on-stage) { background: var(--stage); }
+.ph--banner { aspect-ratio: auto; min-height: 220px; }
+@media (max-width: 767px) { .footer-logo { white-space: normal; font-size: 30px; } }
+@media (max-width: 1023px) { .footer-top { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .footer-top { grid-template-columns: 1fr; } }
+.picker, .picker .track { background: var(--stage); }
+.slot { border-right-color: rgba(31,28,26,.06); }
+.pick-nav { background: var(--stage); }
+.notice { background: var(--white); }
+.slot svg { width: auto; height: min(300px, 82%); max-width: 70%; }
+.slot { opacity: .92; transition: opacity .3s var(--ease); }
+.slot:hover { opacity: 1; }
+.slot.is-watch img { background: transparent; }
+.slot.is-watch { opacity: 1; isolation: auto; }
+.slot.is-watch { background: var(--stage); isolation: isolate; }
+.footer-newsletter { display: block; }
+.footer-newsletter form { display: grid; gap: var(--s2); max-width: 560px; }
+.footer-newsletter .row { display: flex; gap: var(--s1); }
+.footer-newsletter .row input { flex: 1; }
+.steps--list li { text-transform: none; letter-spacing: 0; font-size: 16px; color: var(--grey); flex: none; }
+.steps--list li .label { margin-bottom: var(--s1); }
+.steps--list li h3 { color: var(--ink); }

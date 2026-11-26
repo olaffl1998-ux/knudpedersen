@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { mainNav, business } from "@/lib/site";
 import { nonRolexBrands } from "@/data/catalog";
+import { rolexAssets } from "@/data/rolex";
 import { todayText } from "./OpeningToday";
 import { SearchIcon, HeartIcon } from "./Icons";
 import { WishlistCount } from "./Wishlist";
@@ -27,7 +28,11 @@ function RolexClock() {
       <iframe className="rolex-clock" title="Rolex-ur" src={`https://static.rolex.com/retailers/clock/?colour=gold&apiKey=${ROLEX_CLOCK_KEY}&lang=da`} scrolling="no" style={{ pointerEvents: "none" }} />
     </Link>
   ) : (
-    <Link className="rolex-clock-slot" href="/rolex/discover" aria-label="Rolex hos Knud Pedersen">[Rolex-ur<br />fra Rolex]</Link>
+    <Link className="rolex-clock-slot" href="/rolex/discover" aria-label="Officiel Rolex-forhandler, Udforsk Rolex">
+      {/* [Rolex-ur fra Rolex vises her, når API-nøglen er leveret] */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={rolexAssets.plaque} alt="Officiel Rolex-forhandler" width={120} height={60} />
+    </Link>
   );
 }
 
