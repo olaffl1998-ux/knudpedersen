@@ -11,7 +11,7 @@ export default function PieceCard({ piece }: { piece: Piece }) {
       <div className="card__media">
         {piece.image ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={piece.image} alt={label} loading="lazy" decoding="async" />
+          <img src={piece.image} alt={label} loading="eager" decoding="async" />
         ) : <div className="ph" aria-hidden="true">[Produktbillede]</div>}
         <HeartButton id={`smykke:${piece.brand}/${piece.slug}`} label={label} />
       </div>

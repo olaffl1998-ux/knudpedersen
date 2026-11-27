@@ -105,7 +105,7 @@ export function RolexCarousel({ slides }) {
       {slides.map((s, i) => (<Link key={s.href} href={s.href} className={`rx-slide${i === k ? " on" : ""}`} aria-hidden={i !== k} tabIndex={i === k ? 0 : -1}>
           <picture>
             <source media="(max-width: 767px)" srcSet={s.mobile}/>
-                        <img src={s.desktop} alt={s.alt} loading={i === 0 ? "eager" : "lazy"}/>
+                        <img src={s.desktop} alt={s.alt} loading="eager"/>
           </picture>
           <span className="rx-slide-cap"><small>{s.eyebrow}</small><strong>{s.title}</strong><em>Opdag</em></span>
         </Link>))}

@@ -170,7 +170,9 @@ export default function Header() {
         <div className="container site-header__in">
           <button className="burger" type="button" aria-label="Åbn menu" aria-expanded={menu} onClick={() => setMenu(true)}><span /><span /><span /></button>
           <nav className="nav nav--desktop" aria-label="Hovedmenu">
-            {mainNav.map((n) => (<div key={n.key} className={`nav__item${mega === n.mega ? " is-open" : ""}`} onMouseEnter={() => openMega(n.mega)} onMouseLeave={closeSoon}>
+            {mainNav.map((n) => !n.mega ? (<div key={n.key} className="nav__item">
+                <Link className="nav__link" href={n.href} aria-current={active(n.href) || (n.key === "rolex" && path.startsWith("/rolex")) ? "page" : undefined} onMouseEnter={() => setMega(null)} onFocus={() => setMega(null)}>{n.label}</Link>
+              </div>) : (<div key={n.key} className={`nav__item${mega === n.mega ? " is-open" : ""}`} onMouseEnter={() => openMega(n.mega)} onMouseLeave={closeSoon}>
                 <Link className="nav__link" href={n.href} aria-haspopup="true" aria-expanded={mega === n.mega} aria-controls={`mega-${n.mega}`} aria-current={active(n.href) ? "page" : undefined} onFocus={() => openMega(n.mega)}>{n.label}</Link>
                 {mega === n.mega && <Mega id={n.mega} onClose={() => { setMega(null); document.querySelector(`[aria-controls="mega-${n.mega}"]`)?.focus(); }}/>}
               </div>))}
@@ -190,6 +192,7 @@ export default function Header() {
             <button className="icon-btn" type="button" aria-label="Luk menu" onClick={() => setMenu(false)} autoFocus>✕</button>
           </div>
           <nav aria-label="Mobilmenu">
+            <Link href="/rolex/discover">Rolex</Link>
             <details><summary>Ure</summary><ul><li><Link href="/ure">Alle ure</Link></li>{watchCategories.map((c) => <li key={c.slug}><Link href={`/ure/${c.slug}`}>{c.label}</Link></li>)}<li><Link href="/brugte-ure">Brugte ure</Link></li></ul></details>
             <details className="mm-smykker"><summary>Smykker</summary>
               <div className="mm-group"><h3>Smykker</h3><ul>{jewelleryCategories.map((c) => <li key={c.slug}><Link href={`/smykker/${c.slug}`}>{c.label}</Link></li>)}<li><Link href="/smykker"><b>Se alle smykker →</b></Link></li></ul></div>

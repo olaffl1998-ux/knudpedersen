@@ -112,7 +112,7 @@ export function RolexCarousel({ slides }: { slides: { title: string; eyebrow: st
           <picture>
             <source media="(max-width: 767px)" srcSet={s.mobile} />
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={s.desktop} alt={s.alt} loading={i === 0 ? "eager" : "lazy"} />
+            <img src={s.desktop} alt={s.alt} loading="eager" />
           </picture>
           <span className="rx-slide-cap"><small>{s.eyebrow}</small><strong>{s.title}</strong><em>Opdag</em></span>
         </Link>

@@ -1,9 +1,9 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useRef } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Billboard, ContactShadows, Environment, Html, Lightformer, MeshReflectorMaterial, RoundedBox, useGLTF, useTexture } from "@react-three/drei";
-import { Bloom, EffectComposer, N8AO, ToneMapping, Vignette } from "@react-three/postprocessing";
+import { Billboard, ContactShadows, Environment, Html, Lightformer, MeshReflectorMaterial, PerformanceMonitor, RoundedBox, useGLTF, useTexture } from "@react-three/drei";
+import { Bloom, EffectComposer, ToneMapping, Vignette } from "@react-three/postprocessing";
 import { ToneMappingMode } from "postprocessing";
 import * as THREE from "three";
 import "./r3f-compat";
@@ -533,7 +533,7 @@ function Room({ slots, gaps, length, hq }: { slots: Slot[]; gaps: Gap[]; length:
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, zMid]} receiveShadow>
         <planeGeometry args={[W, L]} />
         {hq ? (
-          <MeshReflectorMaterial map={floor} blur={[400, 120]} resolution={512} mixBlur={1} mixStrength={0.5} mirror={0.3}
+          <MeshReflectorMaterial map={floor} blur={[400, 120]} resolution={256} mixBlur={1} mixStrength={0.5} mirror={0.3}
             roughness={0.5} depthScale={0.6} minDepthThreshold={0.4} maxDepthThreshold={1.3} metalness={0.05} color="#ffffff" />
         ) : (
           <meshStandardMaterial map={floor} roughness={0.3} metalness={0.02} envMapIntensity={1.1} />
@@ -629,6 +629,7 @@ function MovingSpot({ slot }: { slot: Slot | null }) {
 export default function ShowroomScene({ brands, active, hover, lookAngle, mobile, current, onHover, onSelect, onReady, paused, calm }: SceneProps) {
   const { slots, gaps, length, walkEnd } = useMemo(() => layout(brands), [brands]);
   const dragRot = useRef(0);
+  const [low, setLow] = useState(false);
   const look = useRef<Look>({ s: 0, dir: 1, pitch: 0, step: 0, touched: false, dragging: false, lastX: 0, lastY: 0 });
   const bySlot = (i: number | null) => (i == null ? null : slots.find((s) => s.index === i) ?? null);
 
@@ -652,7 +653,7 @@ export default function ShowroomScene({ brands, active, hover, lookAngle, mobile
   return (
     <Canvas
       frameloop={paused ? "never" : "always"}
-      dpr={mobile ? [1, 1.5] : [1, 2]}
+      dpr={mobile ? [1, 1.5] : low ? 1 : [1, 1.5]}
       camera={{ position: start.pos, fov: mobile ? 52 : 50, near: 0.1, far: 60 }}
       onCreated={({ camera }) => camera.lookAt(...start.target)}
       gl={{ antialias: !mobile, powerPreference: "high-performance" }}
@@ -683,19 +684,20 @@ export default function ShowroomScene({ brands, active, hover, lookAngle, mobile
         <Lightformer form="rect" intensity={1.2} position={[4, 2, -6]} rotation-y={-Math.PI / 2} scale={[20, 2, 1]} color="#ffe9c8" />
       </Environment>
       <Suspense fallback={null}>
-        <Room slots={slots} gaps={gaps} length={length} hq={!mobile} />
+        <Room slots={slots} gaps={gaps} length={length} hq={!mobile && !low} />
         {slots.map((s) => (
           <Vitrine key={s.brand.slug} slot={s} active={active === s.index} hover={hover === s.index}
             showProduct={near(s.index)} still={!!s.brand.framed} dragRot={dragRot}
             onHover={onHover} onSelect={onSelect} />
         ))}
         <MovingSpot slot={bySlot(hover ?? active)} />
-        <ContactShadows position={[0, 0.006, -(length - 3) / 2]} scale={[HALL_HALF * 2, length + 3]} resolution={mobile ? 256 : 1024} blur={2.2} opacity={0.4} far={1.2} frames={1} color="#3a2a1a" />
+        <ContactShadows position={[0, 0.006, -(length - 3) / 2]} scale={[HALL_HALF * 2, length + 3]} resolution={mobile || low ? 256 : 512} blur={2.2} opacity={0.4} far={1.2} frames={1} color="#3a2a1a" />
         <Ready onReady={onReady} />
       </Suspense>
-      {!mobile && (
-        <EffectComposer multisampling={4} enableNormalPass={false}>
-          <N8AO aoRadius={0.7} intensity={2.2} distanceFalloff={0.6} halfRes quality="medium" color="#1c120a" />
+      {/* Kører computeren for tungt, skrues der automatisk ned for effekterne, så gåturen forbliver glat */}
+      <PerformanceMonitor onDecline={() => setLow(true)} flipflops={1} />
+      {!mobile && !low && (
+        <EffectComposer multisampling={2} enableNormalPass={false}>
           <Bloom mipmapBlur luminanceThreshold={0.92} luminanceSmoothing={0.2} intensity={0.45} />
           <Vignette offset={0.32} darkness={0.55} />
           <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />

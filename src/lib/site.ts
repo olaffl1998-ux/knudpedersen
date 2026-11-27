@@ -23,13 +23,16 @@ export const business = {
   ],
 } as const;
 
-export const mainNav = [
+export type NavItem = { href: string; label: string; key: string; mega?: string };
+
+export const mainNav: readonly NavItem[] = [
+  { href: "/rolex/discover", label: "Rolex", key: "rolex" },
   { href: "/ure", label: "Ure", key: "ure", mega: "ure" },
   { href: "/smykker", label: "Smykker", key: "smykker", mega: "smykker" },
   { href: "/maerker", label: "Mærker", key: "maerker", mega: "maerker" },
-  { href: "/service", label: "Service & reparation", key: "service", mega: "service" },
+  { href: "/service", label: "Service", key: "service", mega: "service" },
   { href: "/om-os", label: "Om os", key: "om-os", mega: "om-os" },
-] as const;
+];
 
 export const formatPrice = (n: number) => `${n.toLocaleString("da-DK")} kr.`;
 

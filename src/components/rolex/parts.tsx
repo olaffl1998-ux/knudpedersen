@@ -13,7 +13,7 @@ export function RImg({ img, alt, className, eager, sizes }: { img: Img; alt: str
     <picture className={className}>
       {p !== l && <source media="(max-width: 767px)" srcSet={p} />}
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={l} alt={alt} loading={eager ? "eager" : "lazy"} decoding="async" sizes={sizes} />
+      <img src={l} alt={alt} loading="eager" fetchPriority={eager ? "high" : "auto"} decoding="async" sizes={sizes} />
     </picture>
   );
 }

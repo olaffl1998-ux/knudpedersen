@@ -1524,3 +1524,9 @@ p { color: inherit; }
 .rx-pos { padding-bottom: var(--s12); }
 /* Heroen glider farvemæssigt ud fra billedet ovenover (farven aflæses i CampaignHero) */
 .cx__stage::after { content: ""; position: absolute; inset: 0 0 auto; height: min(30%, 180px); z-index: 3; pointer-events: none; background: linear-gradient(to bottom, var(--cx-blend, transparent) 0%, color-mix(in srgb, var(--cx-blend, transparent) 55%, transparent) 35%, transparent 100%); }
+/* Header: logo og knapper må aldrig brydes over to linjer */
+.logo b, .logo span, .btn--sm { white-space: nowrap; }
+.site-header__in { column-gap: 24px; }
+@media (max-width: 1360px) { .nav--desktop { gap: 14px; } .nav__link { letter-spacing: .08em; } .head-actions .btn--sm { padding-inline: 16px; } }
+@media (max-width: 1240px) { .logo b { font-size: 19px; letter-spacing: .16em; } .logo span { letter-spacing: .2em; } }
+@media (max-width: 1240px) { .nav--desktop { gap: 12px; } .nav__link { letter-spacing: .06em; } .head-actions { gap: 12px; } }
