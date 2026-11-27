@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getBrand, modelHref, modelKey, type Model } from "@/data/catalog";
-import { formatPrice } from "@/lib/site";
+import { formatPrice, thumb } from "@/lib/site";
 import { HeartButton } from "./Wishlist";
 
 export default function ModelCard({ model, eager }: { model: Model; eager?: boolean }) {
@@ -11,7 +11,7 @@ export default function ModelCard({ model, eager }: { model: Model; eager?: bool
       <div className="card__media">
         {model.image ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={model.image} alt={`${label}, reference ${model.ref}`} loading="eager" fetchPriority={eager ? "high" : "auto"} decoding="async" />
+          <img src={thumb(model.image)} alt={`${label}, reference ${model.ref}`} loading="eager" fetchPriority={eager ? "high" : "auto"} decoding="async" />
         ) : <div className="ph" aria-hidden="true">[Produktbillede]</div>}
         <HeartButton id={`ur:${modelKey(model)}`} label={label} />
       </div>

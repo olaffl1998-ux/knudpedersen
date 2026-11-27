@@ -1,6 +1,6 @@
 import Link from "@/lib/next/link";
 import { getJewelleryBrand, pieceHref } from "@/data/jewellery";
-import { formatPrice } from "@/lib/site";
+import { formatPrice, thumb } from "@/lib/site";
 import { HeartButton } from "./Wishlist";
 export default function PieceCard({ piece }) {
     const brand = getJewelleryBrand(piece.brand);
@@ -8,7 +8,7 @@ export default function PieceCard({ piece }) {
     return (<article className="card">
       <div className="card__media">
         {piece.image ? (
-        <img src={piece.image} alt={label} loading="eager" decoding="async"/>) : <div className="ph" aria-hidden="true">[Produktbillede]</div>}
+        <img src={thumb(piece.image)} alt={label} loading="eager" decoding="async"/>) : <div className="ph" aria-hidden="true">[Produktbillede]</div>}
         <HeartButton id={`smykke:${piece.brand}/${piece.slug}`} label={label}/>
       </div>
       <div className="card__body">

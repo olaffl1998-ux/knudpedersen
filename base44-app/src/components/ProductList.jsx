@@ -1,5 +1,6 @@
 "use client";
 import Link from "@/lib/next/link";
+import { thumb } from "@/lib/site";
 import { useEffect, useMemo, useState } from "react";
 import { formatPrice } from "@/lib/site";
 import { HeartButton, useWishlist } from "./Wishlist";
@@ -7,7 +8,7 @@ function Card({ it }) {
     const label = `${it.brand} ${it.name}`;
     return (<article className="card">
       <div className="card__media">
-                {it.image ? <img src={it.image} alt={it.ref ? `${label}, reference ${it.ref}` : label} loading="eager" decoding="async"/> : <div className="ph" aria-hidden="true">[Produktbillede]</div>}
+                {it.image ? <img src={thumb(it.image)} alt={it.ref ? `${label}, reference ${it.ref}` : label} loading="eager" decoding="async"/> : <div className="ph" aria-hidden="true">[Produktbillede]</div>}
         <HeartButton id={it.id} label={label}/>
       </div>
       <div className="card__body">

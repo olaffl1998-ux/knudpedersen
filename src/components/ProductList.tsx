@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { thumb } from "@/lib/site";
 import { useEffect, useMemo, useState } from "react";
 import type { IndexItem } from "@/lib/productIndex";
 import { formatPrice } from "@/lib/site";
@@ -12,7 +13,7 @@ function Card({ it }: { it: IndexItem }) {
     <article className="card">
       <div className="card__media">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        {it.image ? <img src={it.image} alt={it.ref ? `${label}, reference ${it.ref}` : label} loading="eager" decoding="async" /> : <div className="ph" aria-hidden="true">[Produktbillede]</div>}
+        {it.image ? <img src={thumb(it.image)} alt={it.ref ? `${label}, reference ${it.ref}` : label} loading="eager" decoding="async" /> : <div className="ph" aria-hidden="true">[Produktbillede]</div>}
         <HeartButton id={it.id} label={label} />
       </div>
       <div className="card__body">

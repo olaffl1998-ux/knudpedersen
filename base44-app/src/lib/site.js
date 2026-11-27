@@ -32,3 +32,5 @@ export const formatPrice = (n) => `${n.toLocaleString("da-DK")} kr.`;
 /** Rolex-uret (Rolex' iframe). Nøglen er den, den nuværende knudpedersen.dk bruger. */
 export const ROLEX_CLOCK_KEY = import.meta.env.VITE_ROLEX_CLOCK_API_KEY || "a3fd140c73bc8f81cc1b8d85379ba066";
 export const rolexClockSrc = (colour = "gold") => `https://static.rolex.com/retailers/clock/?colour=${colour}&apiKey=${ROLEX_CLOCK_KEY}&lang=da`;
+/** Lille udgave (480 px) af et produktbillede til lister og kort. Store billeder bruges kun på produktsiden */
+export const thumb = (src) => (src.startsWith("/billeder/shop/") && !src.includes("/shop/s/") ? src.replace("/billeder/shop/", "/billeder/shop/s/") : src);
