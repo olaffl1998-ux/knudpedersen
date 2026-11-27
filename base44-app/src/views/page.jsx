@@ -1,7 +1,6 @@
 import Link from "@/lib/next/link";
-import { brands, brandHref, models, getBrand, genderOf } from "@/data/catalog";
-import { pieces } from "@/data/jewellery";
-import { jewelleryCategories } from "@/data/categories";
+import { brands, models, genderOf } from "@/data/catalog";
+import { jewelleryBrandList } from "@/data/jewellery";
 import { rolexAssets } from "@/data/rolex";
 import ModelCard from "@/components/ModelCard";
 import Carousel from "@/components/Carousel";
@@ -28,6 +27,24 @@ function RolexBanner({ s, eager }) {
 }
 /** [Kundeanmeldelser fra Google eller Trustpilot: navn, dato og kilde leveres af Knud Pedersen] */
 const T = "/billeder/pics/_thumbs/";
+const ETERNITY_YG = "/billeder/shop/Ring-i-yg-1200.webp";
+const ETERNITY_WG = "/billeder/shop/Ring-i-wg-1200-1.webp";
+const AISLING_ROUNDS = "/billeder/shop/R-ASR4-S-RS-Aisling-Rounds-107ct-sides-015ct--RS30-1200.webp";
+/** Rolex' officielle billede til forhandlere (Udforsk Rolex, serviceeftersyn) */
+const ROLEX_SERVICE_IMG = "/billeder/pics/Rolex/v7images/discover-rolex-page-assets/discover-rolex-page-assets-landscape/keep-exploring-landscape/rolex-keep-exploring-servicing-2234_rolex-sav_retailers_176_controle-final_mise_heure_v2-landscape.jpg";
+const TEAM_IMG = "/billeder/pics/Bundslider_Knud-Pedersen_11.jpg";
+const stories = [
+    { href: "/service", img: WORKSHOP, alt: "Urmager ved arbejdsbordet i Knud Pedersens værksted", title: "Professionel service", text: "Vores faguddannede urmagere følger urproducenternes træning og efteruddannelse og er godkendt til at servicere dit ur.", cta: "Læs om service" },
+    { href: "/rolex/servicing", img: ROLEX_SERVICE_IMG, alt: "Rolex-serviceeftersyn", title: "Autoriseret Rolex-servicecenter", text: "Vores Rolex-oplærte urmagere servicerer dit Rolex-ur efter Rolex' egne standarder.", cta: "Rolex-serviceeftersyn" },
+    { href: "/book-tid", img: TEAM_IMG, alt: "Medarbejderne hos Knud Pedersen på Skt. Clemens Torv", title: "Personlig rådgivning i butikken", text: "Book et møde, så har vi urene eller smykkerne klar, når du kommer. Møderne varer en time.", cta: "Book tid" },
+];
+const jewelLinks = [
+    { href: "/smykker/ringe", label: "Ringe" },
+    { href: "/vielsesringe", label: "Forlovelsesringe" },
+    { href: "/smykker/oereringe", label: "Øreringe" },
+    { href: "/smykker/halskaeder", label: "Halskæder" },
+    { href: "/smykker/armbaand", label: "Armbånd" },
+];
 const campaigns = [
     { brand: "Tudor", title: "Tudor Monarch", href: "/maerker/tudor", desktop: `${T}tudor-monarch-computer.w2400.h880.jpg`, mobile: `${T}tudor-monarch-mobil.w640.h640.jpg` },
     { brand: "Grand Seiko", title: "Snowflake, inspireret af naturen", href: "/maerker/grand-seiko", desktop: `${T}GS_Snowflake_logo_Desktop_2400x1100.w2400.h880.jpg`, mobile: `${T}GS_Snowflake_logo_Mobile_640x640-1.w640.h640.jpg` },
@@ -42,19 +59,23 @@ export default function Home() {
     const focus = byRef("1-66-06-04-22-05") ?? pick("glashutte-original")[0];
     const featuredBrands = ["tudor", "omega", "breitling", "grand-seiko", "tag-heuer", "longines", "glashutte-original", "oris", "baume-mercier", "doxa", "chopard"];
     const featured = featuredBrands.flatMap((b) => pick(b, 1)).slice(0, 10);
-    const ordered = [...brands.filter((b) => b.slug === "rolex" || b.slug === "tudor"), ...brands.filter((b) => b.slug !== "rolex" && b.slug !== "tudor")];
-    const jewel = pieces.find((p) => p.image?.includes("KP_Rainbow_1")) ?? pieces.find((p) => p.brand === "marselis" && p.image);
-    const gs = pick("grand-seiko", 2)[1];
-    const bridal = pieces.find((p) => p.image && /Aisling-Ring-Oval/.test(p.image)) ?? pieces.find((p) => p.image && p.type === "Ringe");
     const herre = models.find((m) => m.image && m.brand === "omega" && genderOf(m) === "Herre") ?? pick("omega")[0];
     const dame = models.find((m) => m.image && genderOf(m) === "Dame");
-    const ring = pieces.find((p) => p.image && /ring/i.test(p.type) && p.brand !== "marselis") ?? pieces.find((p) => p.image && p !== jewel);
     const tiles = [
-        { href: "/ure/herreure", eyebrow: "Ure", title: "Herreure", img: herre?.image, zoom: false },
-        { href: "/ure/dameure", eyebrow: "Ure", title: "Dameure", img: dame?.image, zoom: false },
-        { href: "/smykker", eyebrow: "Smykker", title: "Smykker og ringe", img: ring?.image ?? jewel?.image, zoom: true },
-        { href: "/service", eyebrow: "Værkstedet", title: "Service og reparation", img: WORKSHOP, zoom: false, photo: true },
+        { href: "/ure/herreure", title: "Herreure", img: herre?.image, big: false },
+        { href: "/ure/dameure", title: "Dameure", img: dame?.image, big: false },
+        { href: "/smykker", title: "Smykker og ringe", img: ETERNITY_WG, big: true },
+        { href: "/service", title: "Service og reparation", img: focus?.image, big: false },
     ];
+    const watchGroup = ["glashutte-original", "breitling", "omega", "grand-seiko", "tag-heuer", "longines", "baume-mercier", "oris", "doxa", "montblanc"];
+    const jewelGroup = ["chopard", "georg-jensen", "gucci", "marselis", "ole-mathiesen"];
+    const nameOf = (slug) => brands.find((b) => b.slug === slug) ?? jewelleryBrandList.find((b) => b.slug === slug);
+    const jewelHref = (slug) => (jewelleryBrandList.some((b) => b.slug === slug) && !brands.some((b) => b.slug === slug) ? `/smykker/${slug}` : `/maerker/${slug}`);
+    const brandGroups = [
+        { label: "Ure", items: watchGroup.filter(nameOf).map((sl) => ({ href: `/maerker/${sl}`, name: nameOf(sl).name })) },
+        { label: "Smykker", items: jewelGroup.filter(nameOf).map((sl) => ({ href: jewelHref(sl), name: nameOf(sl).name })) },
+    ];
+    const brandCount = 2 + brandGroups.reduce((n, g) => n + g.items.length, 0);
     return (<>
       {/* 1. Rolex-banner øverst på forsiden (Rolex' krav til officielle forhandlere) */}
       <section className="ed-bleed ed-bleed--first" aria-label="Rolex"><RolexBanner s={rolexAssets.slides[0]} eager/></section>
@@ -75,7 +96,7 @@ export default function Home() {
           </div>
           <ul className="ed-facts">
             <li><strong><CountUp from={1800} to={1887}/></strong><span>Grundlagt i Aarhus</span></li>
-            <li><strong><CountUp to={brands.length} ms={1200}/></strong><span>Mærker med fabriksgaranti</span></li>
+            <li><strong><CountUp to={brandCount} ms={1200}/></strong><span>Mærker med fabriksgaranti</span></li>
             <li><strong>Rolex</strong><span>Autoriseret servicecenter</span></li>
           </ul>
         </div>
@@ -93,20 +114,25 @@ export default function Home() {
         </Link>
       </section>
 
-      {/* 3b. Kategorier i stort format */}
-      <section className="ed-tiles" aria-label="Kategorier">
-        {tiles.map((t) => (<Link key={t.href} href={t.href} className={`ed-tile${t.img ? "" : " ed-tile--type"}${t.zoom ? " ed-tile--zoom" : ""}${"photo" in t && t.photo ? " ed-tile--photo" : ""}`}>
-            <span className="ed-tile__media">
-              {t.img ?  <img src={t.img} alt="" loading="lazy"/> : <span aria-hidden="true">KP</span>}
-            </span>
-            <span className="ed-tile__cap"><small>{t.eyebrow}</small><strong>{t.title}</strong><em>Udforsk</em></span>
-          </Link>))}
+      {/* 3b. Kategorier: fire kort i samme stil (produkt på lys flade, 4:5) */}
+      <section className="hp-section hp-cats" aria-label="Kategorier">
+        <div className="container">
+          <ul className="cat-cards">
+            {tiles.map((t) => (<li key={t.href}>
+                <Link href={t.href} className={`cat-card${t.big ? " cat-card--big" : ""}`}>
+                  <span className="cat-card__media">{t.img &&  <img src={t.img} alt="" loading="lazy"/>}</span>
+                  <strong>{t.title}</strong>
+                  <span className="cat-card__cta">Udforsk</span>
+                </Link>
+              </li>))}
+          </ul>
+        </div>
       </section>
 
       {/* 4. Udvalgte ure (ikke Rolex) */}
-      <section className="section ed-featured">
+      <section className="hp-section ed-featured">
         <div className="container">
-          <Carousel title="Udvalgt lige nu" action={<Link className="link-arrow" href="/ure">Alle ure</Link>}>
+          <Carousel eyebrow="Ure" title="Udvalgt lige nu" action={<Link className="link-arrow" href="/ure">Alle ure</Link>}>
             {featured.map((m) => <li key={m.brand + m.slug}><ModelCard model={m}/></li>)}
           </Carousel>
         </div>
@@ -115,40 +141,37 @@ export default function Home() {
       {/* 4b. Ét ur i fokus */}
       {focus && <FeatureWatch model={focus} kicker="I fokus" text="Saksisk urmageri fra Glashütte. Kom forbi og se det asymmetriske Pano-design og det håndoptrukne urværk på nært hold."/>}
 
-      {/* 5. Redaktionelle features */}
-      <section className="section section--white">
+      {/* 5. Fra butikken og værkstedet: tre fotos i samme format */}
+      <section className="hp-section hp-stories" aria-labelledby="historier">
         <div className="container">
-          <div className="section-head"><div><span className="label">Historier</span><h2>Fra butikken og værkstedet</h2></div></div>
-          <div className="features">
-            <Link href="/service" className="feature">
-              <span className="feature__media feature__media--photo"><img src={WORKSHOP} alt="Urmager servicerer et ur i Knud Pedersens værksted" loading="lazy"/></span>
-              <h3>Ultimativ professionel service</h3>
-              <p>Alle vores faguddannede urmagere følger urproducenternes træning og efteruddannelse, så vi er godkendt til at varetage service.</p>
-              <span className="link-arrow">Læs om service</span>
-            </Link>
-            <Link href="/rolex/servicing" className="feature">
-              <span className="feature__media feature__media--type" aria-hidden="true"><span><small>Værkstedet</small>Autoriseret<br />Rolex-<br />servicecenter</span></span>
-              <h3>Autoriseret Rolex-servicecenter</h3>
-              <p>Vores Rolex-oplærte urmagere servicerer dit Rolex-ur efter Rolex' egne standarder.</p>
-              <span className="link-arrow">Rolex-serviceeftersyn</span>
-            </Link>
-            <Link href="/maerker/grand-seiko" className="feature">
-              <span className="feature__media">{gs?.image &&  <img src={gs.image} alt={`Grand Seiko ${gs.name}`} loading="lazy" className="on-stage"/>}</span>
-              <h3>Grand Seiko</h3>
-              <p>{getBrand("grand-seiko").intro}</p>
-              <span className="link-arrow">Se Grand Seiko</span>
-            </Link>
-          </div>
+          <div className="hp-head"><span className="label">Butikken</span><h2 id="historier">Fra butikken og værkstedet</h2></div>
+          <ul className="story-cards">
+            {stories.map((st) => (<li key={st.title}>
+                <Link href={st.href} className="story-card">
+                                    <span className="story-card__media"><img src={st.img} alt={st.alt} loading="lazy"/></span>
+                  <h3>{st.title}</h3>
+                  <p>{st.text}</p>
+                  <span className="link-arrow">{st.cta}</span>
+                </Link>
+              </li>))}
+          </ul>
         </div>
       </section>
 
-      {/* 6. Mærkegrid */}
-      <section className="section">
+      {/* 6. Mærker: Rolex og Tudor for sig, derefter ure og smykker */}
+      <section className="hp-section hp-brands" aria-labelledby="maerker-h">
         <div className="container">
-          <div className="ed-head"><span className="label">Mærker</span><h2>{brands.length} mærker under ét tag</h2><Link className="link-arrow" href="/maerker">Alle mærker</Link></div>
-          <ul className="ed-brands">
-            {ordered.map((b) => (<li key={b.slug}><Link href={brandHref(b)}>{b.name}{(b.rolex || b.slug === "tudor") && <sup>Officiel forhandler</sup>}</Link></li>))}
+          <div className="hp-head hp-head--center"><span className="label">Mærker</span><h2 id="maerker-h">{brandCount} mærker under ét tag</h2><Link className="link-arrow" href="/maerker">Alle mærker</Link></div>
+          <ul className="brand-official">
+            <li><Link href="/rolex/discover" aria-label="Rolex, officiel forhandler"><img src={rolexAssets.plaque} alt="Officiel Rolex-forhandler" width={120} height={60} loading="lazy"/></Link></li>
+            <li><Link href="/maerker/tudor" className="brand-official__tudor"><strong>Tudor</strong><small>Officiel forhandler</small></Link></li>
           </ul>
+          {brandGroups.map((g) => (<div key={g.label} className="brand-group">
+              <span className="label">{g.label}</span>
+              <ul className="hp-brand-grid">
+                {g.items.map((x) => <li key={x.href}><Link href={x.href}><span className="bn">{x.name}</span><span className="ba" aria-hidden="true">→</span></Link></li>)}
+              </ul>
+            </div>))}
         </div>
       </section>
 
@@ -159,37 +182,38 @@ export default function Home() {
       {/* [Rolex point of sale-banner: foto af Rolex-afdelingen hos Knud Pedersen, leveres og godkendes af Rolex] */}
 
       {/* 8. Smykker */}
-      <section className="section">
-        <div className="container split split--rev">
-          <div className="split__media">
-            {jewel?.image ? (
-        <img src={jewel.image} alt={`Marselis Jewellery ${jewel.name}`} loading="lazy" className="on-stage"/>) : <div className="ph">[Smykkefoto]</div>}
-          </div>
-          <div className="split__text">
+      <section className="hp-section hp-jewel" aria-labelledby="smykker-h">
+        <div className="container hp-jewel__grid">
+          <div className="hp-jewel__text">
             <span className="label">Smykker</span>
-            <h2>Smykker i ædle metaller</h2>
-            <p className="muted">Marselis Jewellery, Georg Jensen, Chopard og Gucci. Ringe, øreringe, halskæder og armbånd med certificerede diamanter.</p>
-            <ul className="cat-list">{jewelleryCategories.slice(0, 4).map((c) => <li key={c.slug}><Link href={`/smykker/${c.slug}`}>{c.label}</Link></li>)}<li><Link href="/vielsesringe">Vielsesringe</Link></li></ul>
-            <p style={{ marginTop: 24 }}><a className="link-arrow" href="https://marselis.lovable.app/" target="_blank" rel="noopener">Besøg Marselis Jewellery</a></p>
+            <h2 id="smykker-h">Smykker i ædle metaller</h2>
+            <p>Marselis Jewellery, Georg Jensen, Chopard og Gucci. Ringe, øreringe, halskæder og armbånd med certificerede diamanter.</p>
+            <ul className="row-links">
+              {jewelLinks.map((l) => <li key={l.label}><Link href={l.href}>{l.label}<span aria-hidden="true">→</span></Link></li>)}
+            </ul>
+            <div className="hp-actions">
+              <Link className="btn" href="/smykker">Se alle smykker</Link>
+              <a className="link-arrow" href="https://marselis.lovable.app/" target="_blank" rel="noopener">Besøg Marselis Jewellery</a>
+            </div>
           </div>
+                    <div className="hp-jewel__media"><img src={ETERNITY_YG} alt="Marselis Eternity-ring i gult guld med diamanter" loading="lazy"/></div>
         </div>
       </section>
 
-      {/* 8b. Vielsesringe: filmisk afsnit med centreret tekst */}
-      {bridal?.image && (<section className="ed-cine" aria-labelledby="cine-title">
-          <div className="ed-cine__media" aria-hidden="true">
-                        <img src={bridal.image} alt="" loading="lazy"/>
+      {/* 8b. Til det store ja: tekst til venstre, ring til højre */}
+      <section className="hp-bridal" aria-labelledby="cine-title">
+        <div className="hp-bridal__text">
+          <span className="label">Vielsesringe og forlovelsesringe</span>
+          <h2 id="cine-title">Til det store ja</h2>
+          <p>Prøv ringe i ro og mag. Book en tid, så sætter vi tid af til jer.</p>
+          <div className="hp-actions">
+            <Link className="btn" href="/book-tid?formaal=vielsesringe">Book tid</Link>
+            <Link className="link-arrow" href="/vielsesringe">Se vielsesringe</Link>
           </div>
-          <div className="ed-cine__text">
-            <small>Vielsesringe og forlovelsesringe</small>
-            <h2 id="cine-title">Til det store ja</h2>
-            <p>Prøv ringe i ro og mag. Book en tid, så sætter vi tid af til jer.</p>
-            <div className="btn-row">
-              <Link className="btn btn--outline" href="/book-tid?formaal=vielsesringe">Book tid</Link>
-              <Link className="link-arrow" href="/vielsesringe">Se vielsesringe</Link>
-            </div>
-          </div>
-        </section>)}
+          <p className="hp-bridal__extras">Gravering · Tilpasning af størrelse · Personlig rådgivning</p>
+        </div>
+                <div className="hp-bridal__media"><img src={AISLING_ROUNDS} alt="Forlovelsesring med diamanter" loading="lazy"/></div>
+      </section>
 
       {/* 9. Værksted og services */}
       <section className="section section--dark">

@@ -1292,3 +1292,192 @@ a:hover { color: var(--ink); }
 .bh--stage .bh__packshot { max-height: min(50vh, 470px); max-width: 70vw; }
 @media (max-width: 767px) { .bh--stage .bh__packshot { max-height: 52vw; } }
 .cx__dots { padding-bottom: var(--s4); }
+
+/* ============================================================
+   v8: Lars' fælles designregler + ny smykke-menu og forsidesektioner
+   ============================================================ */
+:root {
+  --cream: #faf8f5; --stage: #f2f1ee; --stage-2: #eae8e4; --ink: #1f1b18; --brass: #9a7b4f; --brass-ink: #7d6340;
+  --grey: #6b6560; --line: #e4dfd8; --max: 1320px;
+}
+html { overflow-x: clip; }
+body { background: var(--cream); color: var(--ink); }
+h1, h2, h3, h4, .display { text-transform: none !important; }
+p { color: inherit; }
+/* Eyebrows: guld, versaler, 24px streg under */
+.label { font-family: var(--font-body); font-size: 11px; font-weight: 500; letter-spacing: .15em; text-transform: uppercase; font-variant-caps: normal; color: var(--brass-ink); margin-bottom: var(--s2); }
+.label::after { content: ""; display: block; width: 24px; height: 1px; margin-top: 10px; background: var(--brass); }
+.center .label::after, .hp-head--center .label::after, .ed-head .label::after { margin-inline: auto; }
+.section-head .label::after, .ed-head .label::after { width: 24px; }
+/* Tekstlinks: understregning glider ud fra venstre ved hover */
+.link-arrow, .cx__link, .cat-card__cta, .ed-tile__cap em {
+  display: inline-block; min-height: 0; padding: 0 0 4px; border: 0; font-size: 12px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; text-decoration: none; color: var(--ink);
+  background: linear-gradient(currentColor, currentColor) left bottom / 100% 1px no-repeat; transition: background-size .35s var(--ease);
+}
+.link-arrow:hover, .cx__link:hover, a:hover .cat-card__cta, a:hover .link-arrow { opacity: 1; background-size: 0 1px; animation: line-in .5s var(--ease) .15s forwards; }
+@keyframes line-in { from { background-size: 0 1px; } to { background-size: 100% 1px; } }
+.link-arrow::after { content: none; }
+/* Knapper: 48px overalt */
+.btn { min-height: 48px; padding: 12px 32px; font-size: 12px; letter-spacing: .14em; }
+.btn--sm { min-height: 48px; padding: 12px 24px; font-size: 12px; }
+.btn--outline { background: transparent; color: var(--ink); border-color: var(--ink); }
+/* Sektioner: 120px på desktop, 72px på mobil */
+.section, .hp-section { padding-block: 72px; }
+@media (min-width: 1024px) { .section, .hp-section { padding-block: 120px; } }
+.hp-head { margin-bottom: var(--s6); }
+.hp-head h2 { font-size: clamp(30px, 3vw, 40px); margin: 0; }
+.hp-head--center { text-align: center; display: grid; justify-items: center; gap: var(--s2); }
+
+/* Header: forhåndsvisning vises helt, Rolex-uret i fuld officiel størrelse uden kant */
+.preview-flag { position: relative; z-index: 60; white-space: normal; line-height: 1.5; padding: 8px 16px; overflow: visible; }
+.rolex-clock { width: 150px; height: 70px; border: 0; outline: 0; box-shadow: none; background: transparent; overflow: hidden; }
+.site-header__in, .site-header.is-scrolled .site-header__in { height: 88px; }
+.head-actions { gap: var(--s3); }
+
+/* Mørkt slør over siden, mens en menu er åben */
+.mega-scrim { position: fixed; inset: 0; z-index: 45; background: rgba(0,0,0,.25); opacity: 0; visibility: hidden; transition: opacity .22s ease, visibility 0s linear .22s; }
+.mega-scrim.is-on { opacity: 1; visibility: visible; transition: opacity .22s ease; }
+
+/* Mega-menuer: 100 % uigennemsigtige, i fuld bredde, tynd guldstreg i toppen */
+.mega { left: calc(50% - 50vw); right: auto; width: 100vw; background: #faf8f5; opacity: 1; backdrop-filter: none; border-top: 1px solid #d9cbb4; border-bottom: 0; box-shadow: 0 30px 40px -30px rgba(0,0,0,.25); animation: mega-in .24s ease both; }
+@keyframes mega-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+.mega h2 { font-size: 11px; letter-spacing: .15em; color: var(--grey); font-weight: 500; margin: 0 0 var(--s2); }
+.mega a { display: inline-block; padding: 0; font-size: 15px; line-height: 2.2; color: var(--ink); background: linear-gradient(currentColor, currentColor) left 80% / 0 1px no-repeat; transition: background-size .2s ease; transform: none !important; }
+.mega a:hover { color: var(--ink); background-size: 100% 1px; }
+.mega ul { gap: 0; }
+/* Smykke-menuen: tre link-kolonner (60 %) og et fremhævet billedfelt (40 %) */
+.mega--smykker .mega__in { display: grid; grid-template-columns: 3fr 2fr; gap: var(--s8); padding-block: var(--s6) var(--s6); }
+.mega__cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s5); align-content: start; }
+.mega__sub { margin-top: var(--s4) !important; }
+.mega__all a { font-weight: 500; }
+.mega__brandlist a { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; line-height: 2.6; }
+.mega__brandlist .mega__all a { letter-spacing: 0; text-transform: none; font-size: 15px; line-height: 2.2; }
+.bridal-card { position: relative; display: grid; grid-template-columns: 1fr 1fr; background: var(--stage); border-radius: 2px; overflow: hidden; min-height: 300px; }
+.bridal-card__media { display: block; aspect-ratio: 4 / 5; background: var(--stage); background-image: none !important; }
+.bridal-card__media img { width: 100%; height: 100%; object-fit: contain; padding: 10%; mix-blend-mode: multiply; transition: transform .6s var(--ease); }
+.bridal-card:hover .bridal-card__media img { transform: scale(1.04); }
+.bridal-card__text { align-self: center; padding: var(--s4) var(--s4) var(--s4) 0; }
+.bridal-card__text strong { display: block; font-family: var(--font-display); font-weight: 300; font-size: 34px; line-height: 1.1; margin-bottom: var(--s2); }
+.bridal-card__text p { font-size: 15px; color: var(--grey); margin-bottom: var(--s3); }
+.mega .bridal-card .btn, .mobile-menu .bridal-card .btn { color: #fff; background: var(--ink); line-height: 1.2; font-size: 11px; padding: 12px 18px; }
+.mega .bridal-card .btn:hover { background: #000; background-size: auto; }
+@media (max-width: 1279px) { .bridal-card { grid-template-columns: 1fr; } .bridal-card__media { aspect-ratio: 16 / 9; } .bridal-card__text { padding: var(--s3); } }
+
+/* Mobil: smykke-menuen som accordion med kortet nederst */
+.mm-smykker[open] { padding-bottom: var(--s3); }
+.mobile-menu .mm-group h3 { font-family: var(--font-body); font-size: 11px; font-weight: 500; letter-spacing: .15em; text-transform: uppercase; color: var(--grey); margin: var(--s3) 0 0; }
+.mobile-menu .mm-group ul { columns: 1; padding: var(--s1) 0 0; }
+.mobile-menu .mm-group a { font-size: 16px; padding: 7px 0; }
+.mobile-menu .bridal-card { margin-top: var(--s3); grid-template-columns: 1fr; }
+.mobile-menu .bridal-card__media { aspect-ratio: 16 / 10; }
+.mobile-menu .bridal-card__text { padding: var(--s3); }
+
+/* Kategorikort: 4 kolonner med 24px mellemrum inden for containeren */
+.hp-cats { padding-top: 72px; padding-bottom: 0; }
+.cat-cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+.cat-card { display: flex; flex-direction: column; align-items: center; text-align: center; text-decoration: none; color: var(--ink); }
+.cat-card__media { display: flex; align-items: center; justify-content: center; width: 100%; aspect-ratio: 4 / 5; background: var(--stage); overflow: hidden; margin-bottom: var(--s3); }
+.cat-card__media img { height: 62%; width: auto; max-width: 80%; object-fit: contain; mix-blend-mode: multiply; transition: transform .4s ease; }
+.cat-card--big .cat-card__media img { height: auto; width: 72%; max-width: none; }
+.cat-card:hover .cat-card__media img { transform: scale(1.04); }
+.cat-card strong { font-family: var(--font-display); font-weight: 400; font-size: 24px; line-height: 1.2; margin-bottom: var(--s1); }
+.cat-card:hover { color: var(--ink); }
+@media (max-width: 1023px) { .cat-cards { grid-template-columns: 1fr 1fr; gap: var(--s5) var(--s2); } .cat-card strong { font-size: 20px; } }
+
+/* Rolex POS-banneret: ren afstand til næste sektion */
+.rx-pos { padding-bottom: 0; }
+.rx-pos__in { box-shadow: none !important; }
+
+/* Produktkort: kvadratiske felter, ure skaleres ens, centreret tekst */
+.card__media { aspect-ratio: 1 / 1; background: var(--stage); display: flex; align-items: center; justify-content: center; }
+.card__media img { width: auto; height: 55%; max-width: 70%; padding: 0; object-fit: contain; }
+.card__body { text-align: center; justify-items: center; gap: 4px; padding-top: var(--s2); }
+.card__brand { font-size: 11px; letter-spacing: .15em; color: var(--grey); }
+.card__name { font-family: var(--font-display); font-size: 18px; font-weight: 400; letter-spacing: 0; text-decoration: none !important; }
+.card:hover .card__name { text-decoration: underline !important; text-underline-offset: .2em; }
+.card__meta { font-size: 13px; color: #9a948e; }
+.card__price { font-size: 14px; color: var(--ink); }
+.card__price small { font-size: 14px; color: var(--grey); }
+.card .heart { background: transparent; }
+.card .heart svg { stroke: #b5aea6; transition: stroke .2s, fill .2s; }
+.card .heart:hover svg, .card .heart[aria-pressed="true"] svg { stroke: var(--ink); fill: var(--ink); }
+.card .heart:hover { background: transparent; }
+/* Karrusel: små pile, deaktiveret ved enderne, fremdriftslinje */
+.carousel__actions { display: flex; align-items: center; gap: var(--s3); }
+.carousel__nav button { width: 40px; height: 40px; border: 1px solid var(--ink); font-size: 15px; color: var(--ink); background: transparent; transition: background-color .2s, color .2s, opacity .2s; }
+.carousel__nav button:hover:not(:disabled) { background: var(--ink); color: #fff; }
+.carousel__nav button:disabled { opacity: .3; cursor: default; border-color: var(--grey); }
+.carousel__track { grid-auto-columns: calc((100% - 3 * 24px) / 4); gap: 24px; }
+.carousel__progress { position: relative; height: 2px; background: var(--line); margin-top: var(--s5); }
+.carousel__progress span { position: absolute; top: 0; bottom: 0; background: var(--ink); transition: left .2s linear; }
+@media (max-width: 1023px) { .carousel__track { grid-auto-columns: calc((100% - 2 * 24px) / 2.5); } }
+@media (max-width: 767px) { .carousel__track { grid-auto-columns: calc((100% - 16px) / 1.3); gap: 16px; } .carousel__nav { display: none; } }
+
+/* Fra butikken og værkstedet */
+.story-cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.story-cards > li { display: flex; }
+.story-card { display: flex; flex-direction: column; width: 100%; text-decoration: none; color: var(--ink); }
+.story-card__media { display: block; aspect-ratio: 4 / 5; overflow: hidden; background: var(--stage); margin-bottom: var(--s3); }
+.story-card__media img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--ease); }
+.story-card:hover .story-card__media img { transform: scale(1.03); }
+.story-card h3 { font-size: 24px; margin: 0 0 var(--s1); }
+.story-card p { font-size: 15px; color: var(--grey); margin-bottom: var(--s3); }
+.story-card .link-arrow { margin-top: auto; align-self: flex-start; }
+.story-card:hover { color: var(--ink); }
+@media (max-width: 899px) { .story-cards { grid-template-columns: 1fr; gap: var(--s6); } }
+
+/* Mærker */
+.hp-brands { background: var(--cream); }
+.brand-official { list-style: none; margin: 0 auto var(--s8); padding: 0; display: flex; justify-content: center; align-items: center; gap: var(--s8); }
+.brand-official img { width: 120px; height: 60px; }
+.brand-official__tudor { display: grid; justify-items: center; gap: 4px; text-decoration: none; color: var(--ink); }
+.brand-official__tudor strong { font-family: var(--font-display); font-weight: 400; font-size: 30px; letter-spacing: .08em; line-height: 1; }
+.brand-official__tudor small { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--grey); }
+.brand-group + .brand-group { margin-top: var(--s6); }
+.brand-group .label { text-align: left; }
+.hp-brand-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+.hp-brand-grid li { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.hp-brand-grid a { display: flex; align-items: center; justify-content: space-between; gap: var(--s1); min-height: 88px; padding: var(--s2) var(--s3); font-family: var(--font-display); font-size: 22px; line-height: 1.2; text-decoration: none; color: #4a4440; transition: color .2s, background-color .2s; }
+.hp-brand-grid a span { opacity: 0; transform: translateX(-4px); transition: opacity .2s, transform .2s; font-family: var(--font-body); font-size: 15px; }
+.hp-brand-grid a:hover { color: var(--ink); background: #fff; }
+.hp-brand-grid a:hover span { opacity: 1; transform: none; }
+@media (max-width: 767px) { .hp-brand-grid { grid-template-columns: 1fr 1fr; } .hp-brand-grid a { font-size: 18px; min-height: 72px; padding: var(--s2); } .hp-brand-grid a span { opacity: 1; transform: none; } .brand-official { gap: var(--s5); } }
+
+/* Smykker i ædle metaller: 12 kolonner, tekst 1–5 og billede 7–12 */
+.hp-jewel__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: center; }
+.hp-jewel__text { grid-column: 1 / 6; }
+.hp-jewel__media { grid-column: 7 / 13; aspect-ratio: 4 / 5; background: var(--stage); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.hp-jewel__media img { width: 78%; height: auto; mix-blend-mode: multiply; }
+.hp-jewel__text h2 { font-size: clamp(30px, 3vw, 40px); }
+.hp-jewel__text p { color: var(--grey); font-size: 16px; }
+.row-links { list-style: none; margin: var(--s4) 0 var(--s5); padding: 0; border-top: 1px solid var(--line); }
+.row-links li { border-bottom: 1px solid var(--line); }
+.row-links a { display: flex; justify-content: space-between; align-items: center; height: 56px; font-family: var(--font-display); font-size: 20px; color: #4a4440; text-decoration: none; transition: color .2s; }
+.row-links a span { font-family: var(--font-body); font-size: 15px; transition: transform .2s ease; }
+.row-links a:hover { color: var(--ink); }
+.row-links a:hover span { transform: translateX(4px); }
+.hp-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s4); }
+@media (max-width: 899px) { .hp-jewel__grid { grid-template-columns: 1fr; gap: var(--s5); } .hp-jewel__media { grid-column: 1; grid-row: 1; } .hp-jewel__text { grid-column: 1; } }
+
+/* Til det store ja: split-layout, maks. 80vh */
+.hp-bridal { display: grid; grid-template-columns: 1fr 1fr; max-height: 80vh; min-height: 560px; background: var(--sand); }
+.hp-bridal__text { align-self: center; padding: var(--s8) max(var(--gutter), calc((100vw - var(--max)) / 2)); padding-right: var(--s8); }
+.hp-bridal__text h2 { font-size: clamp(44px, 4.6vw, 64px); font-weight: 300; line-height: 1.05; margin-bottom: var(--s3); }
+.hp-bridal__text > p { color: var(--grey); max-width: 40ch; margin-bottom: var(--s5); }
+.hp-bridal__extras { margin: var(--s5) 0 0; font-size: 13px; letter-spacing: .04em; color: var(--grey); }
+.hp-bridal__media { background: var(--stage); display: flex; align-items: center; justify-content: center; overflow: hidden; max-height: 80vh; }
+.hp-bridal__media img { width: auto; height: 78%; max-height: 560px; max-width: 80%; object-fit: contain; mix-blend-mode: multiply; }
+@media (max-width: 899px) { .hp-bridal { grid-template-columns: 1fr; max-height: none; min-height: 0; } .hp-bridal__media { grid-row: 1; aspect-ratio: 4 / 3; } .hp-bridal__media img { height: 80%; } .hp-bridal__text { padding: var(--s6) var(--gutter) 72px; } }
+
+/* Velkomst-overskrift: normal stavning */
+.ed-welcome .ed-statement { letter-spacing: 0; font-size: clamp(26px, 2.6vw, 38px); line-height: 1.25; }
+.ed-intro { background: var(--cream); }
+.hp-brand-grid a .bn { opacity: 1; transform: none; font-family: var(--font-display); font-size: inherit; text-align: left; }
+.hp-brand-grid a .ba { margin-left: auto; }
+.hp-bridal__media img { width: 72%; height: auto; max-height: none; max-width: none; }
+.hp-bridal__extras { max-width: none; }
+.hp-jewel__media img { width: 70%; }
+.mega h2, .mobile-menu .mm-group h3 { text-transform: uppercase !important; }
+.bridal-card { grid-template-columns: 5fr 6fr; }
+.bridal-card .btn { display: inline-flex !important; align-items: center; justify-content: center; white-space: nowrap; padding: 12px 20px !important; }
+.mobile-menu .bridal-card .btn { display: flex !important; }

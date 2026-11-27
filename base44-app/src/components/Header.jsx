@@ -20,6 +20,31 @@ function RolexClock() {
             <img src={rolexAssets.plaque} alt="Officiel Rolex-forhandler" width={120} height={60}/>
     </Link>);
 }
+/** Smykke-menuen: faste links i den rækkefølge, Knud Pedersen ønsker */
+const SMYKKE_RINGE = [
+    { href: "/vielsesringe", label: "Vielsesringe" },
+    { href: "/vielsesringe", label: "Forlovelsesringe" },
+    { href: "/smykker/ringe", label: "Ringe med sten" },
+];
+const SMYKKE_SERVICE = [
+    { href: "/service", label: "Smykkeservice" },
+    { href: "/service", label: "Omtrækning af perlekæder" },
+];
+const SMYKKE_BRANDS = ["georg-jensen", "chopard", "gucci", "marselis"].map((s) => jewelleryBrandList.find((b) => b.slug === s)).filter(Boolean);
+const BRIDAL_IMG = "/billeder/shop/R-ASO4-S-GG-Aisling-Ring-Oval-Center-Round-Sides-GG-standing-1200.webp";
+/** Fremhævet kort med vielsesringe (bruges i mega-menuen og nederst i mobilmenuen) */
+function BridalCard() {
+    return (<div className="bridal-card">
+      <Link href="/vielsesringe" className="bridal-card__media" tabIndex={-1} aria-hidden="true">
+                <img src={BRIDAL_IMG} alt="" loading="lazy"/>
+      </Link>
+      <div className="bridal-card__text">
+        <strong>Vielsesringe</strong>
+        <p>Find jeres ringe sammen med os i butikken på Skt. Clemens Torv.</p>
+        <Link className="btn" href="/book-tid?formaal=vielsesringe">Book tid til vielsesringe</Link>
+      </div>
+    </div>);
+}
 const col = (title, links, cls) => (<div className={cls}><h2>{title}</h2><ul>{links.map((l) => <li key={l.href + l.label}><Link href={l.href}>{l.label}</Link></li>)}</ul></div>);
 function Mega({ id, onClose }) {
     const popular = ["tudor", "omega", "breitling", "grand-seiko", "tag-heuer", "longines"].map((s) => nonRolexBrands.find((x) => x.slug === s)).filter(Boolean).map((b) => ({ href: `/maerker/${b.slug}`, label: b.name }));
@@ -32,12 +57,33 @@ function Mega({ id, onClose }) {
       {col("Rolex", [{ href: "/rolex/discover", label: "Udforsk Rolex" }, { href: "/rolex/watches", label: "Rolex-ure" }, { href: "/rolex/new-watches", label: "Nye Rolex-ure" }])}
     </>);
     else if (id === "smykker")
-        body = (<>
-      {col("Smykker", [{ href: "/smykker", label: "Alle smykker" }, ...jewelleryCategories.map((c) => ({ href: `/smykker/${c.slug}`, label: c.label }))])}
-      {col("Ringe", [{ href: "/vielsesringe", label: "Vielsesringe" }, { href: "/smykker/ringe", label: "Forlovelsesringe og ringe med sten" }, { href: "/book-tid?formaal=vielsesringe", label: "Book tid til vielsesringe" }])}
-      {col("Mærker", jewelleryBrandList.map((b) => ({ href: `/smykker/${b.slug}`, label: b.name })))}
-      {col("Service", [{ href: "/service", label: "Smykkeservice" }, { href: "/service", label: "Omtrækning af perlekæder" }])}
-    </>);
+        return (<div className="mega mega--smykker" id={`mega-${id}`} onKeyDown={(e) => e.key === "Escape" && onClose()}>
+      <div className="container mega__in">
+        <div className="mega__cols">
+          <div>
+            <h2>Smykker</h2>
+            <ul>
+              {jewelleryCategories.map((c) => <li key={c.slug}><Link href={`/smykker/${c.slug}`}>{c.label}</Link></li>)}
+              <li className="mega__all"><Link href="/smykker">Se alle smykker <span aria-hidden="true">→</span></Link></li>
+            </ul>
+          </div>
+          <div>
+            <h2>Ringe</h2>
+            <ul>{SMYKKE_RINGE.map((l) => <li key={l.label}><Link href={l.href}>{l.label}</Link></li>)}</ul>
+            <h2 className="mega__sub">Service</h2>
+            <ul>{SMYKKE_SERVICE.map((l) => <li key={l.label}><Link href={l.href}>{l.label}</Link></li>)}</ul>
+          </div>
+          <div>
+            <h2>Udvalgte mærker</h2>
+            <ul className="mega__brandlist">
+              {SMYKKE_BRANDS.map((b) => <li key={b.slug}><Link href={`/smykker/${b.slug}`}>{b.name}</Link></li>)}
+              <li className="mega__all"><Link href="/maerker">Alle mærker <span aria-hidden="true">→</span></Link></li>
+            </ul>
+          </div>
+        </div>
+        <BridalCard />
+      </div>
+    </div>);
     else if (id === "maerker")
         body = (<>
       <div className="mega__top"><h2>Officiel forhandler</h2><ul><li><Link href="/rolex/discover">Rolex</Link></li><li><Link href="/maerker/tudor">Tudor</Link></li></ul></div>
@@ -72,7 +118,7 @@ export default function Header() {
     // Menuen lukker først efter et øjeblik, så man kan nå at føre musen ned i den
     const timer = useRef(undefined);
     const openMega = (id) => { window.clearTimeout(timer.current); setMega(id); };
-    const closeSoon = () => { window.clearTimeout(timer.current); timer.current = window.setTimeout(() => setMega(null), 350); };
+    const closeSoon = () => { window.clearTimeout(timer.current); timer.current = window.setTimeout(() => setMega(null), 150); };
     useEffect(() => { setMega(null); setMenu(false); }, [path]);
     useEffect(() => {
         setToday(todayText());
@@ -98,6 +144,16 @@ export default function Header() {
         document.addEventListener("mousedown", close);
         return () => document.removeEventListener("mousedown", close);
     }, [mega]);
+    useEffect(() => {
+        if (!mega)
+            return;
+        const k = (e) => { if (e.key === "Escape") {
+            document.querySelector(`[aria-controls="mega-${mega}"]`)?.focus();
+            setMega(null);
+        } };
+        document.addEventListener("keydown", k);
+        return () => document.removeEventListener("keydown", k);
+    }, [mega]);
     useEffect(() => { document.body.style.overflow = menu ? "hidden" : ""; }, [menu]);
     const active = (href) => (href === "/" ? path === "/" : path.startsWith(href));
     return (<>
@@ -110,13 +166,14 @@ export default function Header() {
           </span>
         </div>
       </div>
+      <div className={`mega-scrim${mega ? " is-on" : ""}`} aria-hidden="true" onMouseEnter={() => setMega(null)}/>
       <header ref={ref} className={`site-header${scrolled ? " is-scrolled" : ""}${hidden && !mega && !menu ? " is-hidden" : ""}`}>
         <div className="container site-header__in">
           <button className="burger" type="button" aria-label="Åbn menu" aria-expanded={menu} onClick={() => setMenu(true)}><span /><span /><span /></button>
           <nav className="nav nav--desktop" aria-label="Hovedmenu">
             {mainNav.map((n) => (<div key={n.key} className={`nav__item${mega === n.mega ? " is-open" : ""}`} onMouseEnter={() => openMega(n.mega)} onMouseLeave={closeSoon}>
                 <Link className="nav__link" href={n.href} aria-haspopup="true" aria-expanded={mega === n.mega} aria-controls={`mega-${n.mega}`} aria-current={active(n.href) ? "page" : undefined} onFocus={() => openMega(n.mega)}>{n.label}</Link>
-                {mega === n.mega && <Mega id={n.mega} onClose={() => setMega(null)}/>}
+                {mega === n.mega && <Mega id={n.mega} onClose={() => { setMega(null); document.querySelector(`[aria-controls="mega-${n.mega}"]`)?.focus(); }}/>}
               </div>))}
           </nav>
           <Link className="logo" href="/" aria-label="Knud Pedersen, til forsiden"><b>KNUD PEDERSEN</b><span>Ure &amp; smykker · Aarhus</span></Link>
@@ -135,7 +192,13 @@ export default function Header() {
           </div>
           <nav aria-label="Mobilmenu">
             <details><summary>Ure</summary><ul><li><Link href="/ure">Alle ure</Link></li>{watchCategories.map((c) => <li key={c.slug}><Link href={`/ure/${c.slug}`}>{c.label}</Link></li>)}<li><Link href="/brugte-ure">Brugte ure</Link></li></ul></details>
-            <details><summary>Smykker</summary><ul><li><Link href="/smykker">Alle smykker</Link></li>{jewelleryCategories.map((c) => <li key={c.slug}><Link href={`/smykker/${c.slug}`}>{c.label}</Link></li>)}<li><Link href="/vielsesringe">Vielsesringe</Link></li></ul></details>
+            <details className="mm-smykker"><summary>Smykker</summary>
+              <div className="mm-group"><h3>Smykker</h3><ul>{jewelleryCategories.map((c) => <li key={c.slug}><Link href={`/smykker/${c.slug}`}>{c.label}</Link></li>)}<li><Link href="/smykker"><b>Se alle smykker →</b></Link></li></ul></div>
+              <div className="mm-group"><h3>Ringe</h3><ul>{SMYKKE_RINGE.map((l) => <li key={l.label}><Link href={l.href}>{l.label}</Link></li>)}</ul></div>
+              <div className="mm-group"><h3>Service</h3><ul>{SMYKKE_SERVICE.map((l) => <li key={l.label}><Link href={l.href}>{l.label}</Link></li>)}</ul></div>
+              <div className="mm-group"><h3>Udvalgte mærker</h3><ul>{SMYKKE_BRANDS.map((b) => <li key={b.slug}><Link href={`/smykker/${b.slug}`}>{b.name}</Link></li>)}<li><Link href="/maerker"><b>Alle mærker →</b></Link></li></ul></div>
+              <BridalCard />
+            </details>
             <details><summary>Mærker</summary><ul><li><Link href="/rolex/discover">Rolex</Link></li><li><Link href="/maerker/tudor">Tudor</Link></li>{otherBrands.map((b) => <li key={b.slug}><Link href={`/maerker/${b.slug}`}>{b.name}</Link></li>)}</ul></details>
             <Link href="/service">Service &amp; reparation</Link>
             <Link href="/om-os">Om os</Link>
