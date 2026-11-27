@@ -6,7 +6,6 @@ import { layout } from "./geometry";
 // 3D-scenen hentes som en separat pakke, så resten af forsiden ikke venter på den
 const ShowroomScene = lazy(() => import("./ShowroomScene"));
 const ZONES = ["rolex-tudor", "ure", "smykker"];
-const READY_TIMEOUT = 8000;
 function hasWebGL() {
     try {
         const c = document.createElement("canvas");
@@ -36,6 +35,7 @@ export default function BrandShowroom({ plaque }) {
     const { slots, zoneAngles } = useMemo(() => layout(brands), [brands]);
     const ring = useMemo(() => slots.map((s) => s.index), [slots]);
     const [mode, setMode] = useState("loading");
+    const [calm, setCalm] = useState(false);
     const [can3d, setCan3d] = useState(false);
     const [ready, setReady] = useState(false);
     const [active, setActive] = useState(null);
@@ -49,8 +49,10 @@ export default function BrandShowroom({ plaque }) {
     const touchX = useRef(null);
     // Start med det samme: tjek WebGL og reduceret bevægelse, ellers vis listen
     useEffect(() => {
-        const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const ok = hasWebGL() && !reduced;
+        // Altid 3D-butikken. Kun hvis browseren slet ikke kan vise 3D, vises mærkerne som liste.
+        // Har man slået animationer fra, står kameraet stille, indtil man selv går rundt.
+        setCalm(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+        const ok = hasWebGL();
         setCan3d(ok);
         setMobile(window.matchMedia("(max-width: 767px)").matches);
         setMode(ok ? "3d" : "list");
@@ -63,13 +65,6 @@ export default function BrandShowroom({ plaque }) {
         io.observe(el);
         return () => io.disconnect();
     }, [mode]);
-    // Hvis scenen ikke er klar efter 8 sekunder, vises listen i stedet
-    useEffect(() => {
-        if (mode !== "3d" || ready)
-            return;
-        const t = window.setTimeout(() => setMode((m) => (m === "3d" && !ready ? "list" : m)), READY_TIMEOUT);
-        return () => window.clearTimeout(t);
-    }, [mode, ready]);
     const open = useCallback((i) => {
         setActive(i);
         setCurrent(i);
@@ -140,7 +135,7 @@ export default function BrandShowroom({ plaque }) {
                 touchX.current = null;
             }}>
           {can3d && (<Suspense fallback={null}>
-              <ShowroomScene brands={brands} active={active} hover={hover} lookAngle={lookAngle} mobile={mobile} current={current} paused={!onScreen && ready} onHover={setHover} onSelect={open} onReady={() => setReady(true)}/>
+              <ShowroomScene brands={brands} active={active} hover={hover} lookAngle={lookAngle} mobile={mobile} current={current} paused={!onScreen && ready} calm={calm} onHover={setHover} onSelect={open} onReady={() => setReady(true)}/>
             </Suspense>)}
           {!ready && <div className="showroom__loader" role="status"><span className="sr-only">Indlæser showroom</span><i /></div>}
 
@@ -183,13 +178,11 @@ export default function BrandShowroom({ plaque }) {
             <nav aria-label="Zoner">
               {ZONES.map((z, i) => (<span key={z}>{i > 0 && <i aria-hidden="true">·</i>}<button type="button" onClick={() => goZone(z)}>{zoneLabels[z]}</button></span>))}
             </nav>
-            <button type="button" className="showroom__toggle" onClick={() => { setActive(null); setMode("list"); }}>Vis som liste</button>
           </div>
         </div>)}
 
       {mode === "list" && (<div className="container">
           <BrandList plaque={plaque}/>
-          {can3d && <p className="showroom__back"><button type="button" className="link-arrow" onClick={() => setMode("3d")}>Vis 3D-showroom</button></p>}
         </div>)}
     </section>);
 }

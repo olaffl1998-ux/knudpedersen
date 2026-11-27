@@ -81,59 +81,66 @@ function signTexture(name, eyebrow) {
         ctx.fillText(name, 512, eyebrow ? 186 : 160);
     }));
 }
-/** Poleret marmorgulv i store fliser med fine årer */
+/** Travertin på gulvet: varm beige sten i store fliser med vandrette årer (som i Rolex-afdelingen) */
 function marbleTexture() {
-    return cached("marble", () => {
+    return cached("travertine", () => {
         const t = canvasTex(1024, 1024, (ctx) => {
-            ctx.fillStyle = "#efe9e0";
+            ctx.fillStyle = "#e6dac7";
             ctx.fillRect(0, 0, 1024, 1024);
-            let seed = 7;
+            let seed = 11;
             const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
-            for (let i = 0; i < 26; i++) {
-                ctx.strokeStyle = `rgba(150,135,115,${0.05 + rnd() * 0.12})`;
-                ctx.lineWidth = 0.6 + rnd() * 2.2;
-                ctx.beginPath();
-                let x = rnd() * 1024, y = rnd() * 1024;
-                ctx.moveTo(x, y);
-                for (let j = 0; j < 9; j++) {
-                    x += (rnd() - 0.3) * 160;
-                    y += (rnd() - 0.5) * 120;
-                    ctx.lineTo(x, y);
-                }
-                ctx.stroke();
+            for (let i = 0; i < 140; i++) {
+                const y = rnd() * 1024, h = 1 + rnd() * 5;
+                ctx.fillStyle = `rgba(${rnd() > 0.5 ? "170,150,120" : "250,244,232"},${0.08 + rnd() * 0.18})`;
+                ctx.fillRect(0, y, 1024, h);
             }
-            ctx.strokeStyle = "rgba(120,100,80,.25)";
+            for (let i = 0; i < 900; i++) {
+                ctx.fillStyle = `rgba(150,128,100,${0.1 + rnd() * 0.2})`;
+                ctx.fillRect(rnd() * 1024, rnd() * 1024, 1 + rnd() * 5, 1 + rnd() * 2);
+            }
+            ctx.strokeStyle = "rgba(140,120,95,.35)";
             ctx.lineWidth = 2;
-            ctx.strokeRect(0, 0, 512, 512);
-            ctx.strokeRect(512, 0, 512, 512);
-            ctx.strokeRect(0, 512, 512, 512);
-            ctx.strokeRect(512, 512, 512, 512);
+            for (const y of [0, 512]) {
+                ctx.strokeRect(0, y, 1024, 512);
+            }
+            ctx.beginPath();
+            ctx.moveTo(512, 0);
+            ctx.lineTo(512, 512);
+            ctx.moveTo(256, 512);
+            ctx.lineTo(256, 1024);
+            ctx.moveTo(768, 512);
+            ctx.lineTo(768, 1024);
+            ctx.stroke();
         });
         t.wrapS = t.wrapT = THREE.RepeatWrapping;
         return t;
     });
 }
-/** Valnøddepaneler på væggene */
+/** Lodrette træ-lameller på væggene, som i Rolex-afdelingen hos Knud Pedersen */
 function walnutTexture() {
-    return cached("walnut", () => {
+    return cached("slats", () => {
         const t = canvasTex(512, 512, (ctx) => {
-            ctx.fillStyle = WALNUT;
-            ctx.fillRect(0, 0, 512, 512);
-            for (let i = 0; i < 90; i++) {
-                ctx.strokeStyle = `rgba(${i % 2 ? "30,18,10" : "110,80,55"},${0.08 + (i % 5) * 0.03})`;
-                ctx.lineWidth = 1 + (i % 3);
-                const x = (i * 37) % 512;
-                ctx.beginPath();
-                ctx.moveTo(x, 0);
-                ctx.bezierCurveTo(x + 8, 170, x - 8, 340, x + 4, 512);
-                ctx.stroke();
+            const n = 8, w = 512 / n;
+            for (let i = 0; i < n; i++) {
+                const x = i * w;
+                const g = ctx.createLinearGradient(x, 0, x + w, 0);
+                g.addColorStop(0, "#4e3320");
+                g.addColorStop(0.18, "#86603f");
+                g.addColorStop(0.55, "#765236");
+                g.addColorStop(0.85, "#63432a");
+                g.addColorStop(1, "#24170d");
+                ctx.fillStyle = g;
+                ctx.fillRect(x, 0, w, 512);
+                for (let k = 0; k < 7; k++) {
+                    ctx.strokeStyle = `rgba(${k % 2 ? "40,22,10" : "150,100,65"},.18)`;
+                    ctx.lineWidth = 1;
+                    const gx = x + 6 + ((k * 13 + i * 7) % (w - 12));
+                    ctx.beginPath();
+                    ctx.moveTo(gx, 0);
+                    ctx.bezierCurveTo(gx + 3, 170, gx - 3, 340, gx + 1, 512);
+                    ctx.stroke();
+                }
             }
-            ctx.strokeStyle = "rgba(20,12,6,.55)";
-            ctx.lineWidth = 4;
-            ctx.strokeRect(2, 2, 508, 508);
-            ctx.strokeStyle = "rgba(200,160,110,.18)";
-            ctx.lineWidth = 2;
-            ctx.strokeRect(40, 40, 432, 432);
         });
         t.wrapS = t.wrapT = THREE.RepeatWrapping;
         return t;
@@ -142,8 +149,12 @@ function walnutTexture() {
 /** Bagvæggen i nichen: lyst kalkpuds med et lysfald fra spottet ovenover, ligesom i en rigtig butik */
 function nicheTexture() {
     return cached("niche", () => canvasTex(256, 512, (ctx) => {
-        ctx.fillStyle = "#cfc0aa";
+        ctx.fillStyle = "#ddd0bb";
         ctx.fillRect(0, 0, 256, 512);
+        for (let y = 0; y < 512; y += 3) {
+            ctx.fillStyle = `rgba(${y % 9 ? "180,160,130" : "255,250,240"},.07)`;
+            ctx.fillRect(0, y, 256, 1 + (y % 5));
+        }
         const g = ctx.createRadialGradient(128, 40, 4, 128, 120, 300);
         g.addColorStop(0, "rgba(255,246,228,1)");
         g.addColorStop(0.35, "rgba(250,236,210,.85)");
@@ -344,18 +355,18 @@ function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, on
             cone.current.opacity += (target * 0.07 - cone.current.opacity) * Math.min(1, dt * 6);
     });
     return (<group position={[slot.x, 0, slot.z]} rotation={[0, slot.rotY, 0]} onPointerOver={(e) => { e.stopPropagation(); onHover(slot.index); document.body.style.cursor = "pointer"; }} onPointerOut={() => { onHover(null); document.body.style.cursor = ""; }} onClick={(e) => { e.stopPropagation(); onSelect(slot.index); }}>
-      {/* Sokkel i lys sten med mørk fod */}
-      <mesh position={[0, 0.06, 0]}>
-        <boxGeometry args={[0.8, 0.12, 0.8]}/>
-        <meshStandardMaterial color="#3a2a20" roughness={0.5}/>
+      {/* Montre: træskab med lys stenplade, som i butikken */}
+      <mesh position={[0, 0.05, 0]}>
+        <boxGeometry args={[0.74, 0.1, 0.74]}/>
+        <meshStandardMaterial color="#2a1a10" roughness={0.6}/>
       </mesh>
-      <mesh position={[0, 0.56, 0]} castShadow receiveShadow>
-        <boxGeometry args={[0.76, 0.9, 0.76]}/>
-        <meshStandardMaterial color="#f4efe6" roughness={0.35}/>
+      <mesh position={[0, 0.54, 0]} castShadow receiveShadow>
+        <boxGeometry args={[0.78, 0.88, 0.78]}/>
+        <meshStandardMaterial color="#7e4c2e" roughness={0.5}/>
       </mesh>
-      <mesh position={[0, 1.015, 0]}>
-        <boxGeometry args={[0.82, 0.03, 0.82]}/>
-        <meshStandardMaterial color={BRASS} metalness={0.6} roughness={0.3}/>
+      <mesh position={[0, 1.0, 0]}>
+        <boxGeometry args={[0.84, 0.05, 0.84]}/>
+        <meshStandardMaterial color="#efe6d6" roughness={0.35}/>
       </mesh>
       <mesh position={[0, 1.032, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[0.3, 32]}/>
@@ -392,6 +403,73 @@ function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, on
       {hover && !active && (<Html position={[0, 1.95, 0]} center pointerEvents="none" zIndexRange={[20, 10]}>
           <span className="sr3d-label">{b.name}</span>
         </Html>)}
+    </group>);
+}
+/** Barstol med grønt sæde i læder og træben (som i Rolex-afdelingen) */
+function Stool({ x, z }) {
+    return (<group position={[x, 0, z]}>
+      <mesh position={[0, 0.66, 0]} castShadow>
+        <cylinderGeometry args={[0.2, 0.19, 0.08, 28]}/>
+        <meshStandardMaterial color="#2f7d52" roughness={0.55}/>
+      </mesh>
+      <mesh position={[0, 0.705, 0]}>
+        <sphereGeometry args={[0.2, 24, 8, 0, Math.PI * 2, 0, Math.PI / 6]}/>
+        <meshStandardMaterial color="#2f7d52" roughness={0.55}/>
+      </mesh>
+      {[0, 1, 2, 3].map((k) => {
+            const a = (k / 4) * Math.PI * 2 + Math.PI / 4;
+            return (<mesh key={k} position={[Math.cos(a) * 0.13, 0.31, Math.sin(a) * 0.13]} rotation={[Math.sin(a) * 0.1, 0, -Math.cos(a) * 0.1]}>
+            <cylinderGeometry args={[0.018, 0.014, 0.64, 8]}/>
+            <meshStandardMaterial color="#6e4127" roughness={0.5}/>
+          </mesh>);
+        })}
+      <mesh position={[0, 0.25, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.15, 0.008, 6, 28]}/>
+        <meshStandardMaterial color={BRASS} metalness={0.6} roughness={0.35}/>
+      </mesh>
+    </group>);
+}
+/** Rådgivningsbord i træ med stenplade og to grønne stole */
+function Counter({ x, z, side }) {
+    return (<group>
+      <mesh position={[x, 0.47, z]} castShadow receiveShadow>
+        <boxGeometry args={[0.6, 0.94, 1.5]}/>
+        <meshStandardMaterial color="#7e4c2e" roughness={0.5}/>
+      </mesh>
+      <mesh position={[x - side * 0.05, 0.965, z]}>
+        <boxGeometry args={[0.74, 0.05, 1.6]}/>
+        <meshStandardMaterial color="#efe6d6" roughness={0.35}/>
+      </mesh>
+      <Stool x={x - side * 0.62} z={z - 0.4}/>
+      <Stool x={x - side * 0.62} z={z + 0.4}/>
+    </group>);
+}
+/** Lænestol i mørkegrøn velour */
+function Armchair({ x, z, rotY }) {
+    const mat = <meshStandardMaterial color="#1e4636" roughness={0.9}/>;
+    return (<group position={[x, 0, z]} rotation={[0, rotY, 0]}>
+      <RoundedBox args={[0.72, 0.2, 0.66]} radius={0.06} smoothness={3} position={[0, 0.38, 0]} castShadow>{mat}</RoundedBox>
+      <RoundedBox args={[0.74, 0.5, 0.16]} radius={0.07} smoothness={3} position={[0, 0.66, -0.27]} rotation={[-0.12, 0, 0]} castShadow>{mat}</RoundedBox>
+      {[-1, 1].map((k) => <RoundedBox key={k} args={[0.12, 0.22, 0.6]} radius={0.05} smoothness={3} position={[k * 0.36, 0.52, 0]}>{mat}</RoundedBox>)}
+      {[[-0.28, -0.24], [0.28, -0.24], [-0.28, 0.24], [0.28, 0.24]].map(([lx, lz], k) => (<mesh key={k} position={[lx, 0.14, lz]}>
+          <cylinderGeometry args={[0.02, 0.015, 0.28, 8]}/>
+          <meshStandardMaterial color="#2a1a10"/>
+        </mesh>))}
+    </group>);
+}
+/** Lounge for enden af butikken: to lænestole og et rundt bord med grøn marmorplade */
+function Lounge({ z }) {
+    return (<group>
+      <Armchair x={-0.85} z={z} rotY={Math.PI / 2 - 0.25}/>
+      <Armchair x={0.85} z={z} rotY={-Math.PI / 2 + 0.25}/>
+      <mesh position={[0, 0.42, z]} castShadow>
+        <cylinderGeometry args={[0.36, 0.36, 0.035, 40]}/>
+        <meshStandardMaterial color="#2c5a45" roughness={0.25} metalness={0.05}/>
+      </mesh>
+      <mesh position={[0, 0.2, z]}>
+        <cylinderGeometry args={[0.06, 0.16, 0.4, 20]}/>
+        <meshStandardMaterial color="#2a1a10" roughness={0.5}/>
+      </mesh>
     </group>);
 }
 /** Messingportal på tværs af gangen, der markerer en ny zone */
@@ -431,16 +509,17 @@ function Pendant({ z }) {
 function Room({ slots, gaps, length, hq }) {
     const W = HALL_HALF * 2;
     const floor = useMemo(() => { const t = marbleTexture().clone(); t.needsUpdate = true; t.repeat.set(W / 2, (length + 6) / 2); return t; }, [W, length]);
-    const walls = useMemo(() => { const t = walnutTexture().clone(); t.needsUpdate = true; t.repeat.set((length + 6) / 1.2, CEIL / 1.2); return t; }, [length]);
+    const walls = useMemo(() => { const t = walnutTexture().clone(); t.needsUpdate = true; t.repeat.set((length + 6) / 0.96, 1); return t; }, [length]);
+    const endWall = useMemo(() => { const t = walnutTexture().clone(); t.needsUpdate = true; t.repeat.set(W / 0.96, 1); return t; }, [W]);
     const zMid = -(length - 3) / 2;
     const L = length + 6;
     const pendants = useMemo(() => { const a = []; for (let z = -3; z > -length; z -= 5.5)
         a.push(z); return a; }, [length]);
     return (<>
-      {/* Marmorgulv */}
+      {/* Travertingulv */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, zMid]} receiveShadow>
         <planeGeometry args={[W, L]}/>
-        {hq ? (<MeshReflectorMaterial map={floor} blur={[400, 120]} resolution={512} mixBlur={1} mixStrength={0.9} mirror={0.45} roughness={0.35} depthScale={0.6} minDepthThreshold={0.4} maxDepthThreshold={1.3} metalness={0.05} color="#ffffff"/>) : (<meshStandardMaterial map={floor} roughness={0.18} metalness={0.05} envMapIntensity={1.2}/>)}
+        {hq ? (<MeshReflectorMaterial map={floor} blur={[400, 120]} resolution={512} mixBlur={1} mixStrength={0.5} mirror={0.3} roughness={0.5} depthScale={0.6} minDepthThreshold={0.4} maxDepthThreshold={1.3} metalness={0.05} color="#ffffff"/>) : (<meshStandardMaterial map={floor} roughness={0.3} metalness={0.02} envMapIntensity={1.1}/>)}
       </mesh>
       {/* Løber ned gennem gangen med messingkant */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.004, zMid]}>
@@ -451,15 +530,15 @@ function Room({ slots, gaps, length, hq }) {
           <planeGeometry args={[0.04, L - 3]}/>
           <meshStandardMaterial color={BRASS} metalness={0.5} roughness={0.4}/>
         </mesh>))}
-      {/* Vægge i valnød */}
+      {/* Vægge med træ-lameller */}
       {[-1, 1].map((k) => (<mesh key={k} position={[k * HALL_HALF, CEIL / 2, zMid]} rotation={[0, -k * Math.PI / 2, 0]}>
           <planeGeometry args={[L, CEIL]}/>
-          <meshStandardMaterial map={walls} roughness={0.55}/>
+          <meshStandardMaterial map={walls} bumpMap={walls} bumpScale={4} roughness={0.6}/>
         </mesh>))}
       {/* Endevæg med navnet */}
       <mesh position={[0, CEIL / 2, -length - 0.5]}>
         <planeGeometry args={[W, CEIL]}/>
-        <meshStandardMaterial map={walls} roughness={0.55}/>
+        <meshStandardMaterial map={endWall} bumpMap={endWall} bumpScale={4} roughness={0.6}/>
       </mesh>
       <mesh position={[0, 2.2, -length - 0.48]}>
         <planeGeometry args={[2.6, 0.81]}/>
@@ -467,7 +546,7 @@ function Room({ slots, gaps, length, hq }) {
       </mesh>
       <mesh position={[0, CEIL / 2, 2.5]} rotation={[0, Math.PI, 0]}>
         <planeGeometry args={[W, CEIL]}/>
-        <meshStandardMaterial map={walls} roughness={0.55}/>
+        <meshStandardMaterial map={endWall} roughness={0.6}/>
       </mesh>
       {/* Loft med lysliste langs begge sider */}
       <mesh position={[0, CEIL, zMid]} rotation={[Math.PI / 2, 0, 0]}>
@@ -482,6 +561,8 @@ function Room({ slots, gaps, length, hq }) {
       {slots.map((s) => <Niche key={s.brand.slug} slot={s}/>)}
       {slots.map((s) => (<BladeSign key={s.brand.slug} x={s.side * (HALL_HALF - 0.62)} z={s.z} name={s.brand.name} eyebrow={zoneLabels[s.brand.zone]}/>))}
       {gaps.map((g) => <ZonePortal key={g.zone} z={g.z} zone={g.zone}/>)}
+      {gaps.map((g) => <Counter key={"c" + g.zone} x={g.side * (HALL_HALF - 0.45)} z={g.z - 0.9} side={g.side}/>)}
+      <Lounge z={-length + 1.3}/>
     </>);
 }
 function Ready({ onReady }) {
@@ -518,7 +599,7 @@ function MovingSpot({ slot }) {
       <spotLight ref={light} angle={0.34} penumbra={0.7} intensity={0} distance={7} decay={1.4} color="#fff1da" target={tgt}/>
     </>);
 }
-export default function ShowroomScene({ brands, active, hover, lookAngle, mobile, current, onHover, onSelect, onReady, paused }) {
+export default function ShowroomScene({ brands, active, hover, lookAngle, mobile, current, onHover, onSelect, onReady, paused, calm }) {
     const { slots, gaps, length, walkEnd } = useMemo(() => layout(brands), [brands]);
     const dragRot = useRef(0);
     const look = useRef({ s: 0, dir: 1, pitch: 0, step: 0, touched: false, dragging: false, lastX: 0, lastY: 0 });
@@ -587,6 +668,6 @@ export default function ShowroomScene({ brands, active, hover, lookAngle, mobile
           <ToneMapping mode={ToneMappingMode.ACES_FILMIC}/>
         </EffectComposer>)}
       <WheelWalk look={look} enabled={active == null && !mobile} walkEnd={walkEnd}/>
-      <CameraRig pose={pose} overview={active == null && !mobile} look={look} auto={active == null && !mobile} walkEnd={walkEnd}/>
+      <CameraRig pose={pose} overview={active == null && !mobile} look={look} auto={active == null && !mobile && !calm} walkEnd={walkEnd}/>
     </Canvas>);
 }

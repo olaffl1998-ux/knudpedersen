@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export type Campaign = { href: string; desktop: string; mobile: string; brand: string; title: string; external?: boolean };
 
@@ -19,6 +19,38 @@ export default function CampaignHero({ slides }: { slides: Campaign[] }) {
   // Windows/macOS giver bare et roligt skift uden fade i stedet for at stoppe slideshowet.
   const [paused, setPaused] = useState(false);
   const n = slides.length;
+  const root = useRef<HTMLElement>(null);
+
+  // Overgang fra billedet ovenover: vi aflæser farven i bunden af billedet over heroen og lader toppen af
+  // kampagnebillederne glide ud fra netop den farve. Billedet ovenover (Rolex) bliver ikke ændret.
+  useEffect(() => {
+    const el = root.current;
+    let prevEl = el?.previousElementSibling ?? null;
+    while (prevEl && !prevEl.querySelector("img")) prevEl = prevEl.previousElementSibling;
+    const above = prevEl?.querySelector("img") as HTMLImageElement | null | undefined;
+    if (!el || !above) return;
+    const sample = () => {
+      try {
+        const w = 48, h = 6;
+        const c = document.createElement("canvas"); c.width = w; c.height = h;
+        const ctx = c.getContext("2d", { willReadFrequently: true });
+        if (!ctx || !above.naturalWidth) return;
+        const sh = Math.max(1, Math.round(above.naturalHeight * 0.03));
+        ctx.drawImage(above, 0, above.naturalHeight - sh, above.naturalWidth, sh, 0, 0, w, h);
+        const d = ctx.getImageData(0, 0, w, h).data;
+        let r = 0, g = 0, b = 0;
+        for (let k = 0; k < d.length; k += 4) { r += d[k]; g += d[k + 1]; b += d[k + 2]; }
+        const px = d.length / 4;
+        el.style.setProperty("--cx-blend", `rgb(${Math.round(r / px)} ${Math.round(g / px)} ${Math.round(b / px)})`);
+      } catch { /* billedet kan ikke aflæses: ingen overgang */ }
+    };
+    if (above.complete) sample(); else above.addEventListener("load", sample, { once: true });
+    const mq = window.matchMedia("(max-width: 767px)");
+    const again = () => (above.complete ? sample() : above.addEventListener("load", sample, { once: true }));
+    mq.addEventListener("change", again);
+    return () => { above.removeEventListener("load", sample); mq.removeEventListener("change", again); };
+  }, []);
+
   useEffect(() => {
     if (paused || n < 2) return;
     const t = setTimeout(() => go((i + 1) % n), DURATION);
@@ -31,7 +63,7 @@ export default function CampaignHero({ slides }: { slides: Campaign[] }) {
       : <Link href={c.href} className={className} tabIndex={tabIndex}>{children}</Link>;
 
   return (
-    <section className={`cx${paused ? " is-paused" : ""}`} aria-roledescription="karrusel" aria-label="Kampagner fra vores mærker"
+    <section ref={root} className={`cx${paused ? " is-paused" : ""}`} aria-roledescription="karrusel" aria-label="Kampagner fra vores mærker"
       onFocus={(e) => { if (e.target.matches(":focus-visible")) setPaused(true); }}
       onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false); }}>
       <div className="cx__stage">

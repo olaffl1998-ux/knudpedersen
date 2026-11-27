@@ -99,8 +99,6 @@ export default function Home() {
           <span className="rx-pos__panel">
             <iframe className="rx-pos__clock" title="Rolex-ur" src={rolexClockSrc()} scrolling="no" tabIndex={-1} />
             <span className="rx-pos__txt"><small>Officiel Rolex-forhandler</small><strong>Rolex hos Knud Pedersen</strong><em>Opdag mere</em></span>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="rx-pos__plaque" src={rolexAssets.plaque} alt="Officiel Rolex-forhandler" width={120} height={60} />
           </span>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="rx-pos__photo" src={POS_IMG} alt="Rolex-afdelingen hos Knud Pedersen på Skt. Clemens Torv" loading="eager" fetchPriority="high" decoding="async" />
