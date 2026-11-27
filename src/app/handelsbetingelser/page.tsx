@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/Seo";
 import { business } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Handelsbetingelser", alternates: { canonical: "/handelsbetingelser" } };
+export const metadata: Metadata = { title: "Handelsbetingelser", description: "Handelsbetingelser for Knud Pedersen A/S på Skt. Clemens Torv i Aarhus: priser, booking af tid, køb i butikken, service, reparation og klager.", alternates: { canonical: "/handelsbetingelser" } };
 
 export default function Handelsbetingelser() {
   return (

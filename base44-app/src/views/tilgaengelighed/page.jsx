@@ -1,6 +1,6 @@
 import { Breadcrumbs } from "@/components/Seo";
 import { business } from "@/lib/site";
-export const metadata = { title: "Tilgængelighedserklæring", alternates: { canonical: "/tilgaengelighed" } };
+export const metadata = { title: "Tilgængelighedserklæring", description: "Tilgængelighedserklæring for knudpedersen.dk: hvad vi gør for at siden kan bruges af alle, og hvordan du kontakter os om fejl.", alternates: { canonical: "/tilgaengelighed" } };
 export default function Tilgaengelighed() {
     return (<section className="section">
       <div className="container container--narrow">

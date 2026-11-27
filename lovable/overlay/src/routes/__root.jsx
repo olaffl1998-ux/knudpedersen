@@ -24,7 +24,7 @@ export const Route = createRootRoute({
       { title: "Knud Pedersen – Ure og smykker i Aarhus | Officiel Rolex-forhandler" },
       {
         name: "description",
-        content: "Ur- og smykkeforretning på Skt. Clemens Torv i Aarhus. Officiel Rolex-forhandler og autoriseret forhandler af Tudor, Omega, Breitling, Chopard og flere. Book et møde eller service.",
+        content: "Ure og smykker på Skt. Clemens Torv i Aarhus. Officiel Rolex-forhandler og forhandler af Tudor, Omega, Chopard og flere. Book tid eller service.",
       },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "da_DK" },

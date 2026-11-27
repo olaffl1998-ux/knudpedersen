@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/Seo";
 import { business } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Privatlivspolitik", alternates: { canonical: "/privatlivspolitik" } };
+export const metadata: Metadata = { title: "Privatlivspolitik", description: "Sådan behandler Knud Pedersen A/S dine personoplysninger, når du booker tid, skriver til os eller tilmelder dig nyhedsbrevet.", alternates: { canonical: "/privatlivspolitik" } };
 
 export default function Privatliv() {
   return (

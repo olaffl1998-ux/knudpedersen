@@ -8,6 +8,11 @@ import FeatureWatch from "@/components/FeatureWatch";
 import { CountUp, Words } from "@/components/Motion";
 import Hours from "@/components/Hours";
 import { MapEmbed } from "@/components/Consent";
+export const metadata = {
+    title: { absolute: "Knud Pedersen – Ure og smykker i Aarhus | Officiel Rolex-forhandler" },
+    description: "Ure og smykker på Skt. Clemens Torv i Aarhus. Officiel Rolex-forhandler og forhandler af Tudor, Omega, Chopard og flere. Book tid eller service.",
+    alternates: { canonical: "/" },
+};
 import { business, rolexClockSrc } from "@/lib/site";
 /** Fotos fra Knud Pedersens nuværende hjemmeside */
 const WORKSHOP = "/billeder/pics/Service_billede_forside.webp";

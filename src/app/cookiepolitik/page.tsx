@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/Seo";
 import { CookieSettingsButton } from "@/components/Consent";
 
-export const metadata: Metadata = { title: "Cookiepolitik", alternates: { canonical: "/cookiepolitik" } };
+export const metadata: Metadata = { title: "Cookiepolitik", description: "Hvilke cookies knudpedersen.dk bruger, hvad de gør, og hvordan du ændrer dit samtykke.", alternates: { canonical: "/cookiepolitik" } };
 
 const rows = [
   ["kp-consent-v1", "Nødvendig", "Husker dit cookievalg (gemmes i din browser)", "Til du sletter det"],

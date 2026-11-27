@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/Seo";
 import { business } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Tilgængelighedserklæring", alternates: { canonical: "/tilgaengelighed" } };
+export const metadata: Metadata = { title: "Tilgængelighedserklæring", description: "Tilgængelighedserklæring for knudpedersen.dk: hvad vi gør for at siden kan bruges af alle, og hvordan du kontakter os om fejl.", alternates: { canonical: "/tilgaengelighed" } };
 
 export default function Tilgaengelighed() {
   return (

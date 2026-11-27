@@ -1,6 +1,6 @@
 import { Breadcrumbs } from "@/components/Seo";
 import { CookieSettingsButton } from "@/components/Consent";
-export const metadata = { title: "Cookiepolitik", alternates: { canonical: "/cookiepolitik" } };
+export const metadata = { title: "Cookiepolitik", description: "Hvilke cookies knudpedersen.dk bruger, hvad de gør, og hvordan du ændrer dit samtykke.", alternates: { canonical: "/cookiepolitik" } };
 const rows = [
     ["kp-consent-v1", "Nødvendig", "Husker dit cookievalg (gemmes i din browser)", "Til du sletter det"],
     ["Rolex-ur (static.rolex.com)", "Nødvendig for Rolex-indhold", "Viser Rolex-uret, som Rolex kræver. Rolex kan sætte egne cookies, fx rlx-consent", "Se Rolex' cookiepolitik"],
