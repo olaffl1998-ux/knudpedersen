@@ -10,7 +10,7 @@ import Hours from "@/components/Hours";
 import { MapEmbed } from "@/components/Consent";
 import { business, rolexClockSrc } from "@/lib/site";
 /** Fotos fra Knud Pedersens nuværende hjemmeside */
-const WORKSHOP = "/billeder/pics/Service_billede_forside.jpg";
+const WORKSHOP = "/billeder/pics/Service_billede_forside.webp";
 const VIGNET = "/billeder/pics/KP_logo_vignet.png";
 /** Foto af Rolex-afdelingen hos Knud Pedersen (fra den nuværende hjemmeside) */
 const POS_IMG = "/billeder/pics/rolex-afdeling-knud-pedersen.jpg";
@@ -19,7 +19,7 @@ function RolexBanner({ s, eager }) {
     return (<Link href={s.href} className="rolex-banner">
       <picture>
         <source media="(max-width: 767px)" srcSet={s.mobile}/>
-                <img src={s.desktop} alt={s.alt} loading={eager ? "eager" : "lazy"} fetchPriority={eager ? "high" : undefined}/>
+                <img src={s.desktop} alt={s.alt} loading="eager" fetchPriority={eager ? "high" : "low"}/>
       </picture>
       <span className="rolex-banner__cap"><small>Rolex</small><strong>{s.title}</strong><em>Opdag</em></span>
     </Link>);

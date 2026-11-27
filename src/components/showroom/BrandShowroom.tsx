@@ -54,6 +54,8 @@ export default function BrandShowroom({ plaque }: { plaque: string }) {
   const [lookAngle, setLookAngle] = useState<number | null>(null);
   const [mobile, setMobile] = useState(false);
   const [current, setCurrent] = useState(ring[0] ?? 0);
+  // Scenen tegnes kun, når den er på skærmen, så resten af siden scroller glat og batteriet spares
+  const [onScreen, setOnScreen] = useState(true);
   const stage = useRef<HTMLDivElement>(null);
   const touchX = useRef<number | null>(null);
 
@@ -65,6 +67,13 @@ export default function BrandShowroom({ plaque }: { plaque: string }) {
     setMobile(window.matchMedia("(max-width: 767px)").matches);
     setMode(ok ? "3d" : "list");
   }, []);
+  useEffect(() => {
+    const el = stage.current;
+    if (!el || !("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting), { rootMargin: "200px 0px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [mode]);
   // Hvis scenen ikke er klar efter 8 sekunder, vises listen i stedet
   useEffect(() => {
     if (mode !== "3d" || ready) return;
@@ -131,7 +140,7 @@ export default function BrandShowroom({ plaque }: { plaque: string }) {
           }}>
           {can3d && (
             <Suspense fallback={null}>
-              <ShowroomScene brands={brands} active={active} hover={hover} lookAngle={lookAngle} mobile={mobile} current={current}
+              <ShowroomScene brands={brands} active={active} hover={hover} lookAngle={lookAngle} mobile={mobile} current={current} paused={!onScreen && ready}
                 onHover={setHover} onSelect={open} onReady={() => setReady(true)} />
             </Suspense>
           )}

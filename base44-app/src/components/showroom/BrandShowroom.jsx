@@ -43,6 +43,8 @@ export default function BrandShowroom({ plaque }) {
     const [lookAngle, setLookAngle] = useState(null);
     const [mobile, setMobile] = useState(false);
     const [current, setCurrent] = useState(ring[0] ?? 0);
+    // Scenen tegnes kun, når den er på skærmen, så resten af siden scroller glat og batteriet spares
+    const [onScreen, setOnScreen] = useState(true);
     const stage = useRef(null);
     const touchX = useRef(null);
     // Start med det samme: tjek WebGL og reduceret bevægelse, ellers vis listen
@@ -53,6 +55,14 @@ export default function BrandShowroom({ plaque }) {
         setMobile(window.matchMedia("(max-width: 767px)").matches);
         setMode(ok ? "3d" : "list");
     }, []);
+    useEffect(() => {
+        const el = stage.current;
+        if (!el || !("IntersectionObserver" in window))
+            return;
+        const io = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting), { rootMargin: "200px 0px" });
+        io.observe(el);
+        return () => io.disconnect();
+    }, [mode]);
     // Hvis scenen ikke er klar efter 8 sekunder, vises listen i stedet
     useEffect(() => {
         if (mode !== "3d" || ready)
@@ -130,7 +140,7 @@ export default function BrandShowroom({ plaque }) {
                 touchX.current = null;
             }}>
           {can3d && (<Suspense fallback={null}>
-              <ShowroomScene brands={brands} active={active} hover={hover} lookAngle={lookAngle} mobile={mobile} current={current} onHover={setHover} onSelect={open} onReady={() => setReady(true)}/>
+              <ShowroomScene brands={brands} active={active} hover={hover} lookAngle={lookAngle} mobile={mobile} current={current} paused={!onScreen && ready} onHover={setHover} onSelect={open} onReady={() => setReady(true)}/>
             </Suspense>)}
           {!ready && <div className="showroom__loader" role="status"><span className="sr-only">Indlæser showroom</span><i /></div>}
 

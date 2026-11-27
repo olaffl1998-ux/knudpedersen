@@ -518,7 +518,7 @@ function MovingSpot({ slot }) {
       <spotLight ref={light} angle={0.34} penumbra={0.7} intensity={0} distance={7} decay={1.4} color="#fff1da" target={tgt}/>
     </>);
 }
-export default function ShowroomScene({ brands, active, hover, lookAngle, mobile, current, onHover, onSelect, onReady }) {
+export default function ShowroomScene({ brands, active, hover, lookAngle, mobile, current, onHover, onSelect, onReady, paused }) {
     const { slots, gaps, length, walkEnd } = useMemo(() => layout(brands), [brands]);
     const dragRot = useRef(0);
     const look = useRef({ s: 0, dir: 1, pitch: 0, step: 0, touched: false, dragging: false, lastX: 0, lastY: 0 });
@@ -545,7 +545,7 @@ export default function ShowroomScene({ brands, active, hover, lookAngle, mobile
         const b = slots.findIndex((s) => s.index === i);
         return Math.abs(a - b) <= 2;
     };
-    return (<Canvas dpr={mobile ? [1, 1.5] : [1, 2]} camera={{ position: start.pos, fov: mobile ? 52 : 50, near: 0.1, far: 60 }} onCreated={({ camera }) => camera.lookAt(...start.target)} gl={{ antialias: !mobile, powerPreference: "high-performance" }} onPointerDown={(e) => { const L = look.current; L.dragging = true; L.touched = true; L.lastX = e.clientX; L.lastY = e.clientY; }} onPointerUp={() => { look.current.dragging = false; }} onPointerLeave={() => { look.current.dragging = false; }} onPointerMove={(e) => {
+    return (<Canvas frameloop={paused ? "never" : "always"} dpr={mobile ? [1, 1.5] : [1, 2]} camera={{ position: start.pos, fov: mobile ? 52 : 50, near: 0.1, far: 60 }} onCreated={({ camera }) => camera.lookAt(...start.target)} gl={{ antialias: !mobile, powerPreference: "high-performance" }} onPointerDown={(e) => { const L = look.current; L.dragging = true; L.touched = true; L.lastX = e.clientX; L.lastY = e.clientY; }} onPointerUp={() => { look.current.dragging = false; }} onPointerLeave={() => { look.current.dragging = false; }} onPointerMove={(e) => {
             const L = look.current;
             if (!L.dragging || e.pointerType === "touch")
                 return;

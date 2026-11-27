@@ -23,6 +23,8 @@ export type SceneProps = {
   onHover: (i: number | null) => void;
   onSelect: (i: number) => void;
   onReady: () => void;
+  /** Sand, når scenen er rullet ud af syne: så stopper tegningen */
+  paused?: boolean;
 };
 
 const BRASS = "#b8955e";
@@ -535,7 +537,7 @@ function MovingSpot({ slot }: { slot: Slot | null }) {
   );
 }
 
-export default function ShowroomScene({ brands, active, hover, lookAngle, mobile, current, onHover, onSelect, onReady }: SceneProps) {
+export default function ShowroomScene({ brands, active, hover, lookAngle, mobile, current, onHover, onSelect, onReady, paused }: SceneProps) {
   const { slots, gaps, length, walkEnd } = useMemo(() => layout(brands), [brands]);
   const dragRot = useRef(0);
   const look = useRef<Look>({ s: 0, dir: 1, pitch: 0, step: 0, touched: false, dragging: false, lastX: 0, lastY: 0 });
@@ -560,6 +562,7 @@ export default function ShowroomScene({ brands, active, hover, lookAngle, mobile
 
   return (
     <Canvas
+      frameloop={paused ? "never" : "always"}
       dpr={mobile ? [1, 1.5] : [1, 2]}
       camera={{ position: start.pos, fov: mobile ? 52 : 50, near: 0.1, far: 60 }}
       onCreated={({ camera }) => camera.lookAt(...start.target)}
