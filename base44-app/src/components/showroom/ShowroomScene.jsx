@@ -36,6 +36,104 @@ function plateTexture(name) {
     plates.set(name, t);
     return t;
 }
+/** Skilt på væggen bag hver vitrine: stort mærkenavn, så man kan se det på afstand */
+const signs = new Map();
+function signTexture(name, zone) {
+    const key = name + zone;
+    const hit = signs.get(key);
+    if (hit)
+        return hit;
+    const c = document.createElement("canvas");
+    c.width = 1024;
+    c.height = 300;
+    const ctx = c.getContext("2d");
+    const fam = getComputedStyle(document.body).getPropertyValue("--font-display").trim() || "Georgia, serif";
+    const body = getComputedStyle(document.body).getPropertyValue("--font-body").trim() || "sans-serif";
+    ctx.fillStyle = "#f8f3ea";
+    ctx.fillRect(0, 0, 1024, 300);
+    ctx.strokeStyle = "#b08d57";
+    ctx.lineWidth = 6;
+    ctx.strokeRect(14, 14, 996, 272);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#9a7b4f";
+    ctx.font = `500 30px ${body}`;
+    const eyebrow = zone.toUpperCase().split("").join(String.fromCharCode(8202));
+    ctx.fillText(eyebrow, 512, 70);
+    let size = 128;
+    ctx.font = `400 ${size}px ${fam}`;
+    while (ctx.measureText(name).width > 900 && size > 50) {
+        size -= 6;
+        ctx.font = `400 ${size}px ${fam}`;
+    }
+    ctx.fillStyle = "#1f1b18";
+    ctx.fillText(name, 512, 172);
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = 8;
+    signs.set(key, t);
+    return t;
+}
+/** Sildebensparket i lys eg, tegnet i en canvas (ingen billedfiler at hente) */
+let parquet = null;
+function parquetTexture() {
+    if (parquet)
+        return parquet;
+    const c = document.createElement("canvas");
+    c.width = c.height = 512;
+    const ctx = c.getContext("2d");
+    ctx.fillStyle = "#cdb899";
+    ctx.fillRect(0, 0, 512, 512);
+    const tones = ["#d6c3a5", "#c9b293", "#d1bc9c", "#c4ab8b", "#dbc9ad"];
+    const L = 128, W = 32;
+    let n = 0;
+    for (let y = -L; y < 512 + L; y += W) {
+        for (let x = -L; x < 512 + L; x += L) {
+            for (const dir of [0, 1]) {
+                ctx.save();
+                ctx.translate(x + (dir ? L / 2 : 0), y);
+                ctx.rotate(dir ? -Math.PI / 4 : Math.PI / 4);
+                ctx.fillStyle = tones[n++ % tones.length];
+                ctx.fillRect(0, 0, L * 0.7, W * 0.7);
+                ctx.strokeStyle = "rgba(90,70,45,.25)";
+                ctx.lineWidth = 1.5;
+                ctx.strokeRect(0, 0, L * 0.7, W * 0.7);
+                ctx.restore();
+            }
+        }
+    }
+    parquet = new THREE.CanvasTexture(c);
+    parquet.colorSpace = THREE.SRGBColorSpace;
+    parquet.wrapS = parquet.wrapT = THREE.RepeatWrapping;
+    parquet.repeat.set(7, 7);
+    parquet.anisotropy = 8;
+    return parquet;
+}
+/** Vægpaneler med lister, så væggen ligner en butiksvæg og ikke en flad flade */
+let panels = null;
+function panelTexture(count) {
+    if (panels)
+        return panels;
+    const c = document.createElement("canvas");
+    c.width = 256;
+    c.height = 512;
+    const ctx = c.getContext("2d");
+    ctx.fillStyle = "#f5ede1";
+    ctx.fillRect(0, 0, 256, 512);
+    ctx.strokeStyle = "rgba(120,95,60,.16)";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(22, 30, 212, 250); // øverste felt
+    ctx.strokeRect(22, 330, 212, 150); // brystpanel
+    ctx.fillStyle = "rgba(120,95,60,.12)";
+    ctx.fillRect(0, 300, 256, 8); // liste
+    ctx.fillStyle = "rgba(0,0,0,.05)";
+    ctx.fillRect(0, 0, 3, 512);
+    panels = new THREE.CanvasTexture(c);
+    panels.colorSpace = THREE.SRGBColorSpace;
+    panels.wrapS = THREE.RepeatWrapping;
+    panels.repeat.set(count * 2, 1);
+    return panels;
+}
 const GLASS_EDGES = new THREE.EdgesGeometry(new THREE.BoxGeometry(0.7, 0.72, 0.7));
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 /** Kameraet: i oversigten står det i midten og kigger rundt (træk for at kigge, ingen fri bevægelse).
@@ -69,10 +167,14 @@ function CameraRig({ pose, overview, look, auto }) {
         }
         else if (overview) {
             const L = look.current;
-            if (auto && !L.touched)
-                L.yaw += dt * 0.06;
+            if (auto && !L.touched) {
+                L.yaw += dt * 0.05;
+                L.walk += dt;
+            }
             const p = overviewPose(L.yaw);
-            cam.position.lerp(new THREE.Vector3(...p.pos), Math.min(1, dt * 8));
+            // Et ganske let skridt-vip, når man "går", så det føles som at gå rundt i butikken
+            const bob = auto && !L.touched ? Math.sin(L.walk * 3.2) * 0.012 : 0;
+            cam.position.lerp(new THREE.Vector3(p.pos[0], p.pos[1] + bob, p.pos[2]), Math.min(1, dt * 8));
             const t = new THREE.Vector3(p.target[0], p.target[1] + L.pitch * 2.6, p.target[2]);
             cur.current.target.lerp(t, Math.min(1, dt * 8));
             cam.lookAt(cur.current.target);
@@ -174,14 +276,14 @@ function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, on
       </group>
       {/* Messingplade med navnet (rigtig HTML-tekst) */}
       <mesh position={[0, 0.82, 0.395]}>
-        <boxGeometry args={[0.46, 0.11, 0.012]}/>
+        <boxGeometry args={[0.62, 0.15, 0.012]}/>
         <meshStandardMaterial color="#d2b37c" metalness={0.35} roughness={0.4}/>
       </mesh>
       <mesh position={[0, 0.82, 0.403]}>
-        <planeGeometry args={[0.44, 0.095]}/>
+        <planeGeometry args={[0.6, 0.13]}/>
         <meshBasicMaterial map={plateTexture(b.name)} transparent toneMapped={false}/>
       </mesh>
-      {(hover || active) && (<Html position={[0, 1.95, 0]} center pointerEvents="none" zIndexRange={[20, 10]}>
+      {hover && !active && (<Html position={[0, 1.95, 0]} center pointerEvents="none" zIndexRange={[20, 10]}>
           <span className="sr3d-label">{b.name}</span>
         </Html>)}
     </group>);
@@ -206,25 +308,82 @@ function Zoom({ look, enabled }) {
     }, [gl, look, enabled]);
     return null;
 }
-function Room({ zoneAngles }) {
+const CEIL = 4.2;
+function Plant({ angle }) {
+    const r = WALL_RADIUS - 0.7;
+    return (<group position={[Math.sin(angle) * r, 0, -Math.cos(angle) * r]} scale={0.78}>
+      <mesh position={[0, 0.3, 0]} castShadow>
+        <cylinderGeometry args={[0.26, 0.2, 0.6, 24]}/>
+        <meshStandardMaterial color="#e8e0d3" roughness={0.6}/>
+      </mesh>
+      {[[0, 1.05, 0, 0.42], [0.18, 1.4, 0.05, 0.3], [-0.15, 1.3, -0.08, 0.32], [0.02, 1.7, 0, 0.24]].map(([x, y, z, rr], i) => (<mesh key={i} position={[x, y, z]} castShadow>
+          <icosahedronGeometry args={[rr, 1]}/>
+          <meshStandardMaterial color={i % 2 ? "#87916f" : "#7a8563"} roughness={0.9} flatShading/>
+        </mesh>))}
+      <mesh position={[0, 0.75, 0]}>
+        <cylinderGeometry args={[0.025, 0.03, 0.5, 8]}/>
+        <meshStandardMaterial color="#5b4a36"/>
+      </mesh>
+    </group>);
+}
+function Room({ zoneAngles, slots, gaps }) {
     return (<>
+      {/* Sildebensparket */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <circleGeometry args={[WALL_RADIUS, 64]}/>
-        <meshStandardMaterial color={STONE} roughness={0.35} metalness={0.05}/>
+        <meshStandardMaterial map={parquetTexture()} roughness={0.55} metalness={0.02}/>
       </mesh>
-      <mesh position={[0, 2.6, 0]}>
-        <cylinderGeometry args={[WALL_RADIUS, WALL_RADIUS, 5.2, 64, 1, true]}/>
-        <meshStandardMaterial color={WALL} roughness={0.95} side={THREE.BackSide}/>
+      {/* Rundt tæppe i midten */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.004, 0]}>
+        <ringGeometry args={[0, 2.1, 64]}/>
+        <meshStandardMaterial color="#d9cfc0" roughness={1}/>
       </mesh>
-      {/* Tynd messinglist langs væggen */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.006, 0]}>
+        <ringGeometry args={[1.85, 1.95, 64]}/>
+        <meshStandardMaterial color="#b08d57" roughness={0.8}/>
+      </mesh>
+      {/* Vægge med paneler */}
+      <mesh position={[0, CEIL / 2, 0]}>
+        <cylinderGeometry args={[WALL_RADIUS, WALL_RADIUS, CEIL, 96, 1, true]}/>
+        <meshStandardMaterial map={panelTexture(slots.length + gaps.length)} emissiveMap={panelTexture(slots.length + gaps.length)} emissive="#ffffff" emissiveIntensity={0.22} roughness={0.9} side={THREE.BackSide}/>
+      </mesh>
+      {/* Fodliste i messing */}
       <mesh position={[0, 0.12, 0]}>
-        <cylinderGeometry args={[WALL_RADIUS - 0.01, WALL_RADIUS - 0.01, 0.04, 64, 1, true]}/>
+        <cylinderGeometry args={[WALL_RADIUS - 0.01, WALL_RADIUS - 0.01, 0.04, 96, 1, true]}/>
         <meshStandardMaterial color={BRASS} metalness={0.4} roughness={0.4} side={THREE.BackSide}/>
       </mesh>
+      {/* Loft med indbyggede spots over hver vitrine */}
+      <mesh position={[0, CEIL, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[WALL_RADIUS, 64]}/>
+        <meshStandardMaterial color="#f6f1ea" roughness={1} side={THREE.DoubleSide}/>
+      </mesh>
+      <mesh position={[0, CEIL - 0.01, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[2.3, 2.42, 64]}/>
+        <meshBasicMaterial color="#fff6e4" side={THREE.DoubleSide} toneMapped={false}/>
+      </mesh>
+      {slots.map((s) => (<mesh key={s.brand.slug} position={[s.x, CEIL - 0.01, s.z]} rotation={[Math.PI / 2, 0, 0]}>
+          <circleGeometry args={[0.09, 20]}/>
+          <meshBasicMaterial color="#fff8ea" side={THREE.DoubleSide} toneMapped={false}/>
+        </mesh>))}
+      {/* Mærkeskilte på væggen bag vitrinerne */}
+      {slots.map((s) => {
+            const r = WALL_RADIUS - 0.04;
+            return (<group key={s.brand.slug} position={[Math.sin(s.angle) * r, 2.6, -Math.cos(s.angle) * r]} rotation={[0, -s.angle, 0]}>
+            <mesh position={[0, 0, -0.01]}>
+              <boxGeometry args={[1.86, 0.58, 0.03]}/>
+              <meshStandardMaterial color="#b08d57" metalness={0.3} roughness={0.45}/>
+            </mesh>
+            <mesh position={[0, 0, 0.008]}>
+              <planeGeometry args={[1.8, 0.527]}/>
+              <meshBasicMaterial map={signTexture(s.brand.name, zoneLabels[s.brand.zone])} toneMapped={false}/>
+            </mesh>
+          </group>);
+        })}
+      {gaps.map((a, i) => <Plant key={i} angle={a}/>)}
       {Object.keys(zoneAngles).map((z) => {
             const a = zoneAngles[z];
             const r = WALL_RADIUS - 0.05;
-            return (<Html key={z} transform position={[Math.sin(a) * r, 3.1, -Math.cos(a) * r]} rotation={[0, -a, 0]} distanceFactor={4} pointerEvents="none" zIndexRange={[5, 0]}>
+            return (<Html key={z} transform position={[Math.sin(a) * r, 3.55, -Math.cos(a) * r]} rotation={[0, -a, 0]} distanceFactor={4} pointerEvents="none" zIndexRange={[5, 0]}>
             <span className="sr3d-zone">{zoneLabels[z]}</span>
           </Html>);
         })}
@@ -265,9 +424,9 @@ function MovingSpot({ slot }) {
     </>);
 }
 export default function ShowroomScene({ brands, active, hover, lookAngle, mobile, current, onHover, onSelect, onReady }) {
-    const { slots, zoneAngles } = useMemo(() => layout(brands), [brands]);
+    const { slots, zoneAngles, gaps } = useMemo(() => layout(brands), [brands]);
     const dragRot = useRef(0);
-    const look = useRef({ yaw: 0, pitch: 0, fov: mobile ? 50 : 40, touched: false, dragging: false, lastX: 0, lastY: 0 });
+    const look = useRef({ yaw: 0, pitch: 0, walk: 0, fov: mobile ? 50 : 40, touched: false, dragging: false, lastX: 0, lastY: 0 });
     const bySlot = (i) => (i == null ? null : slots.find((s) => s.index === i) ?? null);
     const pose = useMemo(() => {
         const a = bySlot(active);
@@ -308,7 +467,7 @@ export default function ShowroomScene({ brands, active, hover, lookAngle, mobile
             L.pitch = Math.max(-0.12, Math.min(0.1, L.pitch + dy * 0.0012));
         }} onPointerMissed={() => onHover(null)}>
       <color attach="background" args={["#efe7dc"]}/>
-      <fog attach="fog" args={["#efe7dc", 12, 26]}/>
+      <fog attach="fog" args={["#efe7dc", 14, 30]}/>
       <ambientLight intensity={0.85} color="#fff7ec"/>
       <hemisphereLight args={["#fffaf2", "#d9cfc0", 0.5]}/>
       <directionalLight position={[3, 8, 2]} intensity={0.6} color="#fff4e2"/>
@@ -320,7 +479,7 @@ export default function ShowroomScene({ brands, active, hover, lookAngle, mobile
         <Lightformer form="ring" intensity={1.8} position={[0, 6, 0]} rotation-x={Math.PI / 2} scale={4}/>
       </Environment>
       <Suspense fallback={null}>
-        <Room zoneAngles={zoneAngles}/>
+        <Room zoneAngles={zoneAngles} slots={slots} gaps={gaps}/>
         {slots.map((s) => (<Vitrine key={s.brand.slug} slot={s} active={active === s.index} hover={hover === s.index} showProduct={near(s.index)} still={!!s.brand.framed} dragRot={dragRot} onHover={onHover} onSelect={onSelect}/>))}
         <MovingSpot slot={bySlot(hover ?? active)}/>
         <ContactShadows position={[0, 0.005, 0]} scale={WALL_RADIUS * 2} resolution={mobile ? 256 : 1024} blur={2.4} opacity={0.45} far={1.4} frames={1} color="#5a4a3a"/>
