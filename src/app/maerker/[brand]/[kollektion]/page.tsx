@@ -31,12 +31,14 @@ export default async function CollectionPage({ params }: P) {
   if (!f) notFound();
   const { b, list, name } = f;
   const others = Array.from(new Set(getModelsForBrand(b.slug).map((m) => m.collection).filter(Boolean) as string[]));
+  const tudor = b.slug === "tudor";
   return (
-    <>
+    <div className={tudor ? "td td-col" : undefined}>
+      {tudor && <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,600..900&display=swap" precedence="default" />}
       <div className="container"><Breadcrumbs items={[{ name: b.name, href: `/maerker/${b.slug}` }, { name, href: `/maerker/${b.slug}/${kollektion}` }]} /></div>
       <section className="container page-head">
         <span className="label">{b.name}</span>
-        <h1>{name}</h1>
+        <h1 className={tudor ? "td-h1" : undefined}>{tudor ? `Tudor ${name}` : name}</h1>
         <p className="lead">{list.length} {list.length === 1 ? "model" : "modeller"} fra {b.name} {name}. Vejledende priser. Book et møde, så har vi urene klar til dig.</p>
         <nav className="subcats" aria-label="Kollektioner"><ul>
           <li><Link href={`/maerker/${b.slug}`}>Alle {b.name}</Link></li>
@@ -46,6 +48,6 @@ export default async function CollectionPage({ params }: P) {
       <section className="container" style={{ paddingBottom: 120 }}>
         <ul className="cards">{list.map((m) => <li key={m.slug}><ModelCard model={m} /></li>)}</ul>
       </section>
-    </>
+    </div>
   );
 }

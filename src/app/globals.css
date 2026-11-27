@@ -1800,3 +1800,11 @@ p { color: inherit; }
   .td-banner__text { padding: 0 20px; }
 }
 @media (prefers-reduced-motion: reduce) { .td-hero__text { animation: none; } .td-hero__slide { transition: none; } }
+/* Tudor-kollektionssider */
+.td-col .page-head { text-align: center; padding-top: 32px; }
+.td-col .page-head .label { color: var(--td-red); }
+.td-col .page-head .td-h1 { font-size: clamp(40px, 5vw, 76px); color: var(--td-ink); margin: 8px 0 16px; }
+.td-col .page-head .lead { margin-inline: auto; }
+.td-col .subcats ul { justify-content: center; }
+.td-col .subcats a { border-radius: 999px; }
+.td-col .subcats a[aria-current="page"] { background: var(--td-red); border-color: var(--td-red); color: #fff; }
