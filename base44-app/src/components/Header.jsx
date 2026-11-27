@@ -52,7 +52,6 @@ function Mega({ id, onClose }) {
     if (id === "ure")
         body = (<>
       {col("Kategorier", [{ href: "/ure", label: "Alle ure" }, ...watchCategories.slice(0, 4).map((c) => ({ href: `/ure/${c.slug}`, label: c.label }))])}
-      {col("Materiale og pris", [...watchCategories.slice(4).map((c) => ({ href: `/ure/${c.slug}`, label: c.label })), { href: "/brugte-ure", label: "Brugte ure" }])}
       {col("Populære mærker", [...popular, { href: "/maerker", label: "Alle mærker" }])}
       {col("Rolex", [{ href: "/rolex/discover", label: "Udforsk Rolex" }, { href: "/rolex/watches", label: "Rolex-ure" }, { href: "/rolex/new-watches", label: "Nye Rolex-ure" }])}
     </>);
