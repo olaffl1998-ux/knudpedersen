@@ -1,10 +1,11 @@
+import { daAlternates } from "@/data/en";
 import Link from "@/lib/next/link";
 import { Breadcrumbs, JsonLd } from "@/components/Seo";
 import { SITE_URL } from "@/lib/site";
 export const metadata = {
     title: "Urmager og service i Aarhus – reparation af ure og smykker",
     description: "Faguddannede urmagere og guldsmede i Aarhus. Service og reparation af ure, smykkeservice og omtrækning af perlekæder. Autoriseret Rolex-servicecenter.",
-    alternates: { canonical: "/service" },
+    alternates: daAlternates("/service"),
 };
 const services = [
     { label: "Urmager", title: "Service og reparation af ure", text: "Fuld service, vandtæthedstest, nyt glas, batteriskift og justering af lænke på alle de mærker, vi fører." },

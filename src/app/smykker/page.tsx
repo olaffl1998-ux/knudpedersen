@@ -1,3 +1,4 @@
+import { daAlternates } from "@/data/en";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { jewelleryBrandList, piecesFor, pieces } from "@/data/jewellery";
@@ -17,7 +18,7 @@ const brandImg: Record<string, string> = {
 export const metadata: Metadata = {
   title: "Smykker i Aarhus – Marselis, Georg Jensen, Chopard og Gucci",
   description: "Smykker i ædle metaller med certificerede diamanter hos Knud Pedersen i Aarhus. Ringe, øreringe, armbånd og halskæder samt omtrækning af perlekæder.",
-  alternates: { canonical: "/smykker" },
+  alternates: daAlternates("/smykker"),
 };
 
 export default function Smykker() {

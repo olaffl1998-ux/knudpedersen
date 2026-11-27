@@ -50,7 +50,7 @@ export const showroomBrands: ShowroomBrand[] = [
   { slug: "glashutte-original", name: "Glashütte Original", zone: "ure", href: "/maerker/glashutte-original",
     description: "Tysk finurmageri fra Glashütte i Sachsen, hvor næsten alle dele laves i eget hus.", product: "PanoInverse", image: `${S}glashutte-original.webp` },
   { slug: "breitling", name: "Breitling", zone: "ure", href: "/maerker/breitling",
-    description: "Breitling er kendt for kronografer til luft, land og hav, med Navitimer som det ikoniske pilotur.", product: "Se udvalget i butikken" },
+    description: "Breitling er kendt for kronografer til luft, land og hav, med Navitimer som det ikoniske pilotur.", product: "Navitimer B01 Chronograph 43", image: `${S}breitling.webp` },
   { slug: "omega", name: "Omega", zone: "ure", href: "/maerker/omega",
     description: "Omega står bag Speedmaster, det første ur på Månen, og Seamaster-serien af dykkerure.", product: "Seamaster Diver 300M", image: `${S}omega.webp` },
   { slug: "grand-seiko", name: "Grand Seiko", zone: "ure", href: "/maerker/grand-seiko",

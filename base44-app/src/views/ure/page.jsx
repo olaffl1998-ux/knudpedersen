@@ -1,3 +1,4 @@
+import { daAlternates } from "@/data/en";
 import Link from "@/lib/next/link";
 import Catalog from "@/components/Catalog";
 import { models, priceBands } from "@/data/catalog";
@@ -7,7 +8,7 @@ import { Breadcrumbs } from "@/components/Seo";
 export const metadata = {
     title: "Ure i Aarhus – Tudor, Omega, Breitling, Grand Seiko og flere",
     description: "Se ure fra Tudor, Omega, Breitling, Grand Seiko, TAG Heuer, Longines og flere hos Knud Pedersen i Aarhus. Filtrér efter mærke, størrelse, materiale og pris.",
-    alternates: { canonical: "/ure" },
+    alternates: daAlternates("/ure"),
 };
 export default function Watches() {
     // Rolex vises ikke her (Rolex' krav). Rolex har sin egen sektion.

@@ -1,3 +1,4 @@
+import { daAlternates } from "@/data/en";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/Seo";
@@ -7,7 +8,7 @@ import { business } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Om Knud Pedersen – ur- og smykkeforretning i Aarhus",
   description: "Knud Pedersens historie fra 1949 til i dag, vores værksted og ledige stillinger. Ur- og smykkeforretning på Skt. Clemens Torv i Aarhus.",
-  alternates: { canonical: "/om-os" },
+  alternates: daAlternates("/om-os"),
 };
 
 /** Historiske fotos fra Knud Pedersens nuværende hjemmeside */

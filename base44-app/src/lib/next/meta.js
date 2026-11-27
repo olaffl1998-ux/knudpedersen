@@ -24,5 +24,8 @@ export function metaHead(mod, params) {
   if (img) meta.push({ property: "og:image", content: (typeof img === "string" ? img : img.url).startsWith("http") ? (typeof img === "string" ? img : img.url) : `${SITE_URL}${typeof img === "string" ? img : img.url}` });
   if (SHOW_PREVIEW_BANNER || md.robots?.index === false) meta.push({ name: "robots", content: "noindex, nofollow" });
   const links = md.alternates?.canonical ? [{ rel: "canonical", href: `${SITE_URL}${md.alternates.canonical === "/" ? "" : md.alternates.canonical}` }] : [];
+  const langs = md.alternates?.languages ?? {};
+  for (const [lang, href] of Object.entries(langs)) links.push({ rel: "alternate", hrefLang: lang, href: `${SITE_URL}${href === "/" ? "" : href}` });
+  if (langs.da) links.push({ rel: "alternate", hrefLang: "x-default", href: `${SITE_URL}${langs.da === "/" ? "" : langs.da}` });
   return { meta, links };
 }

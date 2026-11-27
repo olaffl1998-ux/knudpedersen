@@ -1,3 +1,4 @@
+import { daAlternates } from "@/data/en";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Catalog from "@/components/Catalog";
@@ -9,7 +10,7 @@ import { Breadcrumbs } from "@/components/Seo";
 export const metadata: Metadata = {
   title: "Ure i Aarhus – Tudor, Omega, Breitling, Grand Seiko og flere",
   description: "Se ure fra Tudor, Omega, Breitling, Grand Seiko, TAG Heuer, Longines og flere hos Knud Pedersen i Aarhus. Filtrér efter mærke, størrelse, materiale og pris.",
-  alternates: { canonical: "/ure" },
+  alternates: daAlternates("/ure"),
 };
 
 export default function Watches() {

@@ -1,9 +1,12 @@
-import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
+import { HeadContent, Outlet, Scripts, createRootRoute, useRouterState } from "@tanstack/react-router";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { DefaultCatchBoundary } from "@/components/DefaultCatchBoundary";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Chrome from "@/components/en/Chrome";
+import HeaderEn from "@/components/en/HeaderEn";
+import FooterEn from "@/components/en/FooterEn";
 import Reveal from "@/components/Reveal";
 import ScrollFX from "@/components/ScrollFX";
 import { ConsentProvider } from "@/components/Consent";
@@ -54,11 +57,11 @@ function RootComponent() {
         {SHOW_PREVIEW_BANNER && (
           <div className="preview-flag">Forhåndsvisning. Ure og priser er hentet fra den nuværende webshop og skal gennemgås før lancering.</div>
         )}
-        <Header />
+        <Chrome da={<Header />} en={<HeaderEn />} />
         <main id="indhold">
           <Outlet />
         </main>
-        <Footer />
+        <Chrome da={<Footer />} en={<FooterEn />} />
         <Reveal />
         <ScrollFX />
       </ConsentProvider>
@@ -68,8 +71,10 @@ function RootComponent() {
 }
 
 function RootDocument({ children }) {
+  // De engelske sider (/en) får lang="en"
+  const path = useRouterState({ select: (s) => s.location.pathname });
   return (
-    <html lang="da">
+    <html lang={path.startsWith("/en") ? "en" : "da"}>
       <head>
         <HeadContent />
       </head>

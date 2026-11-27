@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { daToEn } from "@/data/en";
 import { useEffect, useRef, useState } from "react";
 import { mainNav, business, ROLEX_CLOCK_KEY, rolexClockSrc } from "@/lib/site";
 import { watchCategories, jewelleryCategories } from "@/data/categories";
@@ -207,6 +208,7 @@ export default function Header() {
             <span className="hide-m"><RolexClock /></span>
             <Link className="icon-btn" href="/soeg" aria-label="Søg"><SearchIcon /></Link>
             <Link className="icon-btn hide-m" href="/oenskeliste" aria-label="Ønskeliste"><HeartIcon /><WishlistCount /></Link>
+            <Link className="lang-switch" href={daToEn[path] ?? "/en"} hrefLang="en" lang="en" aria-label="English version">EN</Link>
             <Link className="btn btn--sm hide-m" href="/book-tid">Book tid</Link>
           </div>
         </div>

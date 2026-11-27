@@ -3,6 +3,9 @@ import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Chrome from "@/components/en/Chrome";
+import HeaderEn from "@/components/en/HeaderEn";
+import FooterEn from "@/components/en/FooterEn";
 import Reveal from "@/components/Reveal";
 import ScrollFX from "@/components/ScrollFX";
 import { ConsentProvider } from "@/components/Consent";
@@ -32,9 +35,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {SHOW_PREVIEW_BANNER && (
             <div className="preview-flag">Forhåndsvisning. Ure og priser er hentet fra den nuværende webshop og skal gennemgås før lancering.</div>
           )}
-          <Header />
+          <Chrome da={<Header />} en={<HeaderEn />} />
           <main id="indhold">{children}</main>
-          <Footer />
+          <Chrome da={<Footer />} en={<FooterEn />} />
           <Reveal />
           <ScrollFX />
         </ConsentProvider>

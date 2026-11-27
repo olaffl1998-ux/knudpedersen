@@ -1,3 +1,4 @@
+import { daAlternates } from "@/data/en";
 import Link from "@/lib/next/link";
 import { jewelleryBrandList, piecesFor, pieces } from "@/data/jewellery";
 import { Breadcrumbs } from "@/components/Seo";
@@ -14,7 +15,7 @@ const brandImg = {
 export const metadata = {
     title: "Smykker i Aarhus – Marselis, Georg Jensen, Chopard og Gucci",
     description: "Smykker i ædle metaller med certificerede diamanter hos Knud Pedersen i Aarhus. Ringe, øreringe, armbånd og halskæder samt omtrækning af perlekæder.",
-    alternates: { canonical: "/smykker" },
+    alternates: daAlternates("/smykker"),
 };
 export default function Smykker() {
     return (<>

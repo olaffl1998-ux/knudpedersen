@@ -98,6 +98,34 @@ function plateTexture(name) {
         ctx.fillText(name, 512, 116);
     }));
 }
+/** Kort med mærkets navn, når der endnu ikke er et produktbillede til vitrinen */
+function cardTexture(name) {
+    return cached("card:" + name, () => canvasTex(600, 760, (ctx) => {
+        const { display, body } = fonts();
+        ctx.fillStyle = "#f7f1e6";
+        ctx.fillRect(0, 0, 600, 760);
+        ctx.strokeStyle = "#b8955e";
+        ctx.lineWidth = 3;
+        ctx.strokeRect(28, 28, 544, 704);
+        ctx.lineWidth = 1;
+        ctx.strokeRect(40, 40, 520, 680);
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "#2a2016";
+        let size = 84;
+        ctx.font = `400 ${size}px ${display}`;
+        while (ctx.measureText(name).width > 470 && size > 36) {
+            size -= 4;
+            ctx.font = `400 ${size}px ${display}`;
+        }
+        ctx.fillText(name, 300, 330);
+        ctx.fillStyle = "#b8955e";
+        ctx.fillRect(270, 400, 60, 2);
+        ctx.fillStyle = "#6b5a48";
+        ctx.font = `500 22px ${body}`;
+        ctx.fillText(spaced("Se udvalget i butikken"), 300, 460);
+    }));
+}
 /** Skilt i messing på mørk valnød: bruges både som udhængsskilt og over nichen */
 function signTexture(name, eyebrow) {
     return cached("sign:" + name + eyebrow, () => canvasTex(1024, 320, (ctx) => {
@@ -515,7 +543,18 @@ function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, on
         <meshBasicMaterial color="#fff6e4" toneMapped={false}/>
       </mesh>
       <group ref={product} position={[0, base, 0]}>
-        {showProduct && b.model ? (<Suspense fallback={null}><ProductModel url={b.model}/></Suspense>) : showProduct && b.image ? (<ProductImage url={b.image} mode={mode}/>) : null}
+        {showProduct && b.model ? (<Suspense fallback={null}><ProductModel url={b.model}/></Suspense>) : showProduct && b.image ? (<ProductImage url={b.image} mode={mode}/>) : showProduct ? (
+        // Intet produktbillede endnu: et kort med mærkets navn i messingramme, så vitrinen aldrig står tom
+        <group rotation={[-0.12, 0, 0]}>
+            <mesh position={[0, 0.2, -0.012]}>
+              <boxGeometry args={[0.33, 0.41, 0.016]}/>
+              <meshStandardMaterial color="#c9a668" metalness={0.85} roughness={0.3} envMapIntensity={1.6}/>
+            </mesh>
+            <mesh position={[0, 0.2, -0.002]}>
+              <planeGeometry args={[0.3, 0.38]}/>
+              <meshBasicMaterial map={cardTexture(b.name)} toneMapped={false}/>
+            </mesh>
+          </group>) : null}
       </group>
       {/* Messingplade med navnet */}
       <mesh position={[0, 0.8, 0.385]}>

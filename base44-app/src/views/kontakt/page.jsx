@@ -1,3 +1,4 @@
+import { daAlternates } from "@/data/en";
 import Link from "@/lib/next/link";
 import ContactForm from "@/components/ContactForm";
 import Hours from "@/components/Hours";
@@ -7,7 +8,7 @@ import { business } from "@/lib/site";
 export const metadata = {
     title: "Kontakt Knud Pedersen – Skt. Clemens Torv 6, Aarhus",
     description: "Kontakt Knud Pedersen, Skt. Clemens Torv 6, 8000 Aarhus C. Tlf. 86 12 17 99. Åbningstider, kort og kontaktformular.",
-    alternates: { canonical: "/kontakt" },
+    alternates: daAlternates("/kontakt"),
 };
 export default function Kontakt() {
     return (<>
