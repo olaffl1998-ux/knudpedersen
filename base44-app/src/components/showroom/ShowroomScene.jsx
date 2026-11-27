@@ -3,6 +3,7 @@ import { Suspense, useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Billboard, ContactShadows, Environment, Html, Lightformer, useGLTF, useTexture } from "@react-three/drei";
 import * as THREE from "three";
+import "./r3f-compat";
 import { zoneLabels } from "@/data/brands";
 import { WALL_RADIUS, focusPose, layout, overviewPose } from "./geometry";
 const STONE = "#ebe6de";
