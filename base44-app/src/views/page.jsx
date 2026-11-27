@@ -45,7 +45,6 @@ const jewelLinks = [
     { href: "/smykker/armbaand", label: "Armbånd" },
 ];
 const campaigns = [
-    { brand: "Tudor", title: "Tudor Monarch", href: "/maerker/tudor", desktop: `${T}tudor-monarch-computer.w2400.h880.jpg`, mobile: `${T}tudor-monarch-mobil.w640.h640.jpg` },
     { brand: "Grand Seiko", title: "Snowflake, inspireret af naturen", href: "/maerker/grand-seiko", desktop: `${T}GS_Snowflake_logo_Desktop_2400x1100.w2400.h880.jpg`, mobile: `${T}GS_Snowflake_logo_Mobile_640x640-1.w640.h640.jpg` },
     { brand: "Marselis Jewellery", title: "Diamanter i 18 karat guld", href: "/smykker/marselis", desktop: `${T}0641-0554-4-Marselis--banner_desktop.w2400.h880.jpg`, mobile: `${T}0641-0554-4-Marselis--banner_mobile.w640.h640.jpg` },
     { brand: "TAG Heuer", title: "Designed to win", href: "/maerker/tag-heuer", desktop: `${T}2400x1100px_TAGH-DTW26-HolidaySeason_NESE_KnudPedersen.w2400.h880.jpg`, mobile: `${T}640x640px_TAGH-DTW26-HolidaySeason_NESE_KnudPedersen.w640.h640.jpg` },
