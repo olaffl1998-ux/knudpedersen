@@ -2,7 +2,7 @@
  * Tudor-siden (/maerker/tudor). Alt billed- og videomateriale er officielt Tudor-materiale.
  * Videoerne ligger i public/video/tudor: originalen fra Tudor (AV1) og en H.264-udgave til browsere uden AV1 (fx ældre iPhones).
  */
-const V = (k: string) => ({ av1: `/video/tudor/${k}.mp4`, h264: `/video/tudor/${k}-h264.mp4`, poster: `/video/tudor/${k}.jpg` });
+const V = (k: string) => ({ av1: `/video/tudor/${k}.mp4`, h264: `/video/tudor/${k}-h264.mp4`, mobile: `/video/tudor/${k}-m.mp4`, poster: `/video/tudor/${k}.jpg` });
 export type TudorVideo = ReturnType<typeof V>;
 
 export type TudorSlide = {

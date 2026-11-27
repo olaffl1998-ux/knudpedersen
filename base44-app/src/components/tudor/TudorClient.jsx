@@ -2,23 +2,45 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "@/lib/next/link";
 const AV1 = 'video/mp4; codecs="av01.0.08M.08"';
-/** Én video uden lyd. AV1-originalen først, H.264 som reserve */
-export function TudorVideoEl({ v, active = true, loop = true, onTime, onEnd, eager }) {
+/**
+ * Én video uden lyd. På mobil en lille H.264-udgave, ellers AV1-originalen og H.264 som reserve.
+ * `lazy`: videoen hentes først, når den er tæt på skærmen, og står stille, når den er ude af syne.
+ */
+export function TudorVideoEl({ v, active = true, loop = true, onTime, onEnd, lazy }) {
     const ref = useRef(null);
+    const [near, setNear] = useState(!lazy);
+    const [seen, setSeen] = useState(!lazy);
     useEffect(() => {
         const el = ref.current;
-        if (!el)
+        if (!lazy || !el || !("IntersectionObserver" in window)) {
+            setNear(true);
+            setSeen(true);
             return;
-        if (active) {
-            el.currentTime = 0;
-            el.play().catch(() => { });
         }
+        const io = new IntersectionObserver(([e]) => { setNear(e.isIntersecting); if (e.isIntersecting)
+            setSeen(true); }, { rootMargin: "300px 0px" });
+        io.observe(el);
+        return () => io.disconnect();
+    }, [lazy]);
+    useEffect(() => {
+        const el = ref.current;
+        if (!el || !seen)
+            return;
+        if (lazy && el.networkState === HTMLMediaElement.NETWORK_EMPTY)
+            el.load();
+        if (active && near)
+            el.play().catch(() => { });
         else
             el.pause();
-    }, [active]);
-    return (<video ref={ref} className="td-video" muted playsInline loop={loop} autoPlay={active} preload={eager || active ? "auto" : "metadata"} poster={v.poster} aria-hidden="true" onTimeUpdate={(e) => onTime?.(e.currentTarget.duration ? e.currentTarget.currentTime / e.currentTarget.duration : 0)} onEnded={onEnd}>
-      <source src={v.av1} type={AV1}/>
-      <source src={v.h264} type="video/mp4"/>
+    }, [active, near, seen, lazy]);
+    useEffect(() => { if (active && ref.current && !lazy)
+        ref.current.currentTime = 0; }, [active, lazy]);
+    return (<video ref={ref} className="td-video" muted playsInline loop={loop} autoPlay={active && !lazy} preload={active && !lazy ? "auto" : "none"} poster={v.poster} aria-hidden="true" onTimeUpdate={(e) => onTime?.(e.currentTarget.duration ? e.currentTarget.currentTime / e.currentTarget.duration : 0)} onEnded={onEnd}>
+      {seen && <>
+        <source src={v.mobile} type="video/mp4" media="(max-width: 700px)"/>
+        <source src={v.av1} type={AV1}/>
+        <source src={v.h264} type="video/mp4"/>
+      </>}
     </video>);
 }
 /** Videoslideren øverst: én video ad gangen, linjer i bunden viser hvor langt videoen er, pil og pause som på tudorwatch.com */
@@ -44,7 +66,7 @@ export function TudorHero({ slides }) {
     return (<section className="td-hero" aria-roledescription="karrusel" aria-label="Tudor-kampagner">
       <div className="td-hero__stage" ref={wrap}>
         {slides.map((x, k) => (<div key={x.key} className={`td-hero__slide${k === i ? " is-on" : ""}`} aria-hidden={k !== i}>
-            <TudorVideoEl v={x.video} active={k === i} loop={false} eager={k === 0} onTime={k === i ? setP : undefined} onEnd={k === i ? () => go(i + 1) : undefined}/>
+            <TudorVideoEl v={x.video} active={k === i} loop={false} onTime={k === i ? setP : undefined} onEnd={k === i ? () => go(i + 1) : undefined}/>
           </div>))}
         <div className="td-hero__shade"/>
         <div className="td-hero__text" key={s.key}>

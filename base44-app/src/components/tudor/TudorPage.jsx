@@ -64,7 +64,7 @@ export default function TudorPage() {
       </section>
 
       <section className="td-banner">
-        <TudorVideoEl v={tudorCentury.video}/>
+        <TudorVideoEl v={tudorCentury.video} lazy/>
         <div className="td-banner__shade"/>
         <div className="td-banner__text">
           <p className="td-eyebrow">{tudorCentury.eyebrow}</p>
@@ -76,7 +76,7 @@ export default function TudorPage() {
       <section className="td-styles">
         {tudorStyles.map((s) => (<Link key={s.key} className="td-style" href={s.href}>
             {"video" in s
-                ? <TudorVideoEl v={s.video}/>
+                ? <TudorVideoEl v={s.video} lazy/>
                 : <img src={s.image} alt="" loading="eager"/>}
             <span className="td-style__text">
               <span className="td-eyebrow">{s.eyebrow}</span>
