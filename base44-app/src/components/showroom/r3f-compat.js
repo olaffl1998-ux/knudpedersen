@@ -1,18 +1,17 @@
-import * as THREE from "three";
 /**
- * Base44's editor adds `data-source-location` and `data-dynamic-content` to every JSX element.
- * Inside a react-three-fiber <Canvas> those props land on three.js objects, and R3F reads a dashed
- * prop as a nested path (`object.data.dynamic-content`) and throws. Declaring the names on the
- * three base classes makes R3F treat them as plain, harmless properties.
+ * Base44's editor injects `data-source-location` and `data-dynamic-content` into every JSX element.
+ * Inside a react-three-fiber <Canvas> those props are applied to whatever instance the element
+ * creates: three.js objects and also postprocessing passes and effects, which do not inherit from
+ * three.js. R3F reads a dashed prop as a nested path (`object.data.dynamic-content`) and throws.
+ *
+ * Declaring both names on Object.prototype makes R3F see them as ordinary, harmless properties on
+ * every instance. They are non-enumerable, so nothing that iterates keys ever sees them.
+ * (Rettelse fra Base44's editor, 2026-11-27.)
  */
-const BASES = [THREE.Object3D, THREE.Material, THREE.BufferGeometry, THREE.Color, THREE.Fog];
 const ATTRIBUTES = ["data-source-location", "data-dynamic-content"];
-for (const Base of BASES) {
-    if (!Base)
+for (const name of ATTRIBUTES) {
+    if (name in Object.prototype)
         continue;
-    for (const name of ATTRIBUTES) {
-        if (name in Base.prototype)
-            continue;
-        Object.defineProperty(Base.prototype, name, { value: undefined, writable: true, configurable: true, enumerable: false });
-    }
+    Object.defineProperty(Object.prototype, name, { value: undefined, writable: true, configurable: true, enumerable: false });
 }
+export {};
