@@ -6,7 +6,7 @@ import { business, formatPrice } from "@/lib/site";
 import { toItems } from "@/lib/watchItems";
 import { TudorRail, TudorVideoEl } from "@/components/tudor/TudorClient";
 /** Billede eller film fra mærket. Toppen hentes med det samme, resten når man nærmer sig */
-function Media({ m, top }) {
+export function Media({ m, top }) {
     if (m.video)
         return <TudorVideoEl v={m.video} lazy={!top}/>;
     if (!m.image)
@@ -16,7 +16,7 @@ function Media({ m, top }) {
             <img src={m.image} alt="" loading="eager" fetchPriority={top ? "high" : undefined}/>
     </picture>);
 }
-function Cta({ c, cls = "bs-btn" }) {
+export function Cta({ c, cls = "bs-btn" }) {
     if (!c)
         return null;
     return c.href.startsWith("#") ? <a className={cls} href={c.href}>{c.label}</a> : <Link className={cls} href={c.href}>{c.label}</Link>;

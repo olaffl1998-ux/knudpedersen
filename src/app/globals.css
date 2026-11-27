@@ -2001,3 +2001,23 @@ p { color: inherit; }
 .bs--breitling { --bs-head: "Barlow Condensed", "Arial Narrow", Arial, sans-serif; --bs-body: "Barlow", Arial, sans-serif; --bs-hw: 700; --bs-case: uppercase; --bs-track: .01em; --bs-ink: #0a1e3c; --bs-muted: #56627a; --bs-accent: #0a1e3c; --bs-btn-bg: #ffc72c; --bs-btn-ink: #0a1e3c; --bs-alt: #f2f4f7; --bs-card: #f2f4f7; --bs-h1: clamp(40px, 5.4vw, 88px); }
 .bs--breitling .bs-quote { background: #0a1e3c; color: #ffc72c; }
 .bs--breitling .bs-btn--line { background: none; color: #0a1e3c; border-color: #0a1e3c; }
+
+/* Smykkesider i mærkernes stil */
+.bs--smykker .bs-tile__img img, .bs--smykker .bs-card__img img { width: 78%; height: 78%; }
+.bs-type { margin-bottom: 64px; scroll-margin-top: 120px; }
+.bs-type .bs-h3 { margin-bottom: 24px; }
+.bs-stories { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 24px; padding: clamp(48px, 7vw, 96px) max(24px, 4vw); }
+.bs-story img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+.bs-story div { padding: 20px 2px 0; }
+.bs-story p { margin: 8px 0 0; color: var(--bs-muted); line-height: 1.6; }
+.bs-intro .bs-link { margin-top: 24px; }
+/* Marselis: Cormorant og Inter på elfenben, som marselis.lovable.app */
+.bs--marselis { --bs-head: "Cormorant Garamond", Georgia, serif; --bs-body: "Inter", Arial, sans-serif; --bs-hw: 300; --bs-ink: #2b2520; --bs-muted: #6d645b; --bs-accent: #2b2520; --bs-btn-bg: #2b2520; --bs-bg: #f6f1ea; --bs-alt: #efe8de; --bs-card: #fbf8f3; }
+.bs--marselis .bs-hero--below { background: #f6f1ea; color: #2b2520; }
+.bs--marselis .bs-hero--below .bs-eyebrow { color: #6d645b; }
+.bs--marselis .bs-quote p { font-style: italic; }
+.bs--marselis .bs-tile { background: #fbf8f3; }
+/* Georg Jensen: Futura-agtig grotesk, spærrede versaler i små overskrifter, lyst og nordisk */
+.bs--georg-jensen { --bs-head: "Jost", "Futura", Arial, sans-serif; --bs-body: "Source Sans 3", Arial, sans-serif; --bs-hw: 400; --bs-track: -.01em; --bs-ink: #1e1e1e; --bs-muted: #5f5f5f; --bs-accent: #1e1e1e; --bs-btn-bg: #1e1e1e; --bs-alt: #f4f3f1; --bs-card: #f4f3f1; }
+.bs--georg-jensen .bs-eyebrow, .bs--georg-jensen .bs-btn, .bs--georg-jensen .bs-link { font-family: "Jost", Arial, sans-serif; font-weight: 600; letter-spacing: .18em; }
+.bs--georg-jensen .bs-tile { background: #fff; }

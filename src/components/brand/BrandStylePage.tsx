@@ -8,7 +8,7 @@ import { toItems } from "@/lib/watchItems";
 import { TudorRail, TudorVideoEl } from "@/components/tudor/TudorClient";
 
 /** Billede eller film fra mærket. Toppen hentes med det samme, resten når man nærmer sig */
-function Media({ m, top }: { m: BrandMediaBlock; top?: boolean }) {
+export function Media({ m, top }: { m: BrandMediaBlock; top?: boolean }) {
   if (m.video) return <TudorVideoEl v={m.video} lazy={!top} />;
   if (!m.image) return null;
   return (
@@ -20,7 +20,7 @@ function Media({ m, top }: { m: BrandMediaBlock; top?: boolean }) {
   );
 }
 
-function Cta({ c, cls = "bs-btn" }: { c?: { label: string; href: string }; cls?: string }) {
+export function Cta({ c, cls = "bs-btn" }: { c?: { label: string; href: string }; cls?: string }) {
   if (!c) return null;
   return c.href.startsWith("#") ? <a className={cls} href={c.href}>{c.label}</a> : <Link className={cls} href={c.href}>{c.label}</Link>;
 }

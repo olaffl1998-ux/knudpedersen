@@ -6,6 +6,8 @@ import { Breadcrumbs } from "@/components/Seo";
 import Link from "next/link";
 import BrandHero from "@/components/BrandHero";
 import { jewelleryMedia } from "@/data/brandMedia";
+import JewelleryStylePage from "@/components/brand/JewelleryStylePage";
+import { jewelleryStyles } from "@/data/brandStyles";
 import { getJewelleryCategory, jewelleryCategories, piecesOfType } from "@/data/categories";
 
 type P = { params: Promise<{ brand: string }> };
@@ -64,6 +66,7 @@ export default async function BrandPage({ params }: P) {
   if (getJewelleryCategory(slug)) return <CategoryPage slug={slug} />;
   const b = getJewelleryBrand(slug);
   if (!b) notFound();
+  if (jewelleryStyles[b.slug]) return <JewelleryStylePage b={b} s={jewelleryStyles[b.slug]} />;
   const list = piecesFor(b.slug);
   return (
     <>

@@ -27,6 +27,13 @@ function typeOf(name: string): string {
   if (/ring|band/.test(n)) return "Ringe";
   return "Andet";
 }
+/** Når navnet ikke siger typen, gør mærkets referencenummer det (Chopard: 79/81 halskæder, 82 ringe, 83/84 øreringe, 85 armbånd; Gucci: YBA armbånd, YBB halskæder, YBC ringe, YBD øreringe) */
+function typeByRef(brand: string, ref: string): string | undefined {
+  const r = ref.trim().toUpperCase();
+  if (brand === "chopard") return ({ "79": "Halskæder", "81": "Halskæder", "82": "Ringe", "83": "Øreringe", "84": "Øreringe", "85": "Armbånd" } as Record<string, string>)[r.slice(0, 2)];
+  if (brand === "gucci") return ({ YBA: "Armbånd", YBB: "Halskæder", YBC: "Ringe", YBD: "Øreringe" } as Record<string, string>)[r.slice(0, 3)];
+  return undefined;
+}
 function metalOf(name: string): string | undefined {
   const n = name.toLowerCase();
   const m: string[] = [];
@@ -48,7 +55,7 @@ function parse(): Piece[] {
     return {
       slug, brand, name: name.trim(), ref: ref.trim(), price: Number(price) || 0, oldId,
       image: img ? img.replace(/^\/upload_dir\//, "/billeder/").replace(/\.[a-z0-9]+$/i, ".webp") : undefined,
-      type: typeOf(name), metal: metalOf(name),
+      type: (() => { const t = typeOf(name); return t === "Andet" ? typeByRef(brand, ref) ?? t : t; })(), metal: metalOf(name),
     };
   });
 }

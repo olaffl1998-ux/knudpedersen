@@ -5,6 +5,8 @@ import { Breadcrumbs } from "@/components/Seo";
 import Link from "@/lib/next/link";
 import BrandHero from "@/components/BrandHero";
 import { jewelleryMedia } from "@/data/brandMedia";
+import JewelleryStylePage from "@/components/brand/JewelleryStylePage";
+import { jewelleryStyles } from "@/data/brandStyles";
 import { getJewelleryCategory, jewelleryCategories, piecesOfType } from "@/data/categories";
 export const dynamicParams = false;
 export function generateStaticParams() {
@@ -60,6 +62,8 @@ export default function BrandPage({ params }) {
     const b = getJewelleryBrand(slug);
     if (!b)
         notFound();
+    if (jewelleryStyles[b.slug])
+        return <JewelleryStylePage b={b} s={jewelleryStyles[b.slug]}/>;
     const list = piecesFor(b.slug);
     return (<>
       <BrandHero name={b.name} eyebrow="Smykker" intro={b.intro} hero={jewelleryMedia[b.slug]?.hero} heroMobile={jewelleryMedia[b.slug]?.heroMobile} packshot={list.find((p) => p.image)?.image}>

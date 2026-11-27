@@ -114,3 +114,35 @@ export const brandStyles = {
         quote: "Deutsche Uhrmacherkunst seit 1845",
     },
 };
+const GJ = "https://res.cloudinary.com/georgjensen/image/upload/f_auto,c_scale,dpr_2/remote_media/prd_new/on/demandware.static/-/Sites-GeorgJensen_DK-Library/default/images/content/georgjensen/georgjensen/";
+export const jewelleryStyles = {
+    marselis: {
+        font: gf("family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400"),
+        heroLayout: "below",
+        hero: { image: T + "0641-0554-4-Marselis--banner_desktop.w2400.h880.jpg", imageMobile: T + "0641-0554-4-Marselis--banner_mobile.w640.h640.jpg", eyebrow: "Marselis Jewellery", title: "Diamanter i 18 karat guld", cta: { label: "Book en tid", href: "/book-tid?formaal=smykker" } },
+        featuredTitle: "Udvalgte Marselis-smykker",
+        quote: "Certificerede diamanter, skabt til at blive båret hver dag",
+    },
+    "georg-jensen": {
+        font: gf("family=Jost:wght@400;500;600&family=Source+Sans+3:wght@400;600"),
+        heroLayout: "below",
+        hero: { image: T + "GJ_AW26_JW_Seasonal-_WS-eCom-banner_2400x1100px-1.w2400.h880.jpg", imageMobile: T + "GJ_AW26_JW_Seasonal-_WS-eCom-banner_640x640px.w640.h640.jpg", eyebrow: "Georg Jensen", title: "Dansk design siden 1904", cta: { label: "Book en tid", href: "/book-tid?formaal=smykker" } },
+        featuredTitle: "Udvalgte Georg Jensen-smykker",
+        stories: [
+            { image: GJ + "jewellery/mercy/GJ_AW26_Seasonal_JW_eCOM_Frontpage_story_tile_410x410_41600.jpg", title: "Mercy", text: "Bløde, organiske former i sølv og guld." },
+            { image: GJ + "jewellery/weft/GJ_SS26_Weft_eCOM_Frontpage_story_tile_410x410_11600.jpg", title: "Weft", text: "Vævede linjer inspireret af tekstilkunst." },
+        ],
+    },
+    chopard: {
+        font: brandStyles.chopard.font,
+        heroLayout: "c",
+        hero: { video: vid("chopard", "happy"), eyebrow: "Chopard", title: "Happy Diamonds", text: "De frit bevægelige diamanter, siden 1976.", cta: { label: "Book en tid", href: "/book-tid?formaal=smykker" } },
+        featuredTitle: "Udvalgte Chopard-smykker",
+    },
+    gucci: {
+        font: brandStyles.gucci.font,
+        heroLayout: "below",
+        hero: { image: T + "Gucci_GUCCI_INTERLOCKING_BANGLE_2400x1100.w2400.h880.jpg", imageMobile: T + "Gucci_GUCCI_INTERLOCKING_BANGLE_640x640.w640.h640.jpg", eyebrow: "Gucci", title: "Smykker i 18 karat guld", cta: { label: "Book en tid", href: "/book-tid?formaal=smykker" } },
+        featuredTitle: "Udvalgte Gucci-smykker",
+    },
+};
