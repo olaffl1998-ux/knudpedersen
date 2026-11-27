@@ -1,5 +1,5 @@
 import Link from "@/lib/next/link";
-import { models, genderOf } from "@/data/catalog";
+import { models } from "@/data/catalog";
 import { showroomBrands } from "@/data/brands";
 import BrandShowroom from "@/components/showroom/BrandShowroom";
 import { rolexAssets } from "@/data/rolex";
@@ -27,7 +27,6 @@ function RolexBanner({ s, eager }) {
 /** [Kundeanmeldelser fra Google eller Trustpilot: navn, dato og kilde leveres af Knud Pedersen] */
 const T = "/billeder/pics/_thumbs/";
 const ETERNITY_YG = "/billeder/shop/Ring-i-yg-1200.webp";
-const ETERNITY_WG = "/billeder/shop/Ring-i-wg-1200-1.webp";
 const AISLING_ROUNDS = "/billeder/shop/R-ASR4-S-RS-Aisling-Rounds-107ct-sides-015ct--RS30-1200.webp";
 /** Rolex' officielle billede til forhandlere (Udforsk Rolex, serviceeftersyn) */
 const ROLEX_SERVICE_IMG = "/billeder/pics/Rolex/v7images/discover-rolex-page-assets/discover-rolex-page-assets-landscape/keep-exploring-landscape/rolex-keep-exploring-servicing-2234_rolex-sav_retailers_176_controle-final_mise_heure_v2-landscape.jpg";
@@ -55,14 +54,6 @@ const reviews = [];
 export default function Home() {
     const byRef = (ref) => models.find((m) => m.ref === ref && m.image);
     const focus = byRef("1-66-06-04-22-05") ?? pick("glashutte-original")[0];
-    const herre = models.find((m) => m.image && m.brand === "omega" && genderOf(m) === "Herre") ?? pick("omega")[0];
-    const dame = models.find((m) => m.image && genderOf(m) === "Dame");
-    const tiles = [
-        { href: "/ure/herreure", title: "Herreure", img: herre?.image, big: false },
-        { href: "/ure/dameure", title: "Dameure", img: dame?.image, big: false },
-        { href: "/smykker", title: "Smykker og ringe", img: ETERNITY_WG, big: true },
-        { href: "/service", title: "Service og reparation", img: focus?.image, big: false },
-    ];
     const brandCount = showroomBrands.length;
     return (<>
       {/* 1. Rolex-banner øverst på forsiden (Rolex' krav til officielle forhandlere) */}
@@ -100,21 +91,6 @@ export default function Home() {
           </span>
                     <img className="rx-pos__photo" src={POS_IMG} alt="Rolex-afdelingen hos Knud Pedersen på Skt. Clemens Torv" loading="eager" fetchPriority="high" decoding="async"/>
         </Link>
-      </section>
-
-      {/* 3b. Kategorier: fire kort i samme stil (produkt på lys flade, 4:5) */}
-      <section className="hp-section hp-cats" aria-label="Kategorier">
-        <div className="container">
-          <ul className="cat-cards">
-            {tiles.map((t) => (<li key={t.href}>
-                <Link href={t.href} className={`cat-card${t.big ? " cat-card--big" : ""}`}>
-                  <span className="cat-card__media">{t.img &&  <img src={t.img} alt="" loading="eager"/>}</span>
-                  <strong>{t.title}</strong>
-                  <span className="cat-card__cta">Udforsk</span>
-                </Link>
-              </li>))}
-          </ul>
-        </div>
       </section>
 
       {/* 4b. Ét ur i fokus */}
