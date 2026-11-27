@@ -35,6 +35,15 @@ export type BrandStyle = {
 };
 
 export const brandStyles: Record<string, BrandStyle> = {
+  breitling: {
+    font: gf("family=Barlow+Condensed:wght@500;700&family=Barlow:wght@400;500"),
+    heroLayout: "bl",
+    hero: { video: vid("breitling", "xmas"), eyebrow: "Breitling", title: "Glædelig jul", cta: { label: "Book en tid", href: "/book-tid?maerke=breitling" } },
+    featuredTitle: "Udvalgte Breitling-ure",
+    collections: "tiles",
+    banner: { image: B("breitling") + "navitimer.jpg", eyebrow: "Navitimer", title: "Piloturet siden 1952", text: "Navitimer med den runde skydelineal blev lavet til piloter.", align: "l" },
+    quote: "Style, purpose and action",
+  },
   omega: {
     font: gf("family=Jost:wght@300;400;500"),
     heroLayout: "bl",

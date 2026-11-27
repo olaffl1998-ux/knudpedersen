@@ -122,7 +122,7 @@ export default function BrandStylePage({ b, s }) {
 
       {s.quote && <section className="bs-quote"><p>{s.quote}</p></section>}
 
-      <section className="section bs-all" id="alle-ure">
+      {list.length > 0 && (<section className="section bs-all" id="alle-ure">
         <div className="container">
           <div className="section-head">
             <div><p className="bs-eyebrow bs-eyebrow--dark">Udvalget i butikken</p><h2 className="bs-h2">Alle {b.name}-ure</h2></div>
@@ -130,7 +130,7 @@ export default function BrandStylePage({ b, s }) {
           </div>
           <Catalog items={toItems(list)} bandOrder={priceBands.map((x) => x.label)}/>
         </div>
-      </section>
+      </section>)}
 
       <section className="bs-retailer">
         <div className="container">

@@ -1997,3 +1997,7 @@ p { color: inherit; }
 .bs--gucci .bs-hero--below { background: #fff; color: #000; }
 .bs--gucci .bs-hero--below .bs-eyebrow { color: #666; }
 @media (max-width: 760px) { .bs-hero--below .bs-btn { margin: 12px 0 0; } }
+/* Breitling: smal, fed grotesk med versaler, marineblå og gul */
+.bs--breitling { --bs-head: "Barlow Condensed", "Arial Narrow", Arial, sans-serif; --bs-body: "Barlow", Arial, sans-serif; --bs-hw: 700; --bs-case: uppercase; --bs-track: .01em; --bs-ink: #0a1e3c; --bs-muted: #56627a; --bs-accent: #0a1e3c; --bs-btn-bg: #ffc72c; --bs-btn-ink: #0a1e3c; --bs-alt: #f2f4f7; --bs-card: #f2f4f7; --bs-h1: clamp(40px, 5.4vw, 88px); }
+.bs--breitling .bs-quote { background: #0a1e3c; color: #ffc72c; }
+.bs--breitling .bs-btn--line { background: none; color: #0a1e3c; border-color: #0a1e3c; }

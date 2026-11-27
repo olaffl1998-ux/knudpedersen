@@ -142,6 +142,7 @@ export default function BrandStylePage({ b, s }: { b: Brand; s: BrandStyle }) {
 
       {s.quote && <section className="bs-quote"><p>{s.quote}</p></section>}
 
+      {list.length > 0 && (
       <section className="section bs-all" id="alle-ure">
         <div className="container">
           <div className="section-head">
@@ -151,6 +152,7 @@ export default function BrandStylePage({ b, s }: { b: Brand; s: BrandStyle }) {
           <Catalog items={toItems(list)} bandOrder={priceBands.map((x) => x.label)} />
         </div>
       </section>
+      )}
 
       <section className="bs-retailer">
         <div className="container">
