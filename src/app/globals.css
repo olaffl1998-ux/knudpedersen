@@ -1808,3 +1808,11 @@ p { color: inherit; }
 .td-col .subcats ul { justify-content: center; }
 .td-col .subcats a { border-radius: 999px; }
 .td-col .subcats a[aria-current="page"] { background: var(--td-red); border-color: var(--td-red); color: #fff; }
+/* Tilgængelighed: læsbar kontrast i footerens nyhedsbrev og på kortene */
+.site-footer .newsletter input[type="email"] { color: var(--ink); background: #fff; border-color: #b9aea2; }
+.site-footer .newsletter label, .site-footer .check label { color: var(--grey); }
+.site-footer .check label a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.card__meta { color: #6f6963; }
+.site-footer .linklike { color: var(--grey); }
+.site-footer .footer-bottom, .site-footer .footer-bottom .linklike { color: var(--grey); }
+.type-panel small { color: #b39465; }

@@ -96,7 +96,7 @@ export function MapEmbed({ query, label }: { query: string; label: string }) {
     );
   }
   return (
-    <div className="map" role="img" aria-label={label}>
+    <div className="map" role="group" aria-label={label}>
       <b>Skt. Clemens Torv 6, Aarhus</b>
       <button type="button" className="btn btn--outline" onClick={() => save({ ...(consent ?? { statistics: false, marketing: false }), external: true })}>
         Vis kort (Google Maps sætter cookies)

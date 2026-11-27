@@ -67,7 +67,7 @@ export function MapEmbed({ query, label }) {
     if (consent?.external) {
         return (<iframe title={label} src={`https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`} style={{ border: 0, width: "100%", aspectRatio: "16/10" }} loading="lazy" referrerPolicy="no-referrer-when-downgrade"/>);
     }
-    return (<div className="map" role="img" aria-label={label}>
+    return (<div className="map" role="group" aria-label={label}>
       <b>Skt. Clemens Torv 6, Aarhus</b>
       <button type="button" className="btn btn--outline" onClick={() => save({ ...(consent ?? { statistics: false, marketing: false }), external: true })}>
         Vis kort (Google Maps sætter cookies)

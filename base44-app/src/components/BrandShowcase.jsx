@@ -116,7 +116,7 @@ export default function BrandShowcase({ featured, grid, total }) {
         <div className="bx-dark" aria-hidden="true"/>
         <div className="container bx-intro__in">
           <div>
-            <p className="bx-eyebrow" aria-label="Mærker">{"MÆRKER".split("").map((c, i) => <i key={i} aria-hidden="true">{c}</i>)}</p>
+            <p className="bx-eyebrow"><span className="sr-only">Mærker</span>{"MÆRKER".split("").map((c, i) => <i key={i} aria-hidden="true">{c}</i>)}</p>
             <span className="bx-rule" aria-hidden="true"/>
             <h1 className="bx-h1">
               <span className="w"><span className="bx-num">{total}</span></span>
