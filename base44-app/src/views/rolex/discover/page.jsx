@@ -1,7 +1,7 @@
 import Link from "@/lib/next/link";
 import { RolexCarousel } from "@/components/rolex/client";
 import { KeepExploring, RImg } from "@/components/rolex/parts";
-import { RETAILER, availabilityText, rolexAssets, rolexPageBlocks } from "@/data/rolex";
+import { RETAILER, availabilityText, getCollection, rolexAssets, rolexGroups, rolexPageBlocks } from "@/data/rolex";
 import { business } from "@/lib/site";
 export const metadata = {
     title: { absolute: `Officiel Rolex-forhandler i ${RETAILER.city} | ${RETAILER.name}` },
@@ -30,8 +30,9 @@ export default function DiscoverRolex() {
     const exploreImgs = explore.filter((e) => e.href).slice(0, 3);
     return (<>
       <RolexCarousel slides={rolexAssets.slides}/>
-      <section className="rx-intro">
-        <h1>Officiel Rolex-forhandler i {RETAILER.city}. Velkommen til {RETAILER.name}</h1>
+      <section className="rx-intro rx-intro--split">
+        <h1>Velkommen til {RETAILER.name} Officiel Rolex-forhandler i {RETAILER.city}</h1>
+        <div>
         <p>{availabilityText[2]}</p>
         <p className="rx-links">
           <a href={`tel:${business.phoneE164}`}>Ring {business.phone}</a>
@@ -39,6 +40,23 @@ export default function DiscoverRolex() {
           <Link href="/rolex/contact-aarhus#book">Book en tid</Link>
           <Link href="/rolex/contact-aarhus">Find os</Link>
         </p>
+        </div>
+      </section>
+      <section className="rx-selection" aria-labelledby="rx-sel">
+        <h2 id="rx-sel">Vores udvalg af Rolex</h2>
+        <ul className="rx-grid rx-grid-4">
+          {rolexGroups.flatMap((g) => g.items).slice(0, 8).map((slug) => {
+            const c = getCollection(slug);
+            return (<li key={slug}>
+                <Link href={`/rolex/${slug}`} className="rx-col-card">
+                  <RImg img={c.card} alt={`Rolex ${c.name}`}/>
+                  <span className="rx-eyebrow">Rolex</span>
+                  <strong>{c.name}</strong>
+                </Link>
+              </li>);
+        })}
+        </ul>
+        <p className="rx-center"><Link className="rx-btn" href="/rolex/watches">Udforsk Rolex-kollektionerne</Link></p>
       </section>
       <section className="rx-tiles" aria-label="Rolex hos Knud Pedersen">
         {t.map((x) => (<Link key={x.title} href={x.href} className="rx-tile">

@@ -237,3 +237,32 @@
 @media (prefers-reduced-motion: reduce) {
   .rx *, .rx *::before, .rx *::after { animation: none !important; transition: none !important; }
 }
+
+/* ===== Federe Rolex-sektion (2026-11-27): grøn Rolex-bjælke, billeder i fuld bredde, delt indledning, udvalg af kollektioner.
+   Rolex' billeder vises uændrede og uden animation (ingen zoom ved hover). ===== */
+.rx-bar { background: linear-gradient(to right, #0b3e27, #197149); border-bottom: 0; }
+.rx-bar-in { min-height: 100px; }
+.rx-menu a { color: #fff; }
+.rx-menu a:hover, .rx-menu a[aria-current="page"] { color: #fff; border-color: #fff; }
+.rx-tile:hover img, .rx-col-card:hover img { transform: none; }
+.rx-tile img, .rx-col-card img { transition: none; }
+.rx-carousel, .rx-cover { width: 100vw; margin-left: calc(50% - 50vw); margin-top: 0; }
+.rx-cover img { max-height: 760px; }
+.rx-intro--split { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 64px; text-align: left; padding: 88px 0 72px; align-items: start; }
+.rx-intro--split h1 { margin: 0; font-size: clamp(2rem, 3.4vw, 3rem); }
+.rx-intro--split p { margin-inline: 0; font-size: 1.125rem; }
+.rx-intro--split .rx-links { justify-content: flex-start; }
+.rx-selection { padding: 24px 0 88px; border-top: 1px solid var(--rx-line); }
+.rx-selection h2 { text-align: center; margin: 56px 0 40px; }
+.rx-grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.rx-col-card .rx-eyebrow { padding: 16px 20px 0; margin: 0; }
+.rx-col-card .rx-eyebrow + strong { padding-top: 2px; }
+.rx p.rx-center { text-align: center; margin: 48px auto 0; max-width: none; }
+@media (max-width: 1023px) {
+  .rx-bar-in { min-height: 80px; }
+  .rx-menu-btn { color: #fff; border-color: #fff; }
+  .rx-menu { background: #0f4a30; border-bottom: 0; }
+  .rx-menu a { border-bottom-color: rgba(255,255,255,.18); }
+  .rx-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rx-intro--split { grid-template-columns: 1fr; padding: 48px 0 40px; }
+}
