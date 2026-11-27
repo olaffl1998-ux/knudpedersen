@@ -23,7 +23,7 @@ export default function Vielsesringe() {
           <span className="label">Vielsesringe</span>
           <h1>Ringe til det store ja</h1>
           <p className="lead">Kom forbi og prøv ringe i ro og mag. Book en tid, så sætter vi tid af til jer.</p>
-          <p className="btn-row"><Link className="btn" href="/book-tid?formaal=vielsesringe">Book tid til vielsesringe</Link></p>
+          <p className="btn-row"><Link className="btn" href="/book-tid?formaal=vielsesringe">Book tid til vielsesringe</Link><Link className="btn btn--outline" href="/ringstoerrelse">Find ringstørrelsen</Link></p>
         </div>
       </section>
       <section className="section section--sand">

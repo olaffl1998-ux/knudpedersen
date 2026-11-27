@@ -1,11 +1,13 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import ModelCard from "./ModelCard";
+import { CompareBar } from "./Compare";
 const FACETS = [
     { key: "maerke", label: "Mærke", get: (i) => i.brandName },
     { key: "koen", label: "Køn", get: (i) => i.gender },
     { key: "materiale", label: "Materiale", get: (i) => i.material || null },
     { key: "stoerrelse", label: "Størrelse", get: (i) => i.size },
+    { key: "urskive", label: "Farve på urskiven", get: (i) => i.dial || null },
     { key: "urvaerk", label: "Urværk", get: (i) => i.movement || null },
     { key: "pris", label: "Pris", get: (i) => i.band },
 ];
@@ -18,7 +20,7 @@ const SORTS = [
 const slug = (s) => s.toLowerCase().replace(/æ/g, "ae").replace(/ø/g, "oe").replace(/å/g, "aa").replace(/[^a-z0-9]+/g, "-");
 const PAGE = 24;
 export default function Catalog({ items, bandOrder }) {
-    const [sel, setSel] = useState({ maerke: [], koen: [], materiale: [], stoerrelse: [], urvaerk: [], pris: [] });
+    const [sel, setSel] = useState({ maerke: [], koen: [], materiale: [], stoerrelse: [], urskive: [], urvaerk: [], pris: [] });
     const [sort, setSort] = useState("anbefalet");
     const [n, setN] = useState(PAGE);
     const [open, setOpen] = useState(false);
@@ -76,7 +78,7 @@ export default function Catalog({ items, bandOrder }) {
                     const c = items.filter((i) => match(i, f.key) && f.get(i) === v).length;
                     return (<label key={v}>
                     <input type="checkbox" checked={sel[f.key].includes(v)} onChange={() => toggle(f.key, v)} disabled={!c && !sel[f.key].includes(v)}/>
-                    {v}<span className="count">{c}</span>
+                    {f.key === "urskive" && <i className={`dial-sw dial-sw--${slug(v)}`} aria-hidden="true"/>}{v}<span className="count">{c}</span>
                   </label>);
                 })}
             </details>);
@@ -95,7 +97,7 @@ export default function Catalog({ items, bandOrder }) {
         </div>
         {active.length > 0 && (<div className="chips" style={{ marginBottom: 32 }}>
             {active.map((a) => <button key={a.f + a.v} type="button" className="chip chip-x" onClick={() => toggle(a.f, a.v)} aria-label={`Fjern filter ${a.v}`}>{a.v}</button>)}
-            <button type="button" className="linklike" onClick={() => setSel({ maerke: [], koen: [], materiale: [], stoerrelse: [], urvaerk: [], pris: [] })}>Ryd alle</button>
+            <button type="button" className="linklike" onClick={() => setSel({ maerke: [], koen: [], materiale: [], stoerrelse: [], urskive: [], urvaerk: [], pris: [] })}>Ryd alle</button>
           </div>)}
         {list.length ? (<ul className="cards" style={{ gridTemplateColumns: undefined }}>
             {list.slice(0, n).map((i, k) => <li key={i.m.brand + i.m.slug}><ModelCard model={i.m} eager={k < 4}/></li>)}
@@ -105,5 +107,6 @@ export default function Catalog({ items, bandOrder }) {
             <span className="muted" style={{ display: "block", marginTop: 12, fontSize: 14 }}>Viser {n} af {list.length}</span>
           </p>)}
       </div>
+      <CompareBar />
     </div>);
 }

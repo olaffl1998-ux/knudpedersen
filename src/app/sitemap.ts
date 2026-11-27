@@ -6,7 +6,7 @@ import { rolexAccessories, rolexCollections, rolexModels } from "@/data/rolex";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const paths = [
-    "/", "/ure", "/maerker", "/smykker", "/vielsesringe", "/brugte-ure", "/service", "/om-os", "/kontakt", "/book-tid", "/en", "/en/watches", "/en/jewellery", "/en/service", "/en/about", "/en/visit",
+    "/", "/ure", "/maerker", "/smykker", "/vielsesringe", "/brugte-ure", "/service", "/om-os", "/kontakt", "/book-tid", "/en", "/en/watches", "/en/jewellery", "/en/service", "/en/about", "/en/visit", "/ringstoerrelse", "/nyheder",
     "/handelsbetingelser", "/privatlivspolitik", "/cookiepolitik", "/tilgaengelighed",
     ...nonRolexBrands.map((b) => `/maerker/${b.slug}`),
     ...models.map(modelHref),

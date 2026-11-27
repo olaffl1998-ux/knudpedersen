@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getBrand, modelHref, modelKey, type Model } from "@/data/catalog";
 import { formatPrice, thumb } from "@/lib/site";
 import { HeartButton } from "./Wishlist";
+import { CompareButton } from "./Compare";
 
 export default function ModelCard({ model, eager }: { model: Model; eager?: boolean }) {
   const brand = getBrand(model.brand)!;
@@ -20,6 +21,7 @@ export default function ModelCard({ model, eager }: { model: Model; eager?: bool
         <Link className="card__name" href={modelHref(model)}>{model.name}</Link>
         <span className="card__meta">{model.ref}{model.size && ` · ${model.size}`}</span>
         <span className="card__price"><small>Vejl. pris</small>{formatPrice(model.price)}</span>
+        {!brand.rolex && <CompareButton id={modelKey(model)} label={label} />}
       </div>
     </article>
   );

@@ -1,3 +1,4 @@
+import { OpenNow } from "@/components/OpeningToday";
 import Link from "@/lib/next/link";
 import { business } from "@/lib/site";
 import { rolexAssets } from "@/data/rolexAssets";
@@ -23,6 +24,7 @@ export default function FooterEn() {
         </div>
         <div>
           <h2>Contact</h2>
+          <OpenNow en className="open-now--footer"/>
           <address style={{ fontStyle: "normal" }}>
             {business.legalName}<br />{business.street}<br />{business.postalCode} {business.city}, Denmark<br />
             <a href={`tel:${business.phoneE164}`}>+45 {business.phone}</a><br />

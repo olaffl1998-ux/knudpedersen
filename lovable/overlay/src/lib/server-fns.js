@@ -65,3 +65,17 @@ export const getRolexPrice = createServerFn({ method: "GET" })
     const country = (getRequestHeader("cf-ipcountry") || "").toUpperCase();
     return { price: country === "DK" ? rolexPriceFor(data.rmc) : null };
   });
+
+/** Nyheder og arrangementer fra tabellen nyheder (kun publicerede rækker kan læses) */
+export const getNews = createServerFn({ method: "GET" }).handler(async () => {
+  try {
+    const { url, key } = cloud();
+    const res = await fetch(`${url}/rest/v1/nyheder?select=id,type,titel,dato,tidspunkt,tekst,billede,link&publiceret=eq.true&order=dato.desc.nullslast&limit=60`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+    });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+});

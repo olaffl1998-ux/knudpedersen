@@ -4,24 +4,51 @@ import { useEffect, useState } from "react";
 import { business } from "@/lib/site";
 
 const DAY = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const DA = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
+const EN = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-/** "Åbent i dag 10.00–17.30" ud fra dansk tid. Vises først i browseren, så den altid er korrekt. */
-export function todayText(now = new Date()) {
+const hoursFor = (dow: number) => business.openingHours.find((h) => (h.days as readonly string[]).includes(DAY[dow]));
+const toMin = (t: string) => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
+const fmt = (t: string, en: boolean) => (en ? t : t.replace(":", "."));
+
+/** Åbent nu / lukket ud fra dansk tid og åbningstiderne i site.ts. */
+export function openStatus(now = new Date(), en = false): { open: boolean; text: string } {
   const dk = new Date(now.toLocaleString("en-US", { timeZone: "Europe/Copenhagen" }));
-  const d = DAY[dk.getDay()];
-  const o = business.openingHours.find((h) => (h.days as readonly string[]).includes(d));
-  if (!o) return "Lukket i dag";
+  const dow = dk.getDay();
   const mins = dk.getHours() * 60 + dk.getMinutes();
-  const [oh, om] = o.opens.split(":").map(Number);
-  const [ch, cm] = o.closes.split(":").map(Number);
-  const range = `${o.opens.replace(":", ".")}–${o.closes.replace(":", ".")}`;
-  if (mins < oh * 60 + om) return `Åbner i dag kl. ${o.opens.replace(":", ".")}`;
-  if (mins >= ch * 60 + cm) return `Lukket for i dag (åbent ${range})`;
-  return `Åbent i dag ${range}`;
+  const o = hoursFor(dow);
+  if (o && mins >= toMin(o.opens) && mins < toMin(o.closes)) {
+    const soon = toMin(o.closes) - mins <= 30;
+    return { open: true, text: en ? `Open now${soon ? ", closing soon" : ""} · closes at ${fmt(o.closes, en)}` : `Åbent nu · lukker kl. ${fmt(o.closes, en)}${soon ? " (snart)" : ""}` };
+  }
+  if (o && mins < toMin(o.opens)) return { open: false, text: en ? `Closed · opens today at ${fmt(o.opens, en)}` : `Lukket · åbner i dag kl. ${fmt(o.opens, en)}` };
+  for (let i = 1; i <= 7; i++) {
+    const d = (dow + i) % 7;
+    const n = hoursFor(d);
+    if (!n) continue;
+    const when = i === 1 ? (en ? "tomorrow" : "i morgen") : (en ? EN[d] : DA[d]);
+    return { open: false, text: en ? `Closed · opens ${when} at ${fmt(n.opens, en)}` : `Lukket · åbner ${when} kl. ${fmt(n.opens, en)}` };
+  }
+  return { open: false, text: en ? "Closed" : "Lukket" };
 }
 
-export function OpeningToday() {
-  const [t, setT] = useState("");
-  useEffect(() => setT(todayText()), []);
-  return <span suppressHydrationWarning>{t || "Se åbningstider"}</span>;
+/** Kort tekst til topbjælken */
+export function todayText(now = new Date()) { return openStatus(now).text; }
+
+/** Lille mærke med grøn/grå prik. Beregnes i browseren, så det altid passer. */
+export function OpenNow({ en = false, className = "" }: { en?: boolean; className?: string }) {
+  const [s, setS] = useState<{ open: boolean; text: string } | null>(null);
+  useEffect(() => {
+    const tick = () => setS(openStatus(new Date(), en));
+    tick();
+    const t = setInterval(tick, 60_000);
+    return () => clearInterval(t);
+  }, [en]);
+  return (
+    <span className={`open-now ${s ? (s.open ? "is-open" : "is-closed") : ""} ${className}`} suppressHydrationWarning>
+      <i aria-hidden="true" />{s ? s.text : en ? "See opening hours" : "Se åbningstider"}
+    </span>
+  );
 }
+
+export function OpeningToday() { return <OpenNow />; }

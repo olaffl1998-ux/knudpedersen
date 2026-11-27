@@ -58,15 +58,68 @@ export function SearchClient({ items }: { items: IndexItem[] }) {
   );
 }
 
-/** Ønskelisten: viser de gemte produkter fra browseren */
+const SHARE_KEY = "liste";
+const shareUrl = (ids: string[]) => `${window.location.origin}/oenskeliste?${SHARE_KEY}=${encodeURIComponent(ids.join("|"))}`;
+
+function ShareBar({ ids, names }: { ids: string[]; names: string }) {
+  const [msg, setMsg] = useState("");
+  const share = async () => {
+    const url = shareUrl(ids);
+    const text = "Min ønskeliste hos Knud Pedersen";
+    try {
+      if (navigator.share) { await navigator.share({ title: text, text, url }); return; }
+      await navigator.clipboard.writeText(url); setMsg("Linket er kopieret. Sæt det ind i en besked.");
+    } catch { /* brugeren lukkede delingen */ }
+  };
+  const mail = () => {
+    const url = shareUrl(ids);
+    window.location.href = `mailto:?subject=${encodeURIComponent("Min ønskeliste hos Knud Pedersen")}&body=${encodeURIComponent(`Hej\n\nHer er min ønskeliste fra Knud Pedersen på Skt. Clemens Torv i Aarhus:\n${names}\n\nSe den her: ${url}\n`)}`;
+  };
+  return (
+    <div className="wish-share">
+      <div><strong>Del din ønskeliste</strong><span>Send listen til kæresten, familien eller vennerne. De kan se den uden at oprette noget.</span></div>
+      <div className="wish-share__btns">
+        <button type="button" className="btn" onClick={share}>Del link</button>
+        <button type="button" className="btn btn--outline" onClick={mail}>Send på mail</button>
+      </div>
+      {msg && <p className="muted" role="status">{msg}</p>}
+    </div>
+  );
+}
+
+/** Ønskelisten: viser de gemte produkter fra browseren, eller en liste nogen har delt */
 export function WishlistClient({ items }: { items: IndexItem[] }) {
-  const { ids } = useWishlist();
-  const saved = ids.map((id) => items.find((x) => x.id === id)).filter(Boolean) as IndexItem[];
+  const { ids, toggle } = useWishlist();
+  const [shared, setShared] = useState<string[] | null>(null);
+  useEffect(() => {
+    const v = new URLSearchParams(window.location.search).get(SHARE_KEY);
+    if (v) setShared(v.split("|").filter(Boolean));
+  }, []);
+  const find = (list: string[]) => list.map((id) => items.find((x) => x.id === id)).filter(Boolean) as IndexItem[];
+
+  if (shared) {
+    const got = find(shared);
+    const missing = got.filter((g) => !ids.includes(g.id));
+    return (
+      <>
+        <div className="wish-shared"><span className="label">Delt med dig</span><p>Nogen har sendt dig sin ønskeliste med {got.length} {got.length === 1 ? "favorit" : "favoritter"}. Kom forbi butikken, så viser vi dem gerne frem.</p></div>
+        {got.length ? <div className="cards">{got.map((it) => <Card key={it.id} it={it} />)}</div> : <div className="empty"><p>Listen er tom, eller varerne findes ikke længere.</p></div>}
+        <p className="btn-row" style={{ marginTop: 48 }}>
+          {missing.length > 0 && <button type="button" className="btn btn--outline" onClick={() => missing.forEach((m) => toggle(m.id))}>Gem dem på min egen ønskeliste</button>}
+          <Link className="btn" href="/book-tid">Book tid i butikken</Link>
+          <button type="button" className="btn btn--outline" onClick={() => { window.history.replaceState(null, "", "/oenskeliste"); setShared(null); }}>Se min egen liste</button>
+        </p>
+      </>
+    );
+  }
+
+  const saved = find(ids);
   if (!saved.length) return <div className="empty"><p>Din ønskeliste er tom. Tryk på hjertet ved et ur eller smykke for at gemme det her.</p><p className="btn-row"><Link className="btn" href="/ure">Se ure</Link><Link className="btn btn--outline" href="/smykker">Se smykker</Link></p></div>;
   const subject = saved.map((s) => `${s.brand} ${s.name}${s.ref ? ` (${s.ref})` : ""}`).join(", ");
   return (
     <>
-      <p className="muted">{saved.length} gemt{saved.length === 1 ? "" : "e"}. Listen gemmes kun i denne browser.</p>
+      <ShareBar ids={saved.map((s) => s.id)} names={saved.map((s) => `- ${s.brand} ${s.name}`).join("\n")} />
+      <p className="muted">{saved.length} gemt{saved.length === 1 ? "" : "e"}. Listen gemmes i denne browser.</p>
       <div className="cards">{saved.map((it) => <Card key={it.id} it={it} />)}</div>
       <p className="btn-row" style={{ marginTop: 48 }}><Link className="btn" href={`/book-tid?emne=${encodeURIComponent(subject.slice(0, 300))}`}>Book tid og se dem i butikken</Link></p>
     </>

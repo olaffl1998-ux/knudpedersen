@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { HeartButton } from "./Wishlist";
+import { CompareBar, CompareButton } from "./Compare";
 
 export type Variant = {
   key: string; href: string; ref: string; image?: string; price: string; size?: string;
@@ -61,6 +62,8 @@ export default function WatchDetail({ brand, brandSlug, name, variants, initial,
           <a className="btn btn--outline" href={`tel:${phoneE164}`}>Ring {phone}</a>
           <span className="pdp__save"><HeartButton key={v.key} id={`ur:${v.key}`} label={subject} /></span>
         </div>
+        <p className="pdp__cmp"><CompareButton key={v.key} id={v.key} label={subject} big /></p>
+        <CompareBar />
         <p className="notice">Uret kan ikke købes online. Prisen gælder uret som vist{variants.length > 1 ? " i den valgte udførelse" : ""}. Book en tid, så har vi det klar til dig i butikken på {street}.</p>
         <div className="accordion" style={{ marginTop: 24 }}>
           <details open>

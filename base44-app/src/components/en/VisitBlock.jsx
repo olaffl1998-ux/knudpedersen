@@ -1,3 +1,4 @@
+import { OpenNow } from "@/components/OpeningToday";
 import { business } from "@/lib/site";
 import { enHours } from "@/data/en";
 import { MapEmbed } from "@/components/Consent";
@@ -10,6 +11,7 @@ export default function VisitBlock() {
           <span className="label">Visit us</span>
           <h2 id="visit-h">In the heart of Aarhus</h2>
           <p>You will find us on Skt. Clemens Torv, right next to Aarhus Cathedral. Drop in, or book an appointment so we can set time aside and have your pieces ready when you arrive.</p>
+          <OpenNow en/>
           <address style={{ fontStyle: "normal" }}>
             <strong>{business.name}</strong><br />{business.street}<br />{business.postalCode} {business.city}, Denmark<br />
             <a href={`tel:${business.phoneE164}`}>+45 {business.phone}</a> · <a href={`mailto:${business.email}`}>{business.email}</a>

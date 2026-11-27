@@ -1,3 +1,4 @@
+import { OpenNow } from "@/components/OpeningToday";
 import { daAlternates } from "@/data/en";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -30,6 +31,7 @@ export default function Kontakt() {
           </div>
           <aside className="contact-grid__info" aria-label="Kontaktoplysninger">
             <h2>Butikken</h2>
+            <OpenNow />
             <p>{business.legalName}<br />{business.street}<br />{business.postalCode} {business.city}</p>
             <p><a href={`tel:${business.phoneE164}`}>Tlf. {business.phone}</a><br /><a href={`mailto:${business.email}`}>{business.email}</a></p>
             <h3 className="label">Åbningstider</h3>

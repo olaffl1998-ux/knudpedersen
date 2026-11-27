@@ -10,7 +10,7 @@ export default function Newsletter({ dark = false, id = "nyhedsbrev" }) {
     const [err, setErr] = useState({});
     const [state, setState] = useState("idle");
     if (state === "done")
-        return <p role="status">Tak. Du får en e-mail, hvor du bekræfter tilmeldingen.</p>;
+        return <p role="status">Tak, du er nu tilmeldt nyhedsbrevet. Du kan altid afmelde dig igen.</p>;
     return (<form noValidate onSubmit={async (e) => {
             e.preventDefault();
             const er = {};

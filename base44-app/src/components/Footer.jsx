@@ -1,3 +1,4 @@
+import { OpenNow } from "@/components/OpeningToday";
 import Link from "@/lib/next/link";
 import { business } from "@/lib/site";
 import { rolexAssets } from "@/data/rolexAssets";
@@ -34,6 +35,8 @@ export default function Footer() {
           <ul>
             <li><Link href="/book-tid">Book tid</Link></li>
             <li><Link href="/service">Service og reparation</Link></li>
+            <li><Link href="/ringstoerrelse">Find din ringstørrelse</Link></li>
+            <li><Link href="/sammenlign">Sammenlign ure</Link></li>
             <li><Link href="/kontakt">Kontakt os</Link></li>
             <li><Link href="/handelsbetingelser">Handelsbetingelser</Link></li>
             <li><Link href="/oenskeliste">Ønskeliste</Link></li>
@@ -43,6 +46,7 @@ export default function Footer() {
           <h2>Om os</h2>
           <ul>
             <li><Link href="/om-os">Vores historie</Link></li>
+            <li><Link href="/nyheder">Nyheder og arrangementer</Link></li>
             <li><Link href="/om-os#vaerksted">Værkstedet</Link></li>
             <li><Link href="/om-os#job">Job hos Knud Pedersen</Link></li>
             <li><Link href="/rolex/knud-pedersen">Rolex hos Knud Pedersen</Link></li>
@@ -50,6 +54,7 @@ export default function Footer() {
         </div>
         <div>
           <h2>Kontakt</h2>
+          <OpenNow className="open-now--footer"/>
           <address style={{ fontStyle: "normal" }}>
             {business.legalName}<br />{business.street}<br />{business.postalCode} {business.city}<br />
             <a href={`tel:${business.phoneE164}`}>Tlf. {business.phone}</a><br />

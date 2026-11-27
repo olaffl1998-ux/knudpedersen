@@ -67,6 +67,7 @@ export default function Smykker() {
               );
             })}
           </ul>
+          <p className="ring-hint"><Link href="/ringstoerrelse">Kender du ikke ringstørrelsen? Se vores guide og print en ringmåler</Link></p>
         </div>
       </section>
 

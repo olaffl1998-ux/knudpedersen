@@ -2,15 +2,17 @@
 
 import { useEffect, useMemo, useState } from "react";
 import ModelCard from "./ModelCard";
+import { CompareBar } from "./Compare";
 import type { Model } from "@/data/catalog";
 
-export type Item = { m: Model; brandName: string; gender: string; size: string | null; material: string; movement: string; band: string; order: number };
-type Facet = "maerke" | "koen" | "materiale" | "stoerrelse" | "urvaerk" | "pris";
+export type Item = { m: Model; brandName: string; gender: string; size: string | null; material: string; movement: string; dial: string; band: string; order: number };
+type Facet = "maerke" | "koen" | "materiale" | "stoerrelse" | "urskive" | "urvaerk" | "pris";
 const FACETS: { key: Facet; label: string; get: (i: Item) => string | null }[] = [
   { key: "maerke", label: "Mærke", get: (i) => i.brandName },
   { key: "koen", label: "Køn", get: (i) => i.gender },
   { key: "materiale", label: "Materiale", get: (i) => i.material || null },
   { key: "stoerrelse", label: "Størrelse", get: (i) => i.size },
+  { key: "urskive", label: "Farve på urskiven", get: (i) => i.dial || null },
   { key: "urvaerk", label: "Urværk", get: (i) => i.movement || null },
   { key: "pris", label: "Pris", get: (i) => i.band },
 ];
@@ -24,7 +26,7 @@ const slug = (s: string) => s.toLowerCase().replace(/æ/g, "ae").replace(/ø/g, 
 const PAGE = 24;
 
 export default function Catalog({ items, bandOrder }: { items: Item[]; bandOrder: string[] }) {
-  const [sel, setSel] = useState<Record<Facet, string[]>>({ maerke: [], koen: [], materiale: [], stoerrelse: [], urvaerk: [], pris: [] });
+  const [sel, setSel] = useState<Record<Facet, string[]>>({ maerke: [], koen: [], materiale: [], stoerrelse: [], urskive: [], urvaerk: [], pris: [] });
   const [sort, setSort] = useState("anbefalet");
   const [n, setN] = useState(PAGE);
   const [open, setOpen] = useState(false);
@@ -82,7 +84,7 @@ export default function Catalog({ items, bandOrder }: { items: Item[]; bandOrder
                 return (
                   <label key={v}>
                     <input type="checkbox" checked={sel[f.key].includes(v)} onChange={() => toggle(f.key, v)} disabled={!c && !sel[f.key].includes(v)} />
-                    {v}<span className="count">{c}</span>
+                    {f.key === "urskive" && <i className={`dial-sw dial-sw--${slug(v)}`} aria-hidden="true" />}{v}<span className="count">{c}</span>
                   </label>
                 );
               })}
@@ -104,7 +106,7 @@ export default function Catalog({ items, bandOrder }: { items: Item[]; bandOrder
         {active.length > 0 && (
           <div className="chips" style={{ marginBottom: 32 }}>
             {active.map((a) => <button key={a.f + a.v} type="button" className="chip chip-x" onClick={() => toggle(a.f, a.v)} aria-label={`Fjern filter ${a.v}`}>{a.v}</button>)}
-            <button type="button" className="linklike" onClick={() => setSel({ maerke: [], koen: [], materiale: [], stoerrelse: [], urvaerk: [], pris: [] })}>Ryd alle</button>
+            <button type="button" className="linklike" onClick={() => setSel({ maerke: [], koen: [], materiale: [], stoerrelse: [], urskive: [], urvaerk: [], pris: [] })}>Ryd alle</button>
           </div>
         )}
         {list.length ? (
@@ -121,6 +123,7 @@ export default function Catalog({ items, bandOrder }: { items: Item[]; bandOrder
           </p>
         )}
       </div>
+      <CompareBar />
     </div>
   );
 }
