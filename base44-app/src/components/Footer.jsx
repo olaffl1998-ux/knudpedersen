@@ -71,8 +71,8 @@ export default function Footer() {
         <span>© {new Date().getFullYear()} {business.legalName} · CVR {business.cvr}</span>
         <ul>
           <li><Link href="/handelsbetingelser">Handelsbetingelser</Link></li>
-          <li><Link href="/privatlivspolitik">Privatlivspolitik</Link></li>
-          <li><Link href="/cookiepolitik">Cookiepolitik</Link></li>
+          <li><Link href="/privatlivspolitik">Persondatapolitik</Link></li>
+          <li><Link href="/cookiepolitik">Cookies og privatlivspolitik</Link></li>
           <li><Link href="/tilgaengelighed">Tilgængelighedserklæring</Link></li>
           <li><CookieSettingsButton /></li>
         </ul>

@@ -31,8 +31,12 @@ function RolexBanner({ s, eager }) {
 }
 /** [Kundeanmeldelser fra Google eller Trustpilot: navn, dato og kilde leveres af Knud Pedersen] */
 const T = "/billeder/pics/_thumbs/";
-const ETERNITY_YG = "/billeder/shop/Ring-i-yg-1200.webp";
-const AISLING_ROUNDS = "/billeder/shop/R-ASR4-S-RS-Aisling-Rounds-107ct-sides-015ct--RS30-1200.webp";
+const jewelTiles = [
+    { href: "/smykker/marselis", name: "Marselis Jewellery", line: "Diamanter i 18 karat guld", img: `${T}0641-0554-4-Marselis--banner_mobile.w640.h640.jpg` },
+    { href: "/smykker/georg-jensen", name: "Georg Jensen", line: "Dansk design siden 1904", img: `${T}GJ_AW26_JW_Seasonal-_WS-eCom-banner_640x640px.w640.h640.jpg` },
+    { href: "/smykker/chopard", name: "Chopard", line: "Happy Diamonds", img: "/brands/chopard/happy-poster.jpg" },
+    { href: "/smykker/gucci", name: "Gucci", line: "Interlocking G", img: `${T}Gucci_GUCCI_INTERLOCKING_BANGLE_640x640.w640.h640.jpg` },
+];
 /** Rolex' officielle billede til forhandlere (Udforsk Rolex, serviceeftersyn) */
 const ROLEX_SERVICE_IMG = "/billeder/pics/Rolex/v7images/discover-rolex-page-assets/discover-rolex-page-assets-landscape/keep-exploring-landscape/rolex-keep-exploring-servicing-2234_rolex-sav_retailers_176_controle-final_mise_heure_v2-landscape.jpg";
 const TEAM_IMG = "/billeder/pics/Bundslider_Knud-Pedersen_11.jpg";
@@ -43,7 +47,6 @@ const stories = [
 ];
 const jewelLinks = [
     { href: "/smykker/ringe", label: "Ringe" },
-    { href: "/vielsesringe", label: "Forlovelsesringe" },
     { href: "/smykker/oereringe", label: "Øreringe" },
     { href: "/smykker/halskaeder", label: "Halskæder" },
     { href: "/smykker/armbaand", label: "Armbånd" },
@@ -78,10 +81,10 @@ export default function Home() {
             <p>I butikken finder du et stort og eksklusivt udvalg af smykker i ædle metaller og med certificerede diamanter. Vi kan vejlede og guide dig i køb og investering af nye eksklusive smykker, hvor du også kan være med til at sætte dit eget personlige præg på smykket. Vi tilbyder også service og reparation af egne smykker og omtrækning af perlekæder.</p>
             <p className="ed-welcome__sign">Velkommen til Knud Pedersen.</p>
           </div>
-          <ul className="ed-facts">
-            <li><strong><CountUp from={1800} to={1887}/></strong><span>Grundlagt i Aarhus</span></li>
-            <li><strong><CountUp to={brandCount} ms={1200}/></strong><span>Mærker med fabriksgaranti</span></li>
-            <li><strong>Rolex</strong><span>Autoriseret servicecenter</span></li>
+          <ul className="ed-facts ed-facts--gold">
+            <li><small>Siden</small><strong><CountUp from={1800} to={1887}/></strong><span>{new Date().getFullYear() - 1887} år på Skt. Clemens Torv i Aarhus</span></li>
+            <li><small>Udvalgte</small><strong><CountUp to={brandCount} ms={1200}/></strong><span>Mærker med fabriksgaranti</span></li>
+            <li><small>Officiel</small><strong>Rolex</strong><span>Forhandler og autoriseret servicecenter</span></li>
           </ul>
         </div>
       </section>
@@ -126,38 +129,28 @@ export default function Home() {
       </section>
       {/* [Rolex point of sale-banner: foto af Rolex-afdelingen hos Knud Pedersen, leveres og godkendes af Rolex] */}
 
-      {/* 8. Smykker */}
-      <section className="hp-section hp-jewel" aria-labelledby="smykker-h">
-        <div className="container hp-jewel__grid">
-          <div className="hp-jewel__text">
+      {/* 8. Smykker: de fire smykkemærker i deres egne kampagnebilleder */}
+      <section className="hp-section hp-jw" aria-labelledby="smykker-h">
+        <div className="container">
+          <div className="hp-jw__head">
             <span className="label">Smykker</span>
             <h2 id="smykker-h">Smykker i ædle metaller</h2>
-            <p>Marselis Jewellery, Georg Jensen, Chopard og Gucci. Ringe, øreringe, halskæder og armbånd med certificerede diamanter.</p>
-            <ul className="row-links">
-              {jewelLinks.map((l) => <li key={l.label}><Link href={l.href}>{l.label}<span aria-hidden="true">→</span></Link></li>)}
-            </ul>
-            <div className="hp-actions">
-              <Link className="btn" href="/smykker">Se alle smykker</Link>
-              <a className="link-arrow" href="https://marselis.lovable.app/" target="_blank" rel="noopener">Besøg Marselis Jewellery</a>
-            </div>
+            <p>Ringe, øreringe, halskæder og armbånd med certificerede diamanter fra fire af de fineste smykkehuse.</p>
           </div>
-                    <div className="hp-jewel__media"><img src={ETERNITY_YG} alt="Marselis Eternity-ring i gult guld med diamanter" loading="eager"/></div>
+          <ul className="hp-jw__tiles">
+            {jewelTiles.map((t) => (<li key={t.href}>
+                <Link href={t.href} className="hp-jw__tile">
+                                    <span className="hp-jw__img"><img src={t.img} alt={`${t.name}: ${t.line}`} loading="eager"/></span>
+                  <span className="hp-jw__name">{t.name}</span>
+                  <span className="hp-jw__line">{t.line}</span>
+                </Link>
+              </li>))}
+          </ul>
+          <nav className="hp-jw__types" aria-label="Smykketyper">
+            {jewelLinks.map((l) => <Link key={l.label} href={l.href}>{l.label}</Link>)}
+          </nav>
+          <div className="hp-jw__cta"><Link className="btn" href="/smykker">Se alle smykker</Link></div>
         </div>
-      </section>
-
-      {/* 8b. Til det store ja: tekst til venstre, ring til højre */}
-      <section className="hp-bridal" aria-labelledby="cine-title">
-        <div className="hp-bridal__text">
-          <span className="label">Vielsesringe og forlovelsesringe</span>
-          <h2 id="cine-title">Til det store ja</h2>
-          <p>Prøv ringe i ro og mag. Book en tid, så sætter vi tid af til jer.</p>
-          <div className="hp-actions">
-            <Link className="btn" href="/book-tid?formaal=vielsesringe">Book tid</Link>
-            <Link className="link-arrow" href="/vielsesringe">Se vielsesringe</Link>
-          </div>
-          <p className="hp-bridal__extras">Gravering · Tilpasning af størrelse · Personlig rådgivning</p>
-        </div>
-                <div className="hp-bridal__media"><img src={AISLING_ROUNDS} alt="Forlovelsesring med diamanter" loading="eager"/></div>
       </section>
 
       {/* 9. Værksted og services */}

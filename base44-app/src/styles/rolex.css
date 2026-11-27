@@ -266,3 +266,6 @@
   .rx-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .rx-intro--split { grid-template-columns: 1fr; padding: 48px 0 40px; }
 }
+
+/* Rolex-skilte i deres oprindelige størrelse (de findes ikke større), så de ikke bliver slørede */
+.rx .rx-plaque-img { display: block; width: 300px; max-width: 100%; height: auto; margin: 40px auto; }

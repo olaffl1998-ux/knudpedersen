@@ -54,6 +54,8 @@ export default function BrandShowroom({ plaque }: { plaque: string }) {
   const [lookAngle, setLookAngle] = useState<number | null>(null);
   const [mobile, setMobile] = useState(false);
   const [current, setCurrent] = useState(ring[0] ?? 0);
+  // Sand, når man selv går rundt med pilene: så stopper den automatiske rundtur
+  const [manual, setManual] = useState(false);
   // Scenen tegnes kun, når den er på skærmen, så resten af siden scroller glat og batteriet spares
   const [onScreen, setOnScreen] = useState(true);
   const stage = useRef<HTMLDivElement>(null);
@@ -94,9 +96,31 @@ export default function BrandShowroom({ plaque }: { plaque: string }) {
     const next = ring[(k + d + ring.length) % ring.length];
     if (active != null) open(next); else setCurrent(next);
   }, [active, current, ring, open]);
+  /** Gå til næste eller forrige vitrine (computer): kameraet går roligt derhen og bliver stående */
+  const walk = useCallback((d: number) => {
+    if (active != null) { step(d); return; }
+    const k = ring.indexOf(current);
+    const next = ring[(k + d + ring.length) % ring.length];
+    const s = slots.find((x) => x.index === next);
+    setCurrent(next); setManual(true);
+    if (s) setLookAngle(s.angle + Math.random() * 1e-6);
+  }, [active, current, ring, slots, step]);
+  useEffect(() => {
+    if (mobile || active != null || !onScreen || !ready) return;
+    const k = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (t && /INPUT|TEXTAREA|SELECT/.test(t.tagName)) return;
+      if (e.key === "ArrowRight") { e.preventDefault(); walk(1); }
+      if (e.key === "ArrowLeft") { e.preventDefault(); walk(-1); }
+      if (e.key === "Enter" && manual && document.activeElement === document.body) open(current);
+    };
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+  }, [mobile, active, onScreen, ready, walk, manual, open, current]);
   const goZone = (z: ShowroomZone) => {
     setActive(null);
     setLookAngle(zoneAngles[z] + Math.random() * 1e-6);
+    setManual(true);
     if (mobile) { const first = slots.find((s) => s.brand.zone === z); if (first) setCurrent(first.index); }
   };
 
@@ -136,7 +160,7 @@ export default function BrandShowroom({ plaque }: { plaque: string }) {
           }}>
           {can3d && (
             <Suspense fallback={null}>
-              <ShowroomScene brands={brands} active={active} hover={hover} lookAngle={lookAngle} mobile={mobile} current={current} paused={!onScreen && ready} calm={calm}
+              <ShowroomScene brands={brands} active={active} hover={hover ?? (manual && !mobile ? current : null)} lookAngle={lookAngle} mobile={mobile} current={current} paused={!onScreen && ready} calm={calm || manual}
                 onHover={setHover} onSelect={open} onReady={() => setReady(true)} />
             </Suspense>
           )}
@@ -158,6 +182,16 @@ export default function BrandShowroom({ plaque }: { plaque: string }) {
               <button type="button" onClick={() => step(-1)} aria-label="Forrige mærke">←</button>
               <button type="button" className="showroom__current" onClick={() => open(current)}>{brands[current]?.name}<small>Tryk for at se mere</small></button>
               <button type="button" onClick={() => step(1)} aria-label="Næste mærke">→</button>
+            </div>
+          )}
+
+          {!mobile && active == null && ready && (
+            <div className="showroom__walk">
+              <button type="button" onClick={() => walk(-1)} aria-label="Gå til forrige vitrine">←</button>
+              <button type="button" className="showroom__walk-now" onClick={() => (manual ? open(current) : walk(0))}>
+                {manual ? <>{brands[current]?.name}<small>Klik for at se mere</small></> : <>Gå selv rundt<small>Brug pilene, piletasterne eller træk</small></>}
+              </button>
+              <button type="button" onClick={() => walk(1)} aria-label="Gå til næste vitrine">→</button>
             </div>
           )}
 

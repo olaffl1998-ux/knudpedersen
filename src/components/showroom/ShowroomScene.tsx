@@ -256,25 +256,81 @@ function WheelWalk({ look, enabled, walkEnd }: { look: React.MutableRefObject<Lo
   return null;
 }
 
-function ProductImage({ url, framed, w = 0.5 }: { url: string; framed?: boolean; w?: number }) {
+type Display = "watch" | "jewel" | "framed";
+
+/** Produktbilledet tager lidt af lyset i butikken, så det ikke ligner et klistermærke */
+function ImageMat({ tex, glow = 0.55 }: { tex: THREE.Texture; glow?: number }) {
+  return <meshStandardMaterial map={tex} emissiveMap={tex} emissive="#ffffff" emissiveIntensity={glow} roughness={0.45} metalness={0} transparent alphaTest={0.02} envMapIntensity={0.6} />;
+}
+
+/** Varen i vitrinen. Origo er bunden af varen.
+    - watch: uret står oprejst på en rund ruskindssokkel og drejer kun om sig selv mod kameraet
+    - jewel: smykket ligger på en skrå bakke i mørk velour, som hos en guldsmed
+    - framed: Rolex- og Tudor-billedet vises uændret i en messingramme på et lille staffeli */
+function ProductImage({ url, mode }: { url: string; mode: Display }) {
   const tex = useTexture(url);
   tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 4;
+  tex.anisotropy = 8;
+  const velvet = useMaps("velvet", 0.6, 0.6);
   const img = tex.image as { width: number; height: number } | undefined;
   const aspect = img ? img.width / img.height : 1;
-  const width = framed ? (aspect > 1.4 ? 0.56 : 0.36) : aspect > 1 ? w : w * aspect;
-  const height = width / aspect;
-  return (
-    <Billboard>
-      {framed && (
-        <mesh position={[0, 0, -0.005]}>
-          <planeGeometry args={[width + 0.06, height + 0.06]} />
-          <meshStandardMaterial color="#ffffff" roughness={0.9} />
+  if (mode === "framed") {
+    // Billedet uændret, indpasset i højst 0,42 x 0,4 m, med hvid kant og messingramme
+    const iw = Math.min(0.42, 0.4 * aspect), ih = iw / aspect;
+    const mw = iw + 0.05, mh = ih + 0.05, fw = mw + 0.03, fh = mh + 0.03;
+    return (
+      <group rotation={[-0.12, 0, 0]}>
+        <group position={[0, fh / 2, 0]}>
+          <mesh position={[0, 0, -0.012]}>
+            <boxGeometry args={[fw, fh, 0.018]} />
+            <meshStandardMaterial color="#c9a668" metalness={0.85} roughness={0.3} envMapIntensity={1.6} />
+          </mesh>
+          <mesh position={[0, 0, -0.002]}>
+            <planeGeometry args={[mw, mh]} />
+            <meshStandardMaterial color="#faf7f1" roughness={0.9} />
+          </mesh>
+          <mesh>
+            <planeGeometry args={[iw, ih]} />
+            <meshBasicMaterial map={tex} toneMapped={false} />
+          </mesh>
+        </group>
+        {/* Staffeliets ben bagved */}
+        <mesh position={[0, fh * 0.42, -0.1]} rotation={[0.42, 0, 0]}>
+          <boxGeometry args={[0.012, fh * 0.9, 0.012]} />
+          <meshStandardMaterial color={BRASS} metalness={0.85} roughness={0.3} />
         </mesh>
-      )}
-      <mesh>
-        <planeGeometry args={[width, height]} />
-        <meshBasicMaterial map={tex} transparent={!framed} alphaTest={framed ? 0 : 0.02} toneMapped={false} />
+      </group>
+    );
+  }
+  if (mode === "jewel") {
+    const tw = 0.52, td = 0.38;
+    const iw = Math.min(tw - 0.06, (td - 0.05) * aspect), ih = iw / aspect;
+    return (
+      <>
+      {/* Messingstøtte bag bakken */}
+      <mesh position={[0, 0.13, -0.15]}>
+        <boxGeometry args={[0.18, 0.26, 0.01]} />
+        <meshStandardMaterial color={BRASS} metalness={0.85} roughness={0.3} />
+      </mesh>
+      <group position={[0, 0.16, -0.03]} rotation={[1.1, 0, 0]}>
+        <RoundedBox args={[tw, 0.03, td]} radius={0.012} smoothness={3}>
+          <meshStandardMaterial {...velvet} color="#22283a" roughness={1} />
+        </RoundedBox>
+        <mesh position={[0, 0.0165, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[iw, ih]} />
+          <ImageMat tex={tex} glow={0.3} />
+        </mesh>
+      </group>
+      </>
+    );
+  }
+  // Ur: oprejst på soklen, i en størrelse så skiven kan ses tydeligt
+  const h = 0.36, w = h * aspect;
+  return (
+    <Billboard lockX lockZ>
+      <mesh position={[0, h / 2, 0]}>
+        <planeGeometry args={[w, h]} />
+        <ImageMat tex={tex} />
       </mesh>
     </Billboard>
   );
@@ -360,7 +416,9 @@ function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, on
 }) {
   const b = slot.brand;
   // Ure står på puden; Rolex- og Tudor-billederne står uændret lidt højere
-  const base = still ? 1.32 : 1.24;
+  const mode: Display = b.framed ? "framed" : b.zone === "smykker" ? "jewel" : "watch";
+  // Bunden af varen: ure står på soklen, smykker og rammer står på bunden af montren
+  const base = mode === "watch" ? 1.105 : 1.035;
   const product = useRef<THREE.Group>(null);
   const wood = useMaps("walnut", 0.5, 0.6);
   const velvet = useMaps("velvet", 1, 1);
@@ -406,7 +464,7 @@ function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, on
         <ringGeometry args={[0.07, 0.095, 24]} />
         <meshStandardMaterial color={BRASS} metalness={0.9} roughness={0.3} />
       </mesh>
-      <mesh position={[0, 1.032, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh position={[0, 1.03, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[0.3, 32]} />
         <meshBasicMaterial ref={glow} color="#fff6e6" transparent opacity={0.25} depthWrite={false} />
       </mesh>
@@ -422,17 +480,38 @@ function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, on
         <boxGeometry args={[0.7, 0.72, 0.7]} />
         <meshPhysicalMaterial color="#f4fbff" transparent opacity={0.1} roughness={0} metalness={0} ior={1.5} specularIntensity={1} clearcoat={1} clearcoatRoughness={0} envMapIntensity={3} depthWrite={false} />
       </mesh>
-      {/* Urpude i ruskind, som uret står på */}
-      {!still && b.image && (
-        <RoundedBox args={[0.3, 0.09, 0.2]} radius={0.04} smoothness={3} position={[0, 1.075, 0]} castShadow>
-          <meshStandardMaterial {...velvet} color="#cdbca2" roughness={1} />
-        </RoundedBox>
+      {/* Bund i ruskind inde i montren */}
+      <mesh position={[0, 1.027, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[0.68, 0.68]} />
+        <meshStandardMaterial {...velvet} color={mode === "jewel" ? "#2a3042" : "#d9ccb6"} roughness={1} />
+      </mesh>
+      {/* Rund sokkel i ruskind med en fin messingkant, som uret står på */}
+      {mode === "watch" && b.image && (
+        <group position={[0, 1.027, 0]}>
+          <mesh position={[0, 0.039, 0]}>
+            <cylinderGeometry args={[0.15, 0.155, 0.078, 48]} />
+            <meshStandardMaterial {...velvet} color="#cbbba2" roughness={1} />
+          </mesh>
+          <mesh position={[0, 0.002, 0]}>
+            <cylinderGeometry args={[0.16, 0.16, 0.004, 48]} />
+            <meshStandardMaterial color={BRASS} metalness={0.85} roughness={0.3} />
+          </mesh>
+          <mesh position={[0, 0.0785, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <circleGeometry args={[0.1, 32]} />
+            <meshBasicMaterial map={blobTexture()} transparent opacity={0.45} depthWrite={false} />
+          </mesh>
+        </group>
       )}
+      {/* Lysliste i toppen af glasset, der lyser ned på varen */}
+      <mesh position={[0, 1.742, 0.3]} rotation={[Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[0.6, 0.018]} />
+        <meshBasicMaterial color="#fff6e4" toneMapped={false} />
+      </mesh>
       <group ref={product} position={[0, base, 0]}>
         {showProduct && b.model ? (
           <Suspense fallback={null}><ProductModel url={b.model} /></Suspense>
         ) : showProduct && b.image ? (
-          <ProductImage url={b.image} framed={b.framed} />
+          <ProductImage url={b.image} mode={mode} />
         ) : null}
       </group>
       {/* Messingplade med navnet */}
@@ -472,8 +551,9 @@ function Stool({ x, z }: { x: number; z: number }) {
         <cylinderGeometry args={[0.2, 0.18, 0.08, 28]} />
         <meshStandardMaterial {...velvet} color="#2c7a50" roughness={1} />
       </mesh>
-      <mesh position={[0, 0.71, 0]}>
-        <sphereGeometry args={[0.2, 24, 8, 0, Math.PI * 2, 0, Math.PI / 6]} />
+      {/* Polstret top: en flad kuppel, der sidder direkte på sædet */}
+      <mesh position={[0, 0.71 - 0.4 * Math.cos(0.45), 0]}>
+        <sphereGeometry args={[0.4, 32, 6, 0, Math.PI * 2, 0, 0.45]} />
         <meshStandardMaterial {...velvet} color="#2c7a50" roughness={1} />
       </mesh>
       {legs.map((l, k) => (

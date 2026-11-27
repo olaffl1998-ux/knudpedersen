@@ -1452,13 +1452,27 @@ p { color: inherit; }
 .nav__link { font-size: 11.5px; letter-spacing: .14em; }
 .logo { padding-inline: 8px; }
 @media (max-width: 1360px) { .nav--desktop { gap: 16px; } .nav__link { letter-spacing: .1em; } .logo b { font-size: 22px; letter-spacing: .2em; } }
-/* Kampagne-hero: blødere overgang. Det nye billede toner langsomt frem oven på det forrige */
-.cx__slide, .cx__slide.is-on { visibility: visible; opacity: 0; z-index: 0; transition: opacity 2.2s cubic-bezier(.45, 0, .2, 1); }
-.cx__slide.is-prev { opacity: 1; z-index: 1; transition: none; }
-.cx__slide.is-on { opacity: 1; z-index: 2; }
-.cx__slide img { transform: scale(1.03); transition: transform 9s linear; }
-.cx__slide.is-on img, .cx__slide.is-prev img { transform: scale(1); }
+/* Kampagne-hero: det nye billede glider ind som et gardin fra højre, mens det gamle trækker sig lidt tilbage.
+   Billederne selv ændres ikke, kun hvordan de kommer frem */
+.cx__slide, .cx__slide.is-on { opacity: 1; visibility: hidden; z-index: 0; clip-path: inset(0 0 0 100%); transition: none; }
+.cx__slide.is-prev { visibility: visible; z-index: 1; clip-path: inset(0); }
+.cx__slide.is-on { visibility: visible; z-index: 2; clip-path: inset(0); transition: clip-path 1.5s cubic-bezier(.7, 0, .2, 1); }
+.cx__slide img { transform: translateX(12%) scale(1.08); transition: none; }
+.cx__slide.is-on img { transform: none; transition: transform 2.6s cubic-bezier(.2, .7, .2, 1); }
+.cx__slide.is-prev img { transform: translateX(-10%) scale(1.03); filter: brightness(.75); transition: transform 1.5s cubic-bezier(.7, 0, .2, 1), filter 1.5s ease; }
+/* Fin lysstribe på gardinets kant */
+.cx__slide.is-on::after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 2px; background: rgba(255, 246, 228, .85); box-shadow: 0 0 24px 6px rgba(255, 240, 210, .35); opacity: 0; animation: cx-edge 1.5s cubic-bezier(.7, 0, .2, 1); pointer-events: none; }
+@keyframes cx-edge { 0% { opacity: 1; transform: translateX(0); } 90% { opacity: 1; } 100% { opacity: 0; } }
+.cx__slide.is-still, .cx__slide.is-still img { transition: none; }
+.cx__slide.is-still::after { display: none; }
 .cx__slide:not(.is-on) { pointer-events: none; }
+@media (prefers-reduced-motion: reduce) {
+  .cx__slide, .cx__slide.is-on { clip-path: none; opacity: 0; transition: opacity 1.2s ease; }
+  .cx__slide.is-prev { opacity: 1; transition: none; }
+  .cx__slide.is-on { opacity: 1; }
+  .cx__slide img, .cx__slide.is-prev img, .cx__slide.is-on img { transform: none; filter: none; }
+  .cx__slide.is-on::after { display: none; }
+}
 .rx-pos__in, .rx-pos__in:hover { color: #fff; }
 
 /* ============================================================
@@ -2021,3 +2035,61 @@ p { color: inherit; }
 .bs--georg-jensen { --bs-head: "Jost", "Futura", Arial, sans-serif; --bs-body: "Source Sans 3", Arial, sans-serif; --bs-hw: 400; --bs-track: -.01em; --bs-ink: #1e1e1e; --bs-muted: #5f5f5f; --bs-accent: #1e1e1e; --bs-btn-bg: #1e1e1e; --bs-alt: #f4f3f1; --bs-card: #f4f3f1; }
 .bs--georg-jensen .bs-eyebrow, .bs--georg-jensen .bs-btn, .bs--georg-jensen .bs-link { font-family: "Jost", Arial, sans-serif; font-weight: 600; letter-spacing: .18em; }
 .bs--georg-jensen .bs-tile { background: #fff; }
+
+/* Showroom på computer: gå fra vitrine til vitrine med pilene */
+.showroom__walk { position: absolute; left: 50%; bottom: 78px; z-index: 6; transform: translateX(-50%); display: flex; align-items: stretch; gap: 8px; transition: transform .5s ease; }
+.showroom__stage.has-panel .showroom__walk { transform: translateX(calc(-50% - 210px)); }
+.showroom__walk > button { min-width: 48px; border: 1px solid var(--line); background: rgba(250,248,245,.92); backdrop-filter: blur(6px); cursor: pointer; font-size: 18px; color: var(--ink); transition: background .2s ease; }
+.showroom__walk > button:hover { background: #fff; }
+.showroom__walk-now { display: grid; gap: 2px; min-width: 240px; padding: 10px 22px; font-family: var(--font-display); font-size: 21px !important; line-height: 1.2; }
+.showroom__walk-now small { font-family: var(--font-body); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--grey); }
+
+/* Forsiden: smykkesektionen med de fire smykkehuse */
+.hp-jw__head { text-align: center; max-width: 640px; margin: 0 auto var(--s5); display: grid; justify-items: center; gap: 12px; }
+.hp-jw__head h2 { margin: 0; }
+.hp-jw__head p { margin: 0; color: var(--grey); }
+.hp-jw__tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(12px, 1.6vw, 24px); }
+.hp-jw__tile { display: grid; gap: 6px; text-decoration: none; color: var(--ink); }
+.hp-jw__img { display: block; aspect-ratio: 1; overflow: hidden; background: var(--stage, #efe9e1); margin-bottom: 14px; }
+.hp-jw__img img { display: block; width: 100%; height: 100%; object-fit: cover; transform: scale(1.001); transition: transform 1.2s cubic-bezier(.2, .7, .2, 1); }
+.hp-jw__tile:hover .hp-jw__img img { transform: scale(1.05); }
+.hp-jw__name { font-family: var(--font-display); font-size: clamp(20px, 1.6vw, 26px); font-weight: 300; }
+.hp-jw__line { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--grey); }
+.hp-jw__types { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: var(--s5); }
+.hp-jw__types a { padding: 10px 20px; border: 1px solid var(--line); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; text-decoration: none; color: var(--ink); transition: background .2s ease, border-color .2s ease; }
+.hp-jw__types a:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+.hp-jw__cta { text-align: center; margin-top: var(--s4); }
+@media (max-width: 900px) { .hp-jw__tiles { grid-template-columns: repeat(2, 1fr); } }
+
+/* /smykker: typer med produktbillede */
+.jw-head { text-align: center; display: grid; justify-items: center; }
+.jw-head .lead { max-width: 640px; }
+.jw-types { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+.jw-type { display: grid; justify-items: center; gap: 4px; text-decoration: none; color: var(--ink); text-align: center; }
+.jw-type__img { display: block; width: 100%; aspect-ratio: 1; background: #fff; margin-bottom: 12px; overflow: hidden; }
+.jw-type__img img { width: 100%; height: 100%; object-fit: contain; padding: 14%; transition: transform .8s cubic-bezier(.2, .7, .2, 1); }
+.jw-type:hover .jw-type__img img { transform: scale(1.08); }
+.jw-type strong { font-family: var(--font-display); font-weight: 300; font-size: 20px; }
+.jw-type span:last-child { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--grey); }
+@media (max-width: 900px) { .jw-types { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 520px) { .jw-types { grid-template-columns: repeat(2, 1fr); } }
+
+/* Velkomstens tre fakta: store tal i guld med en langsom glans, der går hen over dem */
+.ed-facts--gold { border-top: 0 !important; position: relative; display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 0 !important; margin-top: var(--s6); padding: 0 !important; }
+.ed-facts--gold::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, #b8955e 20%, #e6cf9e 50%, #b8955e 80%, transparent); }
+.ed-facts--gold li { display: grid; justify-items: center; align-content: start; gap: 6px; padding: var(--s5) var(--s3) var(--s2); text-align: center; position: relative; }
+.ed-facts--gold li + li::before { content: ""; position: absolute; left: 0; top: 30%; bottom: 10%; width: 1px; background: linear-gradient(180deg, transparent, rgba(184, 149, 94, .6), transparent); }
+.ed-facts--gold small { font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: #9a7a45; }
+.ed-facts--gold strong { font-family: var(--font-display); font-weight: 300; font-size: clamp(52px, 6vw, 88px) !important; line-height: 1; letter-spacing: .02em;
+  background: linear-gradient(100deg, #8a6a35 0%, #b8955e 30%, #f3e2b8 45%, #b8955e 60%, #8a6a35 100%); background-size: 250% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent; animation: fact-shine 7s ease-in-out infinite; }
+.ed-facts--gold li:nth-child(2) strong { animation-delay: .6s; }
+.ed-facts--gold li:nth-child(3) strong { animation-delay: 1.2s; }
+.ed-facts--gold li > span { max-width: 22ch; font-size: 11px !important; letter-spacing: .18em; text-transform: uppercase; color: var(--grey); line-height: 1.6; }
+@keyframes fact-shine { 0%, 15% { background-position: 100% 0; } 60%, 100% { background-position: 0 0; } }
+@media (max-width: 700px) {
+  .ed-facts--gold { grid-template-columns: 1fr; }
+  .ed-facts--gold li + li::before { left: 25%; right: 25%; top: 0; bottom: auto; width: auto; height: 1px; background: linear-gradient(90deg, transparent, rgba(184, 149, 94, .6), transparent); }
+}
+@media (prefers-reduced-motion: reduce) { .ed-facts--gold strong { animation: none; background-position: 50% 0; } }
+.ed-facts--gold { max-width: 1000px; }

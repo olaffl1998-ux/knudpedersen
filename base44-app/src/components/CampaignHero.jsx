@@ -2,6 +2,12 @@
 import Link from "@/lib/next/link";
 import { useEffect, useRef, useState } from "react";
 const DURATION = 7000;
+/** Link til kampagnen. Ligger uden for komponenten, så billederne ikke bygges om ved hvert skift (ellers ingen animation) */
+function Cta({ c, children, className, tabIndex }) {
+    return c.external
+        ? <a href={c.href} className={className} target="_blank" rel="noopener" tabIndex={tabIndex}>{children}</a>
+        : <Link href={c.href} className={className} tabIndex={tabIndex}>{children}</Link>;
+}
 /** Forsidens hero i fuld bredde: mærkernes officielle kampagnebilleder, der skifter roligt.
     Teksten står under billedet, så mærkernes egne logoer og billeder forbliver uberørte. */
 export default function CampaignHero({ slides }) {
@@ -65,14 +71,11 @@ export default function CampaignHero({ slides }) {
         return () => clearTimeout(t);
     }, [i, paused, n]);
     const s = slides[i];
-    const Cta = ({ c, children, className, tabIndex }) => c.external
-        ? <a href={c.href} className={className} target="_blank" rel="noopener" tabIndex={tabIndex}>{children}</a>
-        : <Link href={c.href} className={className} tabIndex={tabIndex}>{children}</Link>;
     return (<section ref={root} className={`cx${paused ? " is-paused" : ""}`} aria-roledescription="karrusel" aria-label="Kampagner fra vores mærker" onFocus={(e) => { if (e.target.matches(":focus-visible"))
         setPaused(true); }} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget))
         setPaused(false); }}>
       <div className="cx__stage">
-        {slides.map((c, k) => (<Cta key={c.desktop} c={c} className={`cx__slide${k === i ? " is-on" : k === prev ? " is-prev" : ""}`} tabIndex={k === i ? 0 : -1}>
+        {slides.map((c, k) => (<Cta key={c.desktop} c={c} className={`cx__slide${k === i ? " is-on" : k === prev ? " is-prev" : ""}${prev < 0 ? " is-still" : ""}`} tabIndex={k === i ? 0 : -1}>
             <picture>
               <source media="(max-width: 767px)" srcSet={c.mobile}/>
                             <img src={c.desktop} alt={`${c.brand}: ${c.title}`} loading="eager" fetchPriority={k === 0 ? "high" : "low"}/>

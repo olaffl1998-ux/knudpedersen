@@ -37,16 +37,25 @@ export function Blocks({ blocks, skipH1 = true }) {
                     return b.href && !b.href.startsWith("#") ? <Link key={i} href={b.href} className="rx-media-link">{pic}</Link> : <div key={i}>{pic}</div>;
                 }
                 case "img":
-                    return <img key={i} className="rx-media" src={b.src} alt={b.alt?.trim() || ""} loading="eager"/>;
+                    // Rolex-skiltene findes kun i lille størrelse (300 x 150). De vises i deres egen størrelse, så de står skarpt
+                    return /plaque/i.test(b.src) ? (<img key={i} className="rx-plaque-img" src={b.src} alt={b.alt?.trim() || ""} loading="eager" width={300} height={150}/>) : <img key={i} className="rx-media" src={b.src} alt={b.alt?.trim() || ""} loading="eager"/>;
                 case "iframe":
                     return b.src && /youtube/.test(b.src) ? (<div key={i} className="rx-video">
-                <iframe src={b.src.replace("youtube.com", "youtube-nocookie.com")} title="Rolex-video" loading="eager" allow="encrypted-media; picture-in-picture" allowFullScreen/>
+                <iframe src={ytAuto(b.src)} title="Rolex-video" loading="eager" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen/>
               </div>) : null;
                 default:
                     return null;
             }
         })}
     </div>);
+}
+/** Rolex' egne film starter af sig selv (uden lyd, som browserne kræver) og kører i ring. Filmen selv er uændret */
+function ytAuto(src) {
+    const u = new URL(src.replace("youtube.com", "youtube-nocookie.com"), "https://www.youtube-nocookie.com");
+    const id = u.pathname.split("/").pop() ?? "";
+    for (const [k, v] of Object.entries({ autoplay: "1", mute: "1", playsinline: "1", loop: "1", playlist: id, rel: "0", modestbranding: "1" }))
+        u.searchParams.set(k, v);
+    return u.toString();
 }
 /** Brødkrummer starter altid ved "Udforsk Rolex". På mobil vises kun et link til niveauet over. */
 export function RolexCrumbs({ items }) {

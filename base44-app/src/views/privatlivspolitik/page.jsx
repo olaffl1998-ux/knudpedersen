@@ -1,28 +1,49 @@
+import Link from "@/lib/next/link";
 import { Breadcrumbs } from "@/components/Seo";
-import { business } from "@/lib/site";
-export const metadata = { title: "Privatlivspolitik", description: "Sådan behandler Knud Pedersen A/S dine personoplysninger, når du booker tid, skriver til os eller tilmelder dig nyhedsbrevet.", alternates: { canonical: "/privatlivspolitik" } };
+export const metadata = { title: "Persondatapolitik", description: "Persondatapolitik hos Knud Pedersen Juveler, Ure, Optik, Århus A/S: hvilke persondata vi indsamler, hvorfor, og hvilke rettigheder du har.", alternates: { canonical: "/privatlivspolitik" } };
+/** Teksten er Knud Pedersens egen persondatapolitik fra knudpedersen.dk */
 export default function Privatliv() {
     return (<section className="section">
       <div className="container container--narrow">
-        <Breadcrumbs items={[{ name: "Privatlivspolitik", href: "/privatlivspolitik" }]}/>
+        <Breadcrumbs items={[{ name: "Persondatapolitik", href: "/privatlivspolitik" }]}/>
         <div className="prose">
-          <p className="tag">Udkast – skal gennemgås før lancering</p>
-          <h1>Privatlivspolitik</h1>
-          <h2>Dataansvarlig</h2>
-          <p>{business.legalName}, {business.street}, {business.postalCode} {business.city}, CVR {business.cvr}. Kontakt: {business.email}, tlf. {business.phone}.</p>
-          <h2>Hvilke oplysninger vi behandler</h2>
+          <h1>Persondatapolitik</h1>
+          <p><strong>Persondatapolitik hos KNUD PEDERSEN JUVELER, URE, OPTIK, ÅRHUS A/S</strong></p>
+          <p>Vi indhenter kun persondata i de tilfælde, hvor dette skulle være relevant for os, og vi vil kun indhente persondata, hvis det er relevant for din aktivitet hos KNUD PEDERSEN JUVELER, URE, OPTIK, ÅRHUS A/S.</p>
+          <p>Ved indsamling, behandling og anvendelse af dine persondata overholder vi altid alle relevante lovbestemmelser.</p>
+          <p>Vi vil kun opbevare dine persondata, så længe vi enten er pålagt en juridisk forpligtelse hertil, eller så længe det er relevant for den hensigt, hvormed de blev indsamlet.</p>
+
+          <h2>Oplysninger vi indsamler</h2>
+          <p>Hvis du ønsker at købe og modtage et produkt eller en ydelse fra os, har vi brug for at indsamle visse persondata for at kunne gennemføre handlen og for at kunne tilbyde dig vores services. Vi kan bruge cookies til at holde styr på indholdet i din indkøbskurv, mens du bruger vores webshop.</p>
+          <p>Vi kan indhente oplysninger som f.eks. navn, e-mailadresse, postadresse, leveringsadresse (hvis den varierer fra postadresse), telefonnummer og betalingsoplysninger.</p>
+          <p>KNUD PEDERSEN JUVELER, URE, OPTIK, ÅRHUS A/S indsamler og behandler dine persondata, når du foretager dig følgende:</p>
           <ul>
-            <li>Når du booker et møde eller sender en besked: navn, e-mail, telefonnummer, ønsket tidspunkt og din besked.</li>
-            <li>Når du besøger siden: tekniske oplysninger og, hvis du har givet samtykke, statistik om brugen af siden.</li>
+            <li>Besøger vores hjemmeside</li>
+            <li>Sender os spørgsmål, reklamationer eller feedback</li>
           </ul>
-          <h2>Formål og retsgrundlag</h2>
-          <p>Vi bruger oplysningerne til at besvare din henvendelse og forberede dit besøg (databeskyttelsesforordningens art. 6, stk. 1, litra b og f). Statistik og marketing sker kun med dit samtykke (art. 6, stk. 1, litra a).</p>
-          <h2>Opbevaring</h2>
-          <p>Henvendelser slettes senest 12 måneder efter sidste kontakt, medmindre de indgår i et køb eller en serviceordre, hvor bogføringslovens regler gælder.</p>
-          <h2>Modtagere</h2>
-          <p>Vi bruger databehandlere til hosting og afsendelse af e-mail. De behandler kun oplysningerne efter vores instruks og inden for EU/EØS eller med gyldigt overførselsgrundlag. Vi sælger aldrig dine oplysninger.</p>
+
+          <h2>Den dataansvarlige</h2>
+          <p>Den dataansvarlige for indsamling, behandling og anvendelse af dine personoplysninger på https://knudpedersen.dk er KNUD PEDERSEN JUVELER, URE, OPTIK, ÅRHUS A/S, Skt. Clemens Torv 6, 8000 Aarhus C, cvr nr. 78299428</p>
+
+          <h2>Behandlingsgrundlag og formål</h2>
+          <p>Dine almindelige kontaktoplysninger som navn og adresse indhenter vi for at kunne levere det produkt eller den ydelse, som du har købt hos os. Din e-mailadresse indhenter vi for at kunne sende dig en ordrebekræftelse samt en leveringsbekræftelse.</p>
+          <p>Dine oplysninger (undtagen din e-mailadresse, hvis du har givet samtykke til behandling heraf med henblik på modtagelse af tilbud) vil blive slettet 5 år efter, at du har modtaget din vare eller ydelse.</p>
+
+          <h2>Andre modtagere af personoplysninger</h2>
+          <p>Vi sælger ikke dine persondata til tredjemand, og vi overfører ikke dine persondata til tredjelande.</p>
+          <p>Vi har vores hjemmeside hos Scannet A/S, som fungerer som vores databehandler. Alle persondata som du oplyser på vores hjemmeside vil blive opbevaret i Scannet A/Ss datacentre.</p>
+          <p>Vi anvender eksterne virksomheder som leverandører for at levere vores ydelser bedst muligt. Disse eksterne leverandører er databehandlere og behandler i visse tilfælde personoplysninger i forbindelse med deres levering af ydelser til os. Vores databehandlere behandler kun personoplysninger efter vores instruks og i overensstemmelse med lovgivningens krav til databehandlere.</p>
+          <p>Vi har indgået databehandleraftaler med vores databehandlere, hvilket er vores garanti for, at de overholder gældende regler om beskyttelse af dine personoplysninger.</p>
+
           <h2>Dine rettigheder</h2>
-          <p>Du har ret til indsigt, berigtigelse, sletning, begrænsning, dataportabilitet og indsigelse, og du kan altid trække et samtykke tilbage. Skriv til {business.email}. Du kan klage til Datatilsynet, www.datatilsynet.dk.</p>
+          <p>Som den registrerede har du en række rettigheder, som vi til enhver tid skal sikre opfyldelse af. Du har ret til at anmode os om følgende:</p>
+          <ul>
+            <li>At få adgang til og få rettet/ændret dine persondata</li>
+            <li>At få slettet persondata</li>
+          </ul>
+          <p>Du har derudover ret til at protestere over behandlingen af dine personlige data, og du har ret til at indgive klage til en databeskyttelsesmyndighed.</p>
+          <p>Ønsker du ikke længere, at vi skal behandle dine personoplysninger, eller at vi skal begrænse behandlingen af dine personoplysninger, kan du også sende os en anmodning herom til vores e-mailadresse <a href="mailto:sktclemenstorv@knudpedersen.dk">sktclemenstorv@knudpedersen.dk</a>.</p>
+          <p>Læs også vores <Link href="/cookiepolitik">cookies og privatlivspolitik</Link>.</p>
         </div>
       </div>
     </section>);

@@ -173,7 +173,7 @@ function HeroField({ b }) {
         {/* Lyset falder på væggen bag billedet, ikke på selve billedet */}
         <div ref={light} className="bx-hero__light" aria-hidden="true"/>
         {h.video
-            ? <video className="bx-hero__media" src={h.video} poster={h.poster} muted playsInline loop preload="none" width={h.width} height={h.height}/>
+            ? <video className="bx-hero__media" src={h.video} poster={h.poster} muted playsInline loop autoPlay preload="auto" width={h.width} height={h.height}/>
             : <img className="bx-hero__media" src={h.src} alt={h.alt} width={h.width} height={h.height} loading="eager" decoding="async"/>}
       </div>
       <div className="bx-hero__text">
