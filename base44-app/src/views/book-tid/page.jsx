@@ -14,6 +14,7 @@ export default function BookTid() {
         <span className="label">Book tid</span>
         <h1>Book en tid i butikken</h1>
         <p className="lead">Vælg hvad du vil tale om, og find en tid, der passer dig. Vi bekræfter tiden på e-mail. Ønsker du en tid til Rolex, så <a href="/rolex/contact-aarhus#book">book her</a>.</p>
+        <p className="lead">Man kan også bare komme forbi til en uforpligtende snak. Du finder os på Skt. Clemens Torv 6 i Aarhus.</p>
       </section>
       <section className="container container--narrow" style={{ paddingBottom: 120 }}>
         <Suspense><BookingFlow brands={nonRolexBrands.map((b) => ({ slug: b.slug, name: b.name }))}/></Suspense>
