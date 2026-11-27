@@ -3,8 +3,6 @@ import { brands, models, genderOf } from "@/data/catalog";
 import { pieces } from "@/data/jewellery";
 import { jewelleryBrandList } from "@/data/jewellery";
 import { rolexAssets } from "@/data/rolex";
-import ModelCard from "@/components/ModelCard";
-import Carousel from "@/components/Carousel";
 import CampaignHero, { type Campaign } from "@/components/CampaignHero";
 import FeatureWatch from "@/components/FeatureWatch";
 import { CountUp, Words } from "@/components/Motion";
@@ -67,8 +65,6 @@ const reviews: { text: string; name: string; date: string; source: string }[] = 
 export default function Home() {
   const byRef = (ref: string) => models.find((m) => m.ref === ref && m.image);
   const focus = byRef("1-66-06-04-22-05") ?? pick("glashutte-original")[0];
-  const featuredBrands = ["tudor", "omega", "breitling", "grand-seiko", "tag-heuer", "longines", "glashutte-original", "oris", "baume-mercier", "doxa", "chopard"];
-  const featured = featuredBrands.flatMap((b) => pick(b, 1)).slice(0, 10);
   const herre = models.find((m) => m.image && m.brand === "omega" && genderOf(m) === "Herre") ?? pick("omega")[0];
   const dame = models.find((m) => m.image && genderOf(m) === "Dame");
   const tiles = [
@@ -125,7 +121,7 @@ export default function Home() {
             <img className="rx-pos__plaque" src={rolexAssets.plaque} alt="Officiel Rolex-forhandler" width={120} height={60} />
           </span>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="rx-pos__photo" src={POS_IMG} alt="Rolex-afdelingen hos Knud Pedersen på Skt. Clemens Torv" loading="lazy" />
+          <img className="rx-pos__photo" src={POS_IMG} alt="Rolex-afdelingen hos Knud Pedersen på Skt. Clemens Torv" loading="eager" fetchPriority="high" decoding="async" />
         </Link>
       </section>
 
@@ -143,15 +139,6 @@ export default function Home() {
               </li>
             ))}
           </ul>
-        </div>
-      </section>
-
-      {/* 4. Udvalgte ure (ikke Rolex) */}
-      <section className="hp-section ed-featured">
-        <div className="container">
-          <Carousel eyebrow="Ure" title="Udvalgt lige nu" action={<Link className="link-arrow" href="/ure">Alle ure</Link>}>
-            {featured.map((m) => <li key={m.brand + m.slug}><ModelCard model={m} /></li>)}
-          </Carousel>
         </div>
       </section>
 
