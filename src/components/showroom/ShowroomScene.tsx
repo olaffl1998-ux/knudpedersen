@@ -7,13 +7,13 @@ import * as THREE from "three";
 import "./r3f-compat";
 import type { ShowroomBrand, ShowroomZone } from "@/data/brands";
 import { zoneLabels } from "@/data/brands";
-import { WALL_RADIUS, focusPose, layout, overviewPose, type Slot } from "./geometry";
+import { HALL_HALF, focusPose, layout, overviewPose, type Gap, type Pose, type Slot } from "./geometry";
 
 export type SceneProps = {
   brands: ShowroomBrand[];
   active: number | null;
   hover: number | null;
-  /** Vinklen, kameraet skal kigge mod i oversigten (zone eller mærke) */
+  /** Hvor langt nede i butikken kameraet skal stå i gåturen (zone eller mærke) */
   lookAngle: number | null;
   mobile: boolean;
   /** Mobil: det mærke, der står foran kameraet */
@@ -23,152 +23,169 @@ export type SceneProps = {
   onReady: () => void;
 };
 
-const STONE = "#ebe6de";
-const WALL = "#efe5d7";
-const BRASS = "#b08d57";
-/** Navnet på messingpladen tegnes som en tekstur i samme serif som logoet */
-const plates = new Map<string, THREE.CanvasTexture>();
-function plateTexture(name: string) {
-  const hit = plates.get(name);
-  if (hit) return hit;
-  const c = document.createElement("canvas");
-  c.width = 1024; c.height = 220;
-  const ctx = c.getContext("2d")!;
-  const fam = getComputedStyle(document.body).getPropertyValue("--font-display").trim() || "Georgia, serif";
-  let size = 120;
-  ctx.font = `400 ${size}px ${fam}`;
-  while (ctx.measureText(name).width > 940 && size > 40) { size -= 6; ctx.font = `400 ${size}px ${fam}`; }
-  ctx.fillStyle = "#2a2016";
-  ctx.textAlign = "center"; ctx.textBaseline = "middle";
-  ctx.fillText(name, 512, 116);
-  const t = new THREE.CanvasTexture(c);
-  t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
-  plates.set(name, t);
-  return t;
-}
+const BRASS = "#b8955e";
+const WALNUT = "#4a3427";
+const CEIL = 4.0;
+const NICHE_W = 1.7;
 
-/** Skilt på væggen bag hver vitrine: stort mærkenavn, så man kan se det på afstand */
-const signs = new Map<string, THREE.CanvasTexture>();
-function signTexture(name: string, zone: string) {
-  const key = name + zone;
-  const hit = signs.get(key);
-  if (hit) return hit;
+const fonts = () => ({
+  display: getComputedStyle(document.body).getPropertyValue("--font-display").trim() || "Georgia, serif",
+  body: getComputedStyle(document.body).getPropertyValue("--font-body").trim() || "sans-serif",
+});
+const spaced = (s: string) => s.toUpperCase().split("").join(String.fromCharCode(8202));
+
+function canvasTex(w: number, h: number, draw: (ctx: CanvasRenderingContext2D) => void) {
   const c = document.createElement("canvas");
-  c.width = 1024; c.height = 300;
-  const ctx = c.getContext("2d")!;
-  const fam = getComputedStyle(document.body).getPropertyValue("--font-display").trim() || "Georgia, serif";
-  const body = getComputedStyle(document.body).getPropertyValue("--font-body").trim() || "sans-serif";
-  ctx.fillStyle = "#f8f3ea"; ctx.fillRect(0, 0, 1024, 300);
-  ctx.strokeStyle = "#b08d57"; ctx.lineWidth = 6; ctx.strokeRect(14, 14, 996, 272);
-  ctx.textAlign = "center"; ctx.textBaseline = "middle";
-  ctx.fillStyle = "#9a7b4f"; ctx.font = `500 30px ${body}`;
-  const eyebrow = zone.toUpperCase().split("").join(String.fromCharCode(8202));
-  ctx.fillText(eyebrow, 512, 70);
-  let size = 128;
-  ctx.font = `400 ${size}px ${fam}`;
-  while (ctx.measureText(name).width > 900 && size > 50) { size -= 6; ctx.font = `400 ${size}px ${fam}`; }
-  ctx.fillStyle = "#1f1b18";
-  ctx.fillText(name, 512, 172);
+  c.width = w; c.height = h;
+  draw(c.getContext("2d")!);
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
-  signs.set(key, t);
+  return t;
+}
+const cache = new Map<string, THREE.CanvasTexture>();
+function cached(key: string, make: () => THREE.CanvasTexture) {
+  let t = cache.get(key);
+  if (!t) { t = make(); cache.set(key, t); }
   return t;
 }
 
-/** Sildebensparket i lys eg, tegnet i en canvas (ingen billedfiler at hente) */
-let parquet: THREE.CanvasTexture | null = null;
-function parquetTexture() {
-  if (parquet) return parquet;
-  const c = document.createElement("canvas");
-  c.width = c.height = 512;
-  const ctx = c.getContext("2d")!;
-  ctx.fillStyle = "#cdb899"; ctx.fillRect(0, 0, 512, 512);
-  const tones = ["#d6c3a5", "#c9b293", "#d1bc9c", "#c4ab8b", "#dbc9ad"];
-  const L = 128, W = 32;
-  let n = 0;
-  for (let y = -L; y < 512 + L; y += W) {
-    for (let x = -L; x < 512 + L; x += L) {
-      for (const dir of [0, 1]) {
-        ctx.save();
-        ctx.translate(x + (dir ? L / 2 : 0), y);
-        ctx.rotate(dir ? -Math.PI / 4 : Math.PI / 4);
-        ctx.fillStyle = tones[n++ % tones.length];
-        ctx.fillRect(0, 0, L * 0.7, W * 0.7);
-        ctx.strokeStyle = "rgba(90,70,45,.25)"; ctx.lineWidth = 1.5;
-        ctx.strokeRect(0, 0, L * 0.7, W * 0.7);
-        ctx.restore();
-      }
-    }
-  }
-  parquet = new THREE.CanvasTexture(c);
-  parquet.colorSpace = THREE.SRGBColorSpace;
-  parquet.wrapS = parquet.wrapT = THREE.RepeatWrapping;
-  parquet.repeat.set(7, 7);
-  parquet.anisotropy = 8;
-  return parquet;
+/** Messingpladen på soklen */
+function plateTexture(name: string) {
+  return cached("plate:" + name, () => canvasTex(1024, 220, (ctx) => {
+    const { display } = fonts();
+    let size = 120;
+    ctx.font = `400 ${size}px ${display}`;
+    while (ctx.measureText(name).width > 940 && size > 40) { size -= 6; ctx.font = `400 ${size}px ${display}`; }
+    ctx.fillStyle = "#2a2016"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(name, 512, 116);
+  }));
 }
 
-/** Vægpaneler med lister, så væggen ligner en butiksvæg og ikke en flad flade */
-let panels: THREE.CanvasTexture | null = null;
-function panelTexture(count: number) {
-  if (panels) return panels;
-  const c = document.createElement("canvas");
-  c.width = 256; c.height = 512;
-  const ctx = c.getContext("2d")!;
-  ctx.fillStyle = "#f5ede1"; ctx.fillRect(0, 0, 256, 512);
-  ctx.strokeStyle = "rgba(120,95,60,.16)"; ctx.lineWidth = 3;
-  ctx.strokeRect(22, 30, 212, 250);   // øverste felt
-  ctx.strokeRect(22, 330, 212, 150);  // brystpanel
-  ctx.fillStyle = "rgba(120,95,60,.12)"; ctx.fillRect(0, 300, 256, 8); // liste
-  ctx.fillStyle = "rgba(0,0,0,.05)"; ctx.fillRect(0, 0, 3, 512);
-  panels = new THREE.CanvasTexture(c);
-  panels.colorSpace = THREE.SRGBColorSpace;
-  panels.wrapS = THREE.RepeatWrapping;
-  panels.repeat.set(count * 2, 1);
-  return panels;
+/** Skilt i messing på mørk valnød: bruges både som udhængsskilt og over nichen */
+function signTexture(name: string, eyebrow: string) {
+  return cached("sign:" + name + eyebrow, () => canvasTex(1024, 320, (ctx) => {
+    const { display, body } = fonts();
+    const g = ctx.createLinearGradient(0, 0, 0, 320);
+    g.addColorStop(0, "#3d2b20"); g.addColorStop(1, "#2e2018");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, 1024, 320);
+    ctx.strokeStyle = "#c9a56b"; ctx.lineWidth = 5; ctx.strokeRect(16, 16, 992, 288);
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    if (eyebrow) { ctx.fillStyle = "#b89a6a"; ctx.font = `500 30px ${body}`; ctx.fillText(spaced(eyebrow), 512, 76); }
+    let size = 132;
+    ctx.font = `400 ${size}px ${display}`;
+    while (ctx.measureText(name).width > 900 && size > 50) { size -= 6; ctx.font = `400 ${size}px ${display}`; }
+    ctx.fillStyle = "#e9d3a6";
+    ctx.fillText(name, 512, eyebrow ? 186 : 160);
+  }));
+}
+
+/** Poleret marmorgulv i store fliser med fine årer */
+function marbleTexture() {
+  return cached("marble", () => {
+    const t = canvasTex(1024, 1024, (ctx) => {
+      ctx.fillStyle = "#efe9e0"; ctx.fillRect(0, 0, 1024, 1024);
+      let seed = 7;
+      const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+      for (let i = 0; i < 26; i++) {
+        ctx.strokeStyle = `rgba(150,135,115,${0.05 + rnd() * 0.12})`;
+        ctx.lineWidth = 0.6 + rnd() * 2.2;
+        ctx.beginPath();
+        let x = rnd() * 1024, y = rnd() * 1024;
+        ctx.moveTo(x, y);
+        for (let j = 0; j < 9; j++) { x += (rnd() - 0.3) * 160; y += (rnd() - 0.5) * 120; ctx.lineTo(x, y); }
+        ctx.stroke();
+      }
+      ctx.strokeStyle = "rgba(120,100,80,.25)"; ctx.lineWidth = 2;
+      ctx.strokeRect(0, 0, 512, 512); ctx.strokeRect(512, 0, 512, 512); ctx.strokeRect(0, 512, 512, 512); ctx.strokeRect(512, 512, 512, 512);
+    });
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    return t;
+  });
+}
+
+/** Valnøddepaneler på væggene */
+function walnutTexture() {
+  return cached("walnut", () => {
+    const t = canvasTex(512, 512, (ctx) => {
+      ctx.fillStyle = WALNUT; ctx.fillRect(0, 0, 512, 512);
+      for (let i = 0; i < 90; i++) {
+        ctx.strokeStyle = `rgba(${i % 2 ? "30,18,10" : "110,80,55"},${0.08 + (i % 5) * 0.03})`;
+        ctx.lineWidth = 1 + (i % 3);
+        const x = (i * 37) % 512;
+        ctx.beginPath(); ctx.moveTo(x, 0);
+        ctx.bezierCurveTo(x + 8, 170, x - 8, 340, x + 4, 512); ctx.stroke();
+      }
+      ctx.strokeStyle = "rgba(20,12,6,.55)"; ctx.lineWidth = 4; ctx.strokeRect(2, 2, 508, 508);
+      ctx.strokeStyle = "rgba(200,160,110,.18)"; ctx.lineWidth = 2; ctx.strokeRect(40, 40, 432, 432);
+    });
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    return t;
+  });
 }
 
 const GLASS_EDGES = new THREE.EdgesGeometry(new THREE.BoxGeometry(0.7, 0.72, 0.7));
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
-type Look = { yaw: number; pitch: number; walk: number; fov: number; touched: boolean; dragging: boolean; lastX: number; lastY: number };
+type Look = { s: number; dir: 1 | -1; pitch: number; step: number; touched: boolean; dragging: boolean; lastX: number; lastY: number };
 
-/** Kameraet: i oversigten står det i midten og kigger rundt (træk for at kigge, ingen fri bevægelse).
-    Ved klik flyver det blødt (1,2 sek., ease-in-out) ind foran vitrinen og tilbage igen. */
-function CameraRig({ pose, overview, look, auto }: { pose: { pos: [number, number, number]; target: [number, number, number] } | null; overview: boolean; look: React.MutableRefObject<Look>; auto: boolean }) {
+/** Kameraet: i gåturen går man langsomt ned gennem butikken (og vender ved enden).
+    Træk eller scroll for selv at gå frem og tilbage. Ved klik går man hen foran vitrinen (1,2 sek., ease-in-out). */
+function CameraRig({ pose, overview, look, auto, walkEnd }: { pose: Pose | null; overview: boolean; look: React.MutableRefObject<Look>; auto: boolean; walkEnd: number }) {
   const { camera } = useThree();
   const cur = useRef({ target: new THREE.Vector3(...overviewPose(0).target) });
-  const anim = useRef<{ t: number; fromP: THREE.Vector3; fromT: THREE.Vector3; toP: THREE.Vector3; toT: THREE.Vector3 } | null>(null);
+  const anim = useRef<{ t: number; fromP: THREE.Vector3; fromT: THREE.Vector3; toP: THREE.Vector3; toT: THREE.Vector3; walk?: number } | null>(null);
+  const tmp = useMemo(() => ({ p: new THREE.Vector3(), t: new THREE.Vector3() }), []);
   useEffect(() => {
     if (!pose) return;
-    anim.current = { t: 0, fromP: camera.position.clone(), fromT: cur.current.target.clone(), toP: new THREE.Vector3(...pose.pos), toT: new THREE.Vector3(...pose.target) };
+    anim.current = { t: 0, fromP: camera.position.clone(), fromT: cur.current.target.clone(), toP: new THREE.Vector3(...pose.pos), toT: new THREE.Vector3(...pose.target), walk: pose.walk };
   }, [pose, camera]);
-  useFrame((_, dt) => {
+  useFrame((_, rawDt) => {
+    const dt = Math.min(rawDt, 0.1);
     const cam = camera as THREE.PerspectiveCamera;
     const a = anim.current;
+    const L = look.current;
     if (a) {
       a.t = Math.min(1, a.t + dt / 1.2);
       const k = ease(a.t);
       cam.position.lerpVectors(a.fromP, a.toP, k);
       cur.current.target.lerpVectors(a.fromT, a.toT, k);
       cam.lookAt(cur.current.target);
-      if (a.t >= 1) {
-        anim.current = null;
-        if (overview) { const d = a.toT.clone().sub(a.toP); look.current.yaw = Math.atan2(d.x, -d.z); look.current.pitch = 0; }
-      }
+      if (a.t >= 1) { anim.current = null; if (a.walk != null) { L.s = a.walk; L.dir = 1; } }
     } else if (overview) {
-      const L = look.current;
-      if (auto && !L.touched) { L.yaw += dt * 0.05; L.walk += dt; }
-      const p = overviewPose(L.yaw);
-      // Et ganske let skridt-vip, når man "går", så det føles som at gå rundt i butikken
-      const bob = auto && !L.touched ? Math.sin(L.walk * 3.2) * 0.012 : 0;
-      cam.position.lerp(new THREE.Vector3(p.pos[0], p.pos[1] + bob, p.pos[2]), Math.min(1, dt * 8));
-      const t = new THREE.Vector3(p.target[0], p.target[1] + L.pitch * 2.6, p.target[2]);
-      cur.current.target.lerp(t, Math.min(1, dt * 8));
+      if (auto && !L.touched) {
+        L.s += dt * 0.42 * L.dir;
+        L.step += dt;
+        if (L.s > walkEnd) { L.s = walkEnd; L.dir = -1; }
+        if (L.s < 0) { L.s = 0; L.dir = 1; }
+      }
+      L.s = Math.max(0, Math.min(walkEnd, L.s));
+      const p = overviewPose(L.s, L.dir);
+      // Et ganske let skridt-vip, når man går
+      const bob = auto && !L.touched ? Math.sin(L.step * 4.2) * 0.01 : 0;
+      cam.position.lerp(tmp.p.set(p.pos[0], p.pos[1] + bob, p.pos[2]), Math.min(1, dt * 5));
+      cur.current.target.lerp(tmp.t.set(p.target[0], p.target[1] + L.pitch * 3, p.target[2]), Math.min(1, dt * 2.2));
       cam.lookAt(cur.current.target);
     }
-    if (Math.abs(cam.fov - look.current.fov) > 0.01) { cam.fov += (look.current.fov - cam.fov) * Math.min(1, dt * 6); cam.updateProjectionMatrix(); }
   });
+  return null;
+}
+
+/** Scroll med hjulet går frem og tilbage i butikken, når man har rørt scenen. Ved enderne ruller siden videre */
+function WheelWalk({ look, enabled, walkEnd }: { look: React.MutableRefObject<Look>; enabled: boolean; walkEnd: number }) {
+  const { gl } = useThree();
+  useEffect(() => {
+    const el = gl.domElement;
+    const on = (e: WheelEvent) => {
+      const L = look.current;
+      if (!enabled || !L.touched) return;
+      const next = Math.max(0, Math.min(walkEnd, L.s + Math.sign(e.deltaY) * 0.7));
+      if (next === L.s) return;
+      e.preventDefault();
+      L.s = next; L.dir = e.deltaY > 0 ? 1 : -1;
+    };
+    el.addEventListener("wheel", on, { passive: false });
+    return () => el.removeEventListener("wheel", on);
+  }, [gl, look, enabled, walkEnd]);
   return null;
 }
 
@@ -211,6 +228,61 @@ function ProductModel({ url }: { url: string }) {
   return <primitive object={obj} />;
 }
 
+/** Udhængsskilt, der stikker ud fra væggen, så man kan læse mærket, mens man går ned gennem butikken */
+function BladeSign({ x, z, name, eyebrow }: { x: number; z: number; name: string; eyebrow: string }) {
+  const tex = signTexture(name, eyebrow);
+  return (
+    <group position={[x, 3.0, z]}>
+      <mesh position={[0, 0.36, 0]}>
+        <boxGeometry args={[0.02, 0.22, 0.02]} />
+        <meshStandardMaterial color={BRASS} metalness={0.6} roughness={0.35} />
+      </mesh>
+      <mesh>
+        <boxGeometry args={[1.16, 0.38, 0.03]} />
+        <meshStandardMaterial color="#2e2018" roughness={0.6} />
+      </mesh>
+      <mesh position={[0, 0, 0.017]}>
+        <planeGeometry args={[1.14, 0.356]} />
+        <meshBasicMaterial map={tex} toneMapped={false} />
+      </mesh>
+      <mesh position={[0, 0, -0.017]} rotation={[0, Math.PI, 0]}>
+        <planeGeometry args={[1.14, 0.356]} />
+        <meshBasicMaterial map={tex} toneMapped={false} />
+      </mesh>
+    </group>
+  );
+}
+
+/** Oplyst niche i væggen bag vitrinen, med mærkets navn over */
+function Niche({ slot }: { slot: Slot }) {
+  const wx = slot.side * (HALL_HALF - 0.02);
+  return (
+    <group position={[wx, 0, slot.z]} rotation={[0, slot.rotY, 0]}>
+      {/* Lys bagvæg i nichen */}
+      <mesh position={[0, 1.7, 0.01]}>
+        <planeGeometry args={[NICHE_W, 3.0]} />
+        <meshStandardMaterial color="#f3e9d8" emissive="#fff1d9" emissiveIntensity={0.28} roughness={0.9} />
+      </mesh>
+      {/* Messingramme */}
+      {[-1, 1].map((k) => (
+        <mesh key={k} position={[k * (NICHE_W / 2 + 0.02), 1.7, 0.03]}>
+          <boxGeometry args={[0.04, 3.0, 0.04]} />
+          <meshStandardMaterial color={BRASS} metalness={0.6} roughness={0.35} />
+        </mesh>
+      ))}
+      <mesh position={[0, 3.22, 0.03]}>
+        <boxGeometry args={[NICHE_W + 0.08, 0.04, 0.04]} />
+        <meshStandardMaterial color={BRASS} metalness={0.6} roughness={0.35} />
+      </mesh>
+      {/* Navneskilt over nichen */}
+      <mesh position={[0, 3.55, 0.03]}>
+        <planeGeometry args={[1.5, 0.47]} />
+        <meshBasicMaterial map={signTexture(slot.brand.name, zoneLabels[slot.brand.zone])} toneMapped={false} />
+      </mesh>
+    </group>
+  );
+}
+
 function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, onSelect }: {
   slot: Slot; active: boolean; hover: boolean; showProduct: boolean; still: boolean; dragRot: React.MutableRefObject<number>;
   onHover: (i: number | null) => void; onSelect: (i: number) => void;
@@ -219,7 +291,6 @@ function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, on
   const product = useRef<THREE.Group>(null);
   const glow = useRef<THREE.MeshBasicMaterial>(null);
   const cone = useRef<THREE.MeshBasicMaterial>(null);
-  const rolex = b.slug === "rolex";
   useFrame((state, dt) => {
     const g = product.current;
     if (g && !still) {
@@ -229,43 +300,44 @@ function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, on
       if (b.model) g.rotation.y = active ? g.rotation.y + dt * 0.35 + dragRot.current : g.rotation.y * 0.95;
       if (active) dragRot.current *= 0.85;
     }
-    const target = hover || active ? 1 : 0.35;
+    const target = hover || active ? 1 : 0.45;
     if (glow.current) glow.current.opacity += (target * 0.55 - glow.current.opacity) * Math.min(1, dt * 6);
-    if (cone.current) cone.current.opacity += (target * 0.06 - cone.current.opacity) * Math.min(1, dt * 6);
+    if (cone.current) cone.current.opacity += (target * 0.07 - cone.current.opacity) * Math.min(1, dt * 6);
   });
-  const scale = rolex ? 1.12 : 1;
   return (
-    <group position={[slot.x, 0, slot.z]} rotation={[0, -slot.angle, 0]} scale={scale}
+    <group position={[slot.x, 0, slot.z]} rotation={[0, slot.rotY, 0]}
       onPointerOver={(e) => { e.stopPropagation(); onHover(slot.index); document.body.style.cursor = "pointer"; }}
       onPointerOut={() => { onHover(null); document.body.style.cursor = ""; }}
       onClick={(e) => { e.stopPropagation(); onSelect(slot.index); }}>
-      {/* Stensokkel */}
-      <mesh position={[0, 0.5, 0]} castShadow receiveShadow>
-        <boxGeometry args={[0.78, 1, 0.78]} />
-        <meshStandardMaterial color="#faf7f1" roughness={0.5} />
+      {/* Sokkel i lys sten med mørk fod */}
+      <mesh position={[0, 0.06, 0]}>
+        <boxGeometry args={[0.8, 0.12, 0.8]} />
+        <meshStandardMaterial color="#3a2a20" roughness={0.5} />
+      </mesh>
+      <mesh position={[0, 0.56, 0]} castShadow receiveShadow>
+        <boxGeometry args={[0.76, 0.9, 0.76]} />
+        <meshStandardMaterial color="#f4efe6" roughness={0.35} />
       </mesh>
       <mesh position={[0, 1.015, 0]}>
         <boxGeometry args={[0.82, 0.03, 0.82]} />
-        <meshStandardMaterial color="#e2dbd0" roughness={0.4} />
+        <meshStandardMaterial color={BRASS} metalness={0.6} roughness={0.3} />
       </mesh>
-      {/* Lyspøl på soklen og en blød lyskegle ovenfra (billigere end et rigtigt spotlys pr. vitrine) */}
       <mesh position={[0, 1.032, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[0.3, 32]} />
         <meshBasicMaterial ref={glow} color="#fff6e6" transparent opacity={0.25} depthWrite={false} />
       </mesh>
-      <mesh position={[0, 2.35, 0]}>
-        <coneGeometry args={[0.36, 2.6, 24, 1, true]} />
-        <meshBasicMaterial ref={cone} color="#fff3dc" transparent opacity={0.04} side={THREE.DoubleSide} depthWrite={false} />
+      <mesh position={[0, 2.4, 0]}>
+        <coneGeometry args={[0.36, 2.7, 24, 1, true]} />
+        <meshBasicMaterial ref={cone} color="#fff3dc" transparent opacity={0.05} side={THREE.DoubleSide} depthWrite={false} />
       </mesh>
       {/* Glaskasse med fine kanter */}
       <lineSegments position={[0, 1.39, 0]} geometry={GLASS_EDGES}>
-        <lineBasicMaterial color="#ffffff" transparent opacity={0.55} />
+        <lineBasicMaterial color="#ffffff" transparent opacity={0.6} />
       </lineSegments>
       <mesh position={[0, 1.39, 0]}>
         <boxGeometry args={[0.7, 0.72, 0.7]} />
         <meshStandardMaterial color="#ffffff" transparent opacity={0.1} roughness={0.04} metalness={0.2} envMapIntensity={2.2} depthWrite={false} />
       </mesh>
-      {/* Produkt */}
       <group ref={product} position={[0, 1.32, 0]}>
         {showProduct && b.model ? (
           <Suspense fallback={null}><ProductModel url={b.model} /></Suspense>
@@ -273,12 +345,12 @@ function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, on
           <ProductImage url={b.image} framed={b.framed} />
         ) : null}
       </group>
-      {/* Messingplade med navnet (rigtig HTML-tekst) */}
-      <mesh position={[0, 0.82, 0.395]}>
+      {/* Messingplade med navnet */}
+      <mesh position={[0, 0.8, 0.385]}>
         <boxGeometry args={[0.62, 0.15, 0.012]} />
         <meshStandardMaterial color="#d2b37c" metalness={0.35} roughness={0.4} />
       </mesh>
-      <mesh position={[0, 0.82, 0.403]}>
+      <mesh position={[0, 0.8, 0.393]}>
         <planeGeometry args={[0.6, 0.13]} />
         <meshBasicMaterial map={plateTexture(b.name)} transparent toneMapped={false} />
       </mesh>
@@ -291,117 +363,110 @@ function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, on
   );
 }
 
-/** Let zoom med scroll/pinch, når man har rørt scenen. Ved grænsen ruller siden videre som normalt */
-function Zoom({ look, enabled }: { look: React.MutableRefObject<Look>; enabled: boolean }) {
-  const { gl } = useThree();
-  useEffect(() => {
-    const el = gl.domElement;
-    const on = (e: WheelEvent) => {
-      const L = look.current;
-      if (!enabled || !L.touched) return;
-      const next = Math.max(30, Math.min(46, L.fov + Math.sign(e.deltaY) * 1.5));
-      if (next === L.fov) return;
-      e.preventDefault();
-      L.fov = next;
-    };
-    el.addEventListener("wheel", on, { passive: false });
-    return () => el.removeEventListener("wheel", on);
-  }, [gl, look, enabled]);
-  return null;
-}
-
-const CEIL = 4.2;
-
-function Plant({ angle }: { angle: number }) {
-  const r = WALL_RADIUS - 0.7;
+/** Messingportal på tværs af gangen, der markerer en ny zone */
+function ZonePortal({ z, zone }: { z: number; zone: ShowroomZone }) {
+  const tex = signTexture(zoneLabels[zone], "");
   return (
-    <group position={[Math.sin(angle) * r, 0, -Math.cos(angle) * r]} scale={0.78}>
-      <mesh position={[0, 0.3, 0]} castShadow>
-        <cylinderGeometry args={[0.26, 0.2, 0.6, 24]} />
-        <meshStandardMaterial color="#e8e0d3" roughness={0.6} />
-      </mesh>
-      {[[0, 1.05, 0, 0.42], [0.18, 1.4, 0.05, 0.3], [-0.15, 1.3, -0.08, 0.32], [0.02, 1.7, 0, 0.24]].map(([x, y, z, rr], i) => (
-        <mesh key={i} position={[x, y, z]} castShadow>
-          <icosahedronGeometry args={[rr, 1]} />
-          <meshStandardMaterial color={i % 2 ? "#87916f" : "#7a8563"} roughness={0.9} flatShading />
+    <group position={[0, 0, z]}>
+      {[-1, 1].map((k) => (
+        <mesh key={k} position={[k * (HALL_HALF - 0.12), CEIL / 2, 0]}>
+          <boxGeometry args={[0.08, CEIL, 0.08]} />
+          <meshStandardMaterial color={BRASS} metalness={0.6} roughness={0.35} />
         </mesh>
       ))}
-      <mesh position={[0, 0.75, 0]}>
-        <cylinderGeometry args={[0.025, 0.03, 0.5, 8]} />
-        <meshStandardMaterial color="#5b4a36" />
+      <mesh position={[0, CEIL - 0.25, 0]}>
+        <boxGeometry args={[HALL_HALF * 2 - 0.2, 0.08, 0.08]} />
+        <meshStandardMaterial color={BRASS} metalness={0.6} roughness={0.35} />
+      </mesh>
+      <mesh position={[0, CEIL - 0.62, 0]}>
+        <planeGeometry args={[1.9, 0.6]} />
+        <meshBasicMaterial map={tex} toneMapped={false} side={THREE.DoubleSide} />
       </mesh>
     </group>
   );
 }
 
-function Room({ zoneAngles, slots, gaps }: { zoneAngles: Record<ShowroomZone, number>; slots: Slot[]; gaps: number[] }) {
+function Pendant({ z }: { z: number }) {
+  return (
+    <group position={[0, CEIL, z]}>
+      <mesh position={[0, -0.35, 0]}>
+        <cylinderGeometry args={[0.006, 0.006, 0.7, 6]} />
+        <meshStandardMaterial color={BRASS} />
+      </mesh>
+      <mesh position={[0, -0.72, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.42, 0.025, 12, 48]} />
+        <meshStandardMaterial color={BRASS} metalness={0.7} roughness={0.25} emissive="#ffdca0" emissiveIntensity={0.35} />
+      </mesh>
+      <mesh position={[0, -0.72, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.42, 0.012, 8, 48]} />
+        <meshBasicMaterial color="#fff2d6" toneMapped={false} />
+      </mesh>
+    </group>
+  );
+}
+
+function Room({ slots, gaps, length }: { slots: Slot[]; gaps: Gap[]; length: number }) {
+  const W = HALL_HALF * 2;
+  const floor = useMemo(() => { const t = marbleTexture().clone(); t.needsUpdate = true; t.repeat.set(W / 2, (length + 6) / 2); return t; }, [W, length]);
+  const walls = useMemo(() => { const t = walnutTexture().clone(); t.needsUpdate = true; t.repeat.set((length + 6) / 1.2, CEIL / 1.2); return t; }, [length]);
+  const zMid = -(length - 3) / 2;
+  const L = length + 6;
+  const pendants = useMemo(() => { const a: number[] = []; for (let z = -3; z > -length; z -= 5.5) a.push(z); return a; }, [length]);
   return (
     <>
-      {/* Sildebensparket */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <circleGeometry args={[WALL_RADIUS, 64]} />
-        <meshStandardMaterial map={parquetTexture()} roughness={0.55} metalness={0.02} />
+      {/* Marmorgulv */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, zMid]} receiveShadow>
+        <planeGeometry args={[W, L]} />
+        <meshStandardMaterial map={floor} roughness={0.18} metalness={0.05} envMapIntensity={1.2} />
       </mesh>
-      {/* Rundt tæppe i midten */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.004, 0]}>
-        <ringGeometry args={[0, 2.1, 64]} />
-        <meshStandardMaterial color="#d9cfc0" roughness={1} />
+      {/* Løber ned gennem gangen med messingkant */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.004, zMid]}>
+        <planeGeometry args={[1.5, L - 3]} />
+        <meshStandardMaterial color="#cdbfae" roughness={1} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.006, 0]}>
-        <ringGeometry args={[1.85, 1.95, 64]} />
-        <meshStandardMaterial color="#b08d57" roughness={0.8} />
-      </mesh>
-      {/* Vægge med paneler */}
-      <mesh position={[0, CEIL / 2, 0]}>
-        <cylinderGeometry args={[WALL_RADIUS, WALL_RADIUS, CEIL, 96, 1, true]} />
-        <meshStandardMaterial map={panelTexture(slots.length + gaps.length)} emissiveMap={panelTexture(slots.length + gaps.length)} emissive="#ffffff" emissiveIntensity={0.22} roughness={0.9} side={THREE.BackSide} />
-      </mesh>
-      {/* Fodliste i messing */}
-      <mesh position={[0, 0.12, 0]}>
-        <cylinderGeometry args={[WALL_RADIUS - 0.01, WALL_RADIUS - 0.01, 0.04, 96, 1, true]} />
-        <meshStandardMaterial color={BRASS} metalness={0.4} roughness={0.4} side={THREE.BackSide} />
-      </mesh>
-      {/* Loft med indbyggede spots over hver vitrine */}
-      <mesh position={[0, CEIL, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[WALL_RADIUS, 64]} />
-        <meshStandardMaterial color="#f6f1ea" roughness={1} side={THREE.DoubleSide} />
-      </mesh>
-      <mesh position={[0, CEIL - 0.01, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[2.3, 2.42, 64]} />
-        <meshBasicMaterial color="#fff6e4" side={THREE.DoubleSide} toneMapped={false} />
-      </mesh>
-      {slots.map((s) => (
-        <mesh key={s.brand.slug} position={[s.x, CEIL - 0.01, s.z]} rotation={[Math.PI / 2, 0, 0]}>
-          <circleGeometry args={[0.09, 20]} />
-          <meshBasicMaterial color="#fff8ea" side={THREE.DoubleSide} toneMapped={false} />
+      {[-1, 1].map((k) => (
+        <mesh key={k} rotation={[-Math.PI / 2, 0, 0]} position={[k * 0.8, 0.005, zMid]}>
+          <planeGeometry args={[0.04, L - 3]} />
+          <meshStandardMaterial color={BRASS} metalness={0.5} roughness={0.4} />
         </mesh>
       ))}
-      {/* Mærkeskilte på væggen bag vitrinerne */}
-      {slots.map((s) => {
-        const r = WALL_RADIUS - 0.04;
-        return (
-          <group key={s.brand.slug} position={[Math.sin(s.angle) * r, 2.6, -Math.cos(s.angle) * r]} rotation={[0, -s.angle, 0]}>
-            <mesh position={[0, 0, -0.01]}>
-              <boxGeometry args={[1.86, 0.58, 0.03]} />
-              <meshStandardMaterial color="#b08d57" metalness={0.3} roughness={0.45} />
-            </mesh>
-            <mesh position={[0, 0, 0.008]}>
-              <planeGeometry args={[1.8, 0.527]} />
-              <meshBasicMaterial map={signTexture(s.brand.name, zoneLabels[s.brand.zone])} toneMapped={false} />
-            </mesh>
-          </group>
-        );
-      })}
-      {gaps.map((a, i) => <Plant key={i} angle={a} />)}
-      {(Object.keys(zoneAngles) as ShowroomZone[]).map((z) => {
-        const a = zoneAngles[z];
-        const r = WALL_RADIUS - 0.05;
-        return (
-          <Html key={z} transform position={[Math.sin(a) * r, 3.55, -Math.cos(a) * r]} rotation={[0, -a, 0]} distanceFactor={4} pointerEvents="none" zIndexRange={[5, 0]}>
-            <span className="sr3d-zone">{zoneLabels[z]}</span>
-          </Html>
-        );
-      })}
+      {/* Vægge i valnød */}
+      {[-1, 1].map((k) => (
+        <mesh key={k} position={[k * HALL_HALF, CEIL / 2, zMid]} rotation={[0, -k * Math.PI / 2, 0]}>
+          <planeGeometry args={[L, CEIL]} />
+          <meshStandardMaterial map={walls} roughness={0.55} />
+        </mesh>
+      ))}
+      {/* Endevæg med navnet */}
+      <mesh position={[0, CEIL / 2, -length - 0.5]}>
+        <planeGeometry args={[W, CEIL]} />
+        <meshStandardMaterial map={walls} roughness={0.55} />
+      </mesh>
+      <mesh position={[0, 2.2, -length - 0.48]}>
+        <planeGeometry args={[2.6, 0.81]} />
+        <meshBasicMaterial map={signTexture("Knud Pedersen", "Skt. Clemens Torv · Aarhus")} toneMapped={false} />
+      </mesh>
+      <mesh position={[0, CEIL / 2, 2.5]} rotation={[0, Math.PI, 0]}>
+        <planeGeometry args={[W, CEIL]} />
+        <meshStandardMaterial map={walls} roughness={0.55} />
+      </mesh>
+      {/* Loft med lysliste langs begge sider */}
+      <mesh position={[0, CEIL, zMid]} rotation={[Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[W, L]} />
+        <meshStandardMaterial color="#f3ede4" roughness={1} />
+      </mesh>
+      {[-1, 1].map((k) => (
+        <mesh key={k} position={[k * (HALL_HALF - 0.25), CEIL - 0.01, zMid]} rotation={[Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[0.06, L]} />
+          <meshBasicMaterial color="#fff3dc" toneMapped={false} />
+        </mesh>
+      ))}
+      {pendants.map((z) => <Pendant key={z} z={z} />)}
+      {slots.map((s) => <Niche key={s.brand.slug} slot={s} />)}
+      {slots.map((s) => (
+        <BladeSign key={s.brand.slug} x={s.side * (HALL_HALF - 0.62)} z={s.z} name={s.brand.name} eyebrow={zoneLabels[s.brand.zone]} />
+      ))}
+      {gaps.map((g) => <ZonePortal key={g.zone} z={g.z} zone={g.zone} />)}
     </>
   );
 }
@@ -423,10 +488,10 @@ function MovingSpot({ slot }: { slot: Slot | null }) {
   useFrame((_, dt) => {
     const l = light.current;
     if (!l) return;
-    const want = slot ? 26 : 0;
+    const want = slot ? 22 : 0;
     l.intensity += (want - l.intensity) * Math.min(1, dt * 5);
     if (slot) {
-      l.position.set(slot.x * 0.92, 4.4, slot.z * 0.92);
+      l.position.set(slot.x - slot.side * 0.7, 3.8, slot.z);
       tgt.position.set(slot.x, 1.1, slot.z);
       tgt.updateMatrixWorld();
     }
@@ -434,42 +499,40 @@ function MovingSpot({ slot }: { slot: Slot | null }) {
   return (
     <>
       <primitive object={tgt} />
-      <spotLight ref={light} angle={0.32} penumbra={0.7} intensity={0} distance={9} decay={1.4} color="#fff1da" target={tgt} />
+      <spotLight ref={light} angle={0.34} penumbra={0.7} intensity={0} distance={7} decay={1.4} color="#fff1da" target={tgt} />
     </>
   );
 }
 
 export default function ShowroomScene({ brands, active, hover, lookAngle, mobile, current, onHover, onSelect, onReady }: SceneProps) {
-  const { slots, zoneAngles, gaps } = useMemo(() => layout(brands), [brands]);
+  const { slots, gaps, length, walkEnd } = useMemo(() => layout(brands), [brands]);
   const dragRot = useRef(0);
-  const look = useRef<Look>({ yaw: 0, pitch: 0, walk: 0, fov: mobile ? 50 : 40, touched: false, dragging: false, lastX: 0, lastY: 0 });
+  const look = useRef<Look>({ s: 0, dir: 1, pitch: 0, step: 0, touched: false, dragging: false, lastX: 0, lastY: 0 });
   const bySlot = (i: number | null) => (i == null ? null : slots.find((s) => s.index === i) ?? null);
 
-  const pose = useMemo(() => {
+  const pose = useMemo<Pose | null>(() => {
     const a = bySlot(active);
     if (a) return focusPose(a, mobile, mobile);
     if (mobile) { const c = bySlot(current); if (c) return focusPose(c, true); }
-    if (lookAngle != null) return overviewPose(lookAngle);
+    if (lookAngle != null) return overviewPose(Math.min(walkEnd, lookAngle));
     return null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active, lookAngle, mobile, current, slots]);
+  }, [active, lookAngle, mobile, current, slots, walkEnd]);
 
-  const start = overviewPose(0);
+  const start = mobile ? focusPose(slots[0], true) : overviewPose(0);
   const near = (i: number) => {
     if (!mobile) return true;
-    const n = slots.length;
     const a = slots.findIndex((s) => s.index === current);
     const b = slots.findIndex((s) => s.index === i);
-    const d = Math.abs(a - b);
-    return Math.min(d, n - d) <= 1;
+    return Math.abs(a - b) <= 2;
   };
 
   return (
     <Canvas
       dpr={mobile ? [1, 1.5] : [1, 2]}
-      camera={{ position: mobile ? focusPose(slots[0], true).pos : start.pos, fov: mobile ? 50 : 40, near: 0.1, far: 60 }}
+      camera={{ position: start.pos, fov: mobile ? 52 : 50, near: 0.1, far: 60 }}
+      onCreated={({ camera }) => camera.lookAt(...start.target)}
       gl={{ antialias: !mobile, powerPreference: "high-performance" }}
-      onCreated={({ gl }) => { gl.toneMapping = THREE.ACESFilmicToneMapping; gl.toneMappingExposure = 1.05; }}
       onPointerDown={(e) => { const L = look.current; L.dragging = true; L.touched = true; L.lastX = e.clientX; L.lastY = e.clientY; }}
       onPointerUp={() => { look.current.dragging = false; }}
       onPointerLeave={() => { look.current.dragging = false; }}
@@ -479,37 +542,36 @@ export default function ShowroomScene({ brands, active, hover, lookAngle, mobile
         const dx = e.clientX - L.lastX, dy = e.clientY - L.lastY;
         L.lastX = e.clientX; L.lastY = e.clientY;
         if (active != null) { dragRot.current = dx * 0.004; return; }
-        L.yaw -= dx * 0.0035;
-        L.pitch = Math.max(-0.12, Math.min(0.1, L.pitch + dy * 0.0012));
+        // Træk mod venstre = gå frem
+        L.s -= dx * 0.012; if (dx) L.dir = dx < 0 ? 1 : -1;
+        L.pitch = Math.max(-0.12, Math.min(0.12, L.pitch + dy * 0.0012));
       }}
       onPointerMissed={() => onHover(null)}
     >
-      <color attach="background" args={["#efe7dc"]} />
-      <fog attach="fog" args={["#efe7dc", 14, 30]} />
-      <ambientLight intensity={0.85} color="#fff7ec" />
-      <hemisphereLight args={["#fffaf2", "#d9cfc0", 0.5]} />
-      <directionalLight position={[3, 8, 2]} intensity={0.6} color="#fff4e2" />
+      <color attach="background" args={["#2e2219"]} />
+      <fog attach="fog" args={["#3a2b20", 16, 34]} />
+      <ambientLight intensity={0.7} color="#fff3e2" />
+      <hemisphereLight args={["#fff6e8", "#8a7560", 0.55]} />
+      <directionalLight position={[0, 6, 2]} intensity={0.45} color="#fff0da" />
       <Environment resolution={mobile ? 64 : 256} frames={1}>
-        {/* Blødt "studie"-lys uden at hente en HDRI udefra */}
-        <Lightformer form="rect" intensity={2.2} position={[0, 5, -4]} scale={[10, 3, 1]} color="#fff3e0" />
-        <Lightformer form="rect" intensity={1.4} position={[-5, 2, 2]} rotation-y={Math.PI / 2} scale={[8, 2, 1]} />
-        <Lightformer form="rect" intensity={1.4} position={[5, 2, 2]} rotation-y={-Math.PI / 2} scale={[8, 2, 1]} />
-        <Lightformer form="ring" intensity={1.8} position={[0, 6, 0]} rotation-x={Math.PI / 2} scale={4} />
+        {/* Blødt butikslys uden at hente en HDRI udefra */}
+        <Lightformer form="rect" intensity={2.4} position={[0, 5, -6]} scale={[6, 20, 1]} rotation-x={Math.PI / 2} color="#fff3e0" />
+        <Lightformer form="rect" intensity={1.2} position={[-4, 2, -6]} rotation-y={Math.PI / 2} scale={[20, 2, 1]} color="#ffe9c8" />
+        <Lightformer form="rect" intensity={1.2} position={[4, 2, -6]} rotation-y={-Math.PI / 2} scale={[20, 2, 1]} color="#ffe9c8" />
       </Environment>
       <Suspense fallback={null}>
-        <Room zoneAngles={zoneAngles} slots={slots} gaps={gaps} />
+        <Room slots={slots} gaps={gaps} length={length} />
         {slots.map((s) => (
           <Vitrine key={s.brand.slug} slot={s} active={active === s.index} hover={hover === s.index}
             showProduct={near(s.index)} still={!!s.brand.framed} dragRot={dragRot}
             onHover={onHover} onSelect={onSelect} />
         ))}
         <MovingSpot slot={bySlot(hover ?? active)} />
-        <ContactShadows position={[0, 0.005, 0]} scale={WALL_RADIUS * 2} resolution={mobile ? 256 : 1024} blur={2.4} opacity={0.45} far={1.4} frames={1} color="#5a4a3a" />
+        <ContactShadows position={[0, 0.006, -(length - 3) / 2]} scale={[HALL_HALF * 2, length + 3]} resolution={mobile ? 256 : 1024} blur={2.2} opacity={0.4} far={1.2} frames={1} color="#3a2a1a" />
         <Ready onReady={onReady} />
       </Suspense>
-      <Zoom look={look} enabled={active == null && !mobile} />
-      <CameraRig pose={pose} overview={active == null && !mobile} look={look} auto={active == null && !mobile} />
+      <WheelWalk look={look} enabled={active == null && !mobile} walkEnd={walkEnd} />
+      <CameraRig pose={pose} overview={active == null && !mobile} look={look} auto={active == null && !mobile} walkEnd={walkEnd} />
     </Canvas>
   );
 }
-

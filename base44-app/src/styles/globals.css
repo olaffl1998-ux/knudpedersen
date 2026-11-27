@@ -1501,7 +1501,7 @@ p { color: inherit; }
    ============================================================ */
 .showroom { padding-bottom: 0; }
 .showroom__intro { color: var(--grey); font-size: 16px; margin: 0; }
-.showroom__stage { position: relative; height: min(78vh, 760px); min-height: 520px; background: #efe7dc; overflow: hidden; }
+.showroom__stage { position: relative; height: min(78vh, 760px); min-height: 520px; background: #2e2219; overflow: hidden; }
 .showroom__stage canvas { display: block; touch-action: pan-y; opacity: 0; transition: opacity .8s ease; }
 .showroom__stage.is-ready canvas { opacity: 1; }
 .showroom__loader { position: absolute; left: 50%; top: 50%; width: 160px; height: 1px; transform: translate(-50%, -50%); background: rgba(154,123,79,.25); overflow: hidden; }
