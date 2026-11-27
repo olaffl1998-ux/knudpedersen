@@ -2,7 +2,9 @@
 
 import { Suspense, useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Billboard, ContactShadows, Environment, Html, Lightformer, useGLTF, useTexture } from "@react-three/drei";
+import { Billboard, ContactShadows, Environment, Html, Lightformer, MeshReflectorMaterial, RoundedBox, useGLTF, useTexture } from "@react-three/drei";
+import { Bloom, EffectComposer, N8AO, ToneMapping, Vignette } from "@react-three/postprocessing";
+import { ToneMappingMode } from "postprocessing";
 import * as THREE from "three";
 import "./r3f-compat";
 import type { ShowroomBrand, ShowroomZone } from "@/data/brands";
@@ -121,6 +123,22 @@ function walnutTexture() {
     t.wrapS = t.wrapT = THREE.RepeatWrapping;
     return t;
   });
+}
+
+/** Bagvæggen i nichen: lyst kalkpuds med et lysfald fra spottet ovenover, ligesom i en rigtig butik */
+function nicheTexture() {
+  return cached("niche", () => canvasTex(256, 512, (ctx) => {
+    ctx.fillStyle = "#cfc0aa"; ctx.fillRect(0, 0, 256, 512);
+    const g = ctx.createRadialGradient(128, 40, 4, 128, 120, 300);
+    g.addColorStop(0, "rgba(255,246,228,1)");
+    g.addColorStop(0.35, "rgba(250,236,210,.85)");
+    g.addColorStop(1, "rgba(250,236,210,0)");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, 256, 512);
+    const v = ctx.createLinearGradient(0, 0, 0, 512);
+    v.addColorStop(0, "rgba(0,0,0,0)"); v.addColorStop(1, "rgba(60,40,25,.25)");
+    ctx.fillStyle = v; ctx.fillRect(0, 0, 256, 512);
+    for (let i = 0; i < 1400; i++) { ctx.fillStyle = `rgba(${i % 2 ? "255,255,255" : "90,70,50"},.04)`; ctx.fillRect((i * 73) % 256, (i * 137) % 512, 2, 2); }
+  }));
 }
 
 const GLASS_EDGES = new THREE.EdgesGeometry(new THREE.BoxGeometry(0.7, 0.72, 0.7));
@@ -261,7 +279,7 @@ function Niche({ slot }: { slot: Slot }) {
       {/* Lys bagvæg i nichen */}
       <mesh position={[0, 1.7, 0.01]}>
         <planeGeometry args={[NICHE_W, 3.0]} />
-        <meshStandardMaterial color="#f3e9d8" emissive="#fff1d9" emissiveIntensity={0.28} roughness={0.9} />
+        <meshStandardMaterial map={nicheTexture()} emissiveMap={nicheTexture()} emissive="#ffffff" emissiveIntensity={0.18} roughness={0.95} />
       </mesh>
       {/* Messingramme */}
       {[-1, 1].map((k) => (
@@ -288,6 +306,8 @@ function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, on
   onHover: (i: number | null) => void; onSelect: (i: number) => void;
 }) {
   const b = slot.brand;
+  // Ure står på puden; Rolex- og Tudor-billederne står uændret lidt højere
+  const base = still ? 1.32 : 1.24;
   const product = useRef<THREE.Group>(null);
   const glow = useRef<THREE.MeshBasicMaterial>(null);
   const cone = useRef<THREE.MeshBasicMaterial>(null);
@@ -296,7 +316,7 @@ function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, on
     if (g && !still) {
       // Løfter sig let og drejer langsomt, når vitrinen er valgt (aldrig for Rolex og Tudor)
       const lift = active ? 0.1 + Math.sin(state.clock.elapsedTime * 1.4) * 0.015 : 0;
-      g.position.y += (1.32 + lift - g.position.y) * Math.min(1, dt * 4);
+      g.position.y += (base + lift - g.position.y) * Math.min(1, dt * 4);
       if (b.model) g.rotation.y = active ? g.rotation.y + dt * 0.35 + dragRot.current : g.rotation.y * 0.95;
       if (active) dragRot.current *= 0.85;
     }
@@ -336,9 +356,15 @@ function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, on
       </lineSegments>
       <mesh position={[0, 1.39, 0]}>
         <boxGeometry args={[0.7, 0.72, 0.7]} />
-        <meshStandardMaterial color="#ffffff" transparent opacity={0.1} roughness={0.04} metalness={0.2} envMapIntensity={2.2} depthWrite={false} />
+        <meshPhysicalMaterial color="#ffffff" transparent opacity={0.08} roughness={0.02} metalness={0} clearcoat={1} clearcoatRoughness={0.02} reflectivity={0.9} envMapIntensity={2.6} depthWrite={false} />
       </mesh>
-      <group ref={product} position={[0, 1.32, 0]}>
+      {/* Urpude i ruskind, som uret står på */}
+      {!still && b.image && (
+        <RoundedBox args={[0.3, 0.09, 0.2]} radius={0.04} smoothness={3} position={[0, 1.075, 0]} castShadow>
+          <meshStandardMaterial color="#c9b79e" roughness={1} />
+        </RoundedBox>
+      )}
+      <group ref={product} position={[0, base, 0]}>
         {showProduct && b.model ? (
           <Suspense fallback={null}><ProductModel url={b.model} /></Suspense>
         ) : showProduct && b.image ? (
@@ -405,7 +431,7 @@ function Pendant({ z }: { z: number }) {
   );
 }
 
-function Room({ slots, gaps, length }: { slots: Slot[]; gaps: Gap[]; length: number }) {
+function Room({ slots, gaps, length, hq }: { slots: Slot[]; gaps: Gap[]; length: number; hq: boolean }) {
   const W = HALL_HALF * 2;
   const floor = useMemo(() => { const t = marbleTexture().clone(); t.needsUpdate = true; t.repeat.set(W / 2, (length + 6) / 2); return t; }, [W, length]);
   const walls = useMemo(() => { const t = walnutTexture().clone(); t.needsUpdate = true; t.repeat.set((length + 6) / 1.2, CEIL / 1.2); return t; }, [length]);
@@ -417,7 +443,12 @@ function Room({ slots, gaps, length }: { slots: Slot[]; gaps: Gap[]; length: num
       {/* Marmorgulv */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, zMid]} receiveShadow>
         <planeGeometry args={[W, L]} />
-        <meshStandardMaterial map={floor} roughness={0.18} metalness={0.05} envMapIntensity={1.2} />
+        {hq ? (
+          <MeshReflectorMaterial map={floor} blur={[400, 120]} resolution={512} mixBlur={1} mixStrength={0.9} mirror={0.45}
+            roughness={0.35} depthScale={0.6} minDepthThreshold={0.4} maxDepthThreshold={1.3} metalness={0.05} color="#ffffff" />
+        ) : (
+          <meshStandardMaterial map={floor} roughness={0.18} metalness={0.05} envMapIntensity={1.2} />
+        )}
       </mesh>
       {/* Løber ned gennem gangen med messingkant */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.004, zMid]}>
@@ -560,7 +591,7 @@ export default function ShowroomScene({ brands, active, hover, lookAngle, mobile
         <Lightformer form="rect" intensity={1.2} position={[4, 2, -6]} rotation-y={-Math.PI / 2} scale={[20, 2, 1]} color="#ffe9c8" />
       </Environment>
       <Suspense fallback={null}>
-        <Room slots={slots} gaps={gaps} length={length} />
+        <Room slots={slots} gaps={gaps} length={length} hq={!mobile} />
         {slots.map((s) => (
           <Vitrine key={s.brand.slug} slot={s} active={active === s.index} hover={hover === s.index}
             showProduct={near(s.index)} still={!!s.brand.framed} dragRot={dragRot}
@@ -570,6 +601,14 @@ export default function ShowroomScene({ brands, active, hover, lookAngle, mobile
         <ContactShadows position={[0, 0.006, -(length - 3) / 2]} scale={[HALL_HALF * 2, length + 3]} resolution={mobile ? 256 : 1024} blur={2.2} opacity={0.4} far={1.2} frames={1} color="#3a2a1a" />
         <Ready onReady={onReady} />
       </Suspense>
+      {!mobile && (
+        <EffectComposer multisampling={4} enableNormalPass={false}>
+          <N8AO aoRadius={0.7} intensity={2.2} distanceFalloff={0.6} halfRes quality="medium" color="#1c120a" />
+          <Bloom mipmapBlur luminanceThreshold={0.92} luminanceSmoothing={0.2} intensity={0.45} />
+          <Vignette offset={0.32} darkness={0.55} />
+          <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
+        </EffectComposer>
+      )}
       <WheelWalk look={look} enabled={active == null && !mobile} walkEnd={walkEnd} />
       <CameraRig pose={pose} overview={active == null && !mobile} look={look} auto={active == null && !mobile} walkEnd={walkEnd} />
     </Canvas>
