@@ -117,6 +117,8 @@ export function layout(brands: ShowroomBrand[]) {
   return { slots, gaps, zoneAngles, backZ, loop, walkEnd: loop.P };
 }
 
+const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+
 export type Pose = { pos: [number, number, number]; target: [number, number, number]; walk?: number };
 
 /** Rundturen: kameraet går rundt i rummet og kigger fremad og lidt ud mod vitrinerne */
@@ -135,13 +137,14 @@ export function overviewPose(L: Loop, s: number, dir: 1 | -1 = 1): Pose {
 }
 
 /** Tæt på en vitrine: man går hen foran nichen og kigger direkte ind i den */
-export function focusPose(slot: Slot, mobile: boolean, sheet = false): Pose {
+export function focusPose(slot: Slot, mobile: boolean, sheet = false, backZ = -Infinity): Pose {
   // Mobil, når man swiper: man står lidt før vitrinen og ser den på skrå, så man mærker butikken
   if (mobile && !sheet) {
     // Langs væggen i gåretningen (højre om normalen)
     const tx = slot.nz, tz = -slot.nx;
     return {
-      pos: [slot.x + slot.nx * 2.4 - tx * 2.6, EYE_Y + 0.05, slot.z + slot.nz * 2.4 - tz * 2.6],
+      // Kameraet bliver altid inde i butikken (ellers ser man væggene bagfra)
+      pos: [clamp(slot.x + slot.nx * 2.4 - tx * 2.6, -ROOM_HALF + 0.5, ROOM_HALF - 0.5), EYE_Y + 0.05, clamp(slot.z + slot.nz * 2.4 - tz * 2.6, backZ + 0.5, FRONT_Z - 0.5)],
       target: [slot.x + slot.nx * 0.5 + tx * 0.2, TARGET_Y + 0.05, slot.z + slot.nz * 0.5 + tz * 0.2],
     };
   }

@@ -1,9 +1,10 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, createContext, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Billboard, ContactShadows, Environment, Html, Lightformer, MeshReflectorMaterial, PerformanceMonitor, RoundedBox, useGLTF, useTexture } from "@react-three/drei";
-import { Bloom, EffectComposer, ToneMapping, Vignette } from "@react-three/postprocessing";
+import { Bloom, EffectComposer, N8AO, ToneMapping, Vignette } from "@react-three/postprocessing";
+import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { ToneMappingMode } from "postprocessing";
 import * as THREE from "three";
 import "./r3f-compat";
@@ -55,6 +56,47 @@ function cached(key: string, make: () => THREE.CanvasTexture) {
   return t;
 }
 
+/** Rigtige materialer (CC0 fra Poly Haven): travertin, valnød, velour og kalkpuds.
+    Hentes én gang (ca. 280 kB i alt) og deles af alle møbler */
+const TEX = "/showroom/tex/";
+const PBR_FILES = {
+  stone: ["marble_01_diff", "marble_01_nor", "marble_01_rough"],
+  walnut: ["walnut_veneer_diff", "walnut_veneer_nor", "walnut_veneer_rough"],
+  velvet: [null, "velour_velvet_nor", "velour_velvet_rough"],
+  plaster: [null, "beige_wall_001_nor", "beige_wall_001_rough"],
+} as const;
+type PbrKind = keyof typeof PBR_FILES;
+const PBR_URLS: Record<string, string> = {};
+for (const [k, files] of Object.entries(PBR_FILES)) files.forEach((f, i) => { if (f) PBR_URLS[`${k}${i}`] = `${TEX}${f}.webp`; });
+if (typeof window !== "undefined") useTexture.preload(Object.values(PBR_URLS));
+type Pbr = Record<string, THREE.Texture>;
+const PbrCtx = createContext<Pbr | null>(null);
+function PbrProvider({ children }: { children: React.ReactNode }) {
+  const t = useTexture(PBR_URLS) as Pbr;
+  useMemo(() => {
+    for (const [k, tex] of Object.entries(t)) {
+      tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+      tex.anisotropy = 8;
+      tex.colorSpace = k.endsWith("0") ? THREE.SRGBColorSpace : THREE.NoColorSpace;
+      tex.needsUpdate = true;
+    }
+  }, [t]);
+  return <PbrCtx.Provider value={t}>{children}</PbrCtx.Provider>;
+}
+/** Kort til ét materiale med egen gentagelse (kopierne deler billedet på grafikkortet) */
+function useMaps(kind: PbrKind, rx: number, ry: number, ox = 0, oy = 0) {
+  const t = useContext(PbrCtx)!;
+  return useMemo(() => {
+    const c = (i: number) => {
+      const src = t[`${kind}${i}`];
+      if (!src) return undefined;
+      const x = src.clone(); x.repeat.set(rx, ry); x.offset.set(ox, oy); x.needsUpdate = true;
+      return x;
+    };
+    return { map: c(0), normalMap: c(1), roughnessMap: c(2) };
+  }, [t, kind, rx, ry, ox, oy]);
+}
+
 /** Messingpladen på soklen */
 function plateTexture(name: string) {
   return cached("plate:" + name, () => canvasTex(1024, 220, (ctx) => {
@@ -85,50 +127,6 @@ function signTexture(name: string, eyebrow: string) {
   }));
 }
 
-/** Travertin på gulvet: varm beige sten i store fliser med vandrette årer (som i Rolex-afdelingen) */
-function marbleTexture() {
-  return cached("travertine", () => {
-    const t = canvasTex(1024, 1024, (ctx) => {
-      ctx.fillStyle = "#e6dac7"; ctx.fillRect(0, 0, 1024, 1024);
-      let seed = 11;
-      const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
-      for (let i = 0; i < 140; i++) {
-        const y = rnd() * 1024, h = 1 + rnd() * 5;
-        ctx.fillStyle = `rgba(${rnd() > 0.5 ? "170,150,120" : "250,244,232"},${0.08 + rnd() * 0.18})`;
-        ctx.fillRect(0, y, 1024, h);
-      }
-      for (let i = 0; i < 900; i++) { ctx.fillStyle = `rgba(150,128,100,${0.1 + rnd() * 0.2})`; ctx.fillRect(rnd() * 1024, rnd() * 1024, 1 + rnd() * 5, 1 + rnd() * 2); }
-      ctx.strokeStyle = "rgba(140,120,95,.35)"; ctx.lineWidth = 2;
-      for (const y of [0, 512]) { ctx.strokeRect(0, y, 1024, 512); }
-      ctx.beginPath(); ctx.moveTo(512, 0); ctx.lineTo(512, 512); ctx.moveTo(256, 512); ctx.lineTo(256, 1024); ctx.moveTo(768, 512); ctx.lineTo(768, 1024); ctx.stroke();
-    });
-    t.wrapS = t.wrapT = THREE.RepeatWrapping;
-    return t;
-  });
-}
-
-/** Lodrette træ-lameller på væggene, som i Rolex-afdelingen hos Knud Pedersen */
-function walnutTexture() {
-  return cached("slats", () => {
-    const t = canvasTex(512, 512, (ctx) => {
-      const n = 8, w = 512 / n;
-      for (let i = 0; i < n; i++) {
-        const x = i * w;
-        const g = ctx.createLinearGradient(x, 0, x + w, 0);
-        g.addColorStop(0, "#4e3320"); g.addColorStop(0.18, "#86603f"); g.addColorStop(0.55, "#765236"); g.addColorStop(0.85, "#63432a"); g.addColorStop(1, "#24170d");
-        ctx.fillStyle = g; ctx.fillRect(x, 0, w, 512);
-        for (let k = 0; k < 7; k++) {
-          ctx.strokeStyle = `rgba(${k % 2 ? "40,22,10" : "150,100,65"},.18)`; ctx.lineWidth = 1;
-          const gx = x + 6 + ((k * 13 + i * 7) % (w - 12));
-          ctx.beginPath(); ctx.moveTo(gx, 0); ctx.bezierCurveTo(gx + 3, 170, gx - 3, 340, gx + 1, 512); ctx.stroke();
-        }
-      }
-    });
-    t.wrapS = t.wrapT = THREE.RepeatWrapping;
-    return t;
-  });
-}
-
 /** Bagvæggen i nichen: lyst kalkpuds med et lysfald fra spottet ovenover, ligesom i en rigtig butik */
 function nicheTexture() {
   return cached("niche", () => canvasTex(256, 512, (ctx) => {
@@ -142,7 +140,6 @@ function nicheTexture() {
     const v = ctx.createLinearGradient(0, 0, 0, 512);
     v.addColorStop(0, "rgba(0,0,0,0)"); v.addColorStop(1, "rgba(60,40,25,.25)");
     ctx.fillStyle = v; ctx.fillRect(0, 0, 256, 512);
-    for (let i = 0; i < 1400; i++) { ctx.fillStyle = `rgba(${i % 2 ? "255,255,255" : "90,70,50"},.04)`; ctx.fillRect((i * 73) % 256, (i * 137) % 512, 2, 2); }
   }));
 }
 
@@ -184,7 +181,16 @@ function rugTexture() {
   }));
 }
 
-const GLASS_EDGES = new THREE.EdgesGeometry(new THREE.BoxGeometry(0.7, 0.72, 0.7));
+/** Fin messingramme om glasset: 12 smalle profiler samlet i én geometri */
+const GLASS_FRAME = (() => {
+  const w = 0.7, h = 0.72, t = 0.014, parts: THREE.BufferGeometry[] = [];
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) parts.push(new THREE.BoxGeometry(t, h, t).translate(sx * w / 2, 0, sz * w / 2));
+  for (const y of [-h / 2, h / 2]) for (const s of [-1, 1]) {
+    parts.push(new THREE.BoxGeometry(w + t, t, t).translate(0, y, s * w / 2));
+    parts.push(new THREE.BoxGeometry(t, t, w + t).translate(s * w / 2, y, 0));
+  }
+  return mergeGeometries(parts);
+})();
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 type Look = { s: number; dir: 1 | -1; pitch: number; step: number; touched: boolean; dragging: boolean; lastX: number; lastY: number };
@@ -317,11 +323,11 @@ function BladeSign({ x, z, rotY, name, eyebrow }: { x: number; z: number; rotY: 
 /** Oplyst niche i væggen bag vitrinen, med mærkets navn over */
 function Niche({ slot }: { slot: Slot }) {
   return (
-    <group position={[slot.wx + slot.nx * 0.02, 0, slot.wz + slot.nz * 0.02]} rotation={[0, slot.rotY, 0]}>
+    <group position={[slot.wx + slot.nx * 0.045, 0, slot.wz + slot.nz * 0.045]} rotation={[0, slot.rotY, 0]}>
       {/* Lys bagvæg i nichen */}
       <mesh position={[0, 1.7, 0.01]}>
         <planeGeometry args={[NICHE_W, 3.0]} />
-        <meshStandardMaterial map={nicheTexture()} emissiveMap={nicheTexture()} emissive="#ffffff" emissiveIntensity={0.18} roughness={0.95} />
+        <meshStandardMaterial map={nicheTexture()} emissiveMap={nicheTexture()} emissive="#ffffff" emissiveIntensity={0.22} roughness={1} />
       </mesh>
       {/* Messingramme */}
       {[-1, 1].map((k) => (
@@ -356,6 +362,9 @@ function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, on
   // Ure står på puden; Rolex- og Tudor-billederne står uændret lidt højere
   const base = still ? 1.32 : 1.24;
   const product = useRef<THREE.Group>(null);
+  const wood = useMaps("walnut", 0.5, 0.6);
+  const velvet = useMaps("velvet", 1, 1);
+  const stone = useMaps("stone", 0.2, 0.2, 0.04 + (slot.index % 3) * 0.25, 0.04);
   const glow = useRef<THREE.MeshBasicMaterial>(null);
   const cone = useRef<THREE.MeshBasicMaterial>(null);
   useFrame((state, dt) => {
@@ -379,16 +388,23 @@ function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, on
       <Blob w={1.4} d={1.4} opacity={0.6} />
       {/* Montre: træskab med lys stenplade, som i butikken */}
       <mesh position={[0, 0.05, 0]}>
-        <boxGeometry args={[0.74, 0.1, 0.74]} />
-        <meshStandardMaterial color="#2a1a10" roughness={0.6} />
+        <boxGeometry args={[0.72, 0.1, 0.72]} />
+        <meshStandardMaterial color="#1a100a" roughness={0.6} />
       </mesh>
-      <mesh position={[0, 0.54, 0]} castShadow receiveShadow>
-        <boxGeometry args={[0.78, 0.88, 0.78]} />
-        <meshStandardMaterial color="#7e4c2e" roughness={0.5} />
+      <RoundedBox args={[0.78, 0.88, 0.78]} radius={0.012} smoothness={2} position={[0, 0.54, 0]}>
+        <meshStandardMaterial {...wood} color="#b08a68" roughness={0.9} envMapIntensity={1} />
+      </RoundedBox>
+      <RoundedBox args={[0.84, 0.05, 0.84]} radius={0.01} smoothness={2} position={[0, 1.0, 0]}>
+        <meshStandardMaterial {...stone} color="#fbf6ee" roughness={1} envMapIntensity={1.1} />
+      </RoundedBox>
+      {/* Indbygget spot i loftet over vitrinen */}
+      <mesh position={[0, CEIL - 0.006, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[0.07, 24]} />
+        <meshBasicMaterial color="#fff4dc" toneMapped={false} />
       </mesh>
-      <mesh position={[0, 1.0, 0]}>
-        <boxGeometry args={[0.84, 0.05, 0.84]} />
-        <meshStandardMaterial color="#efe6d6" roughness={0.35} />
+      <mesh position={[0, CEIL - 0.004, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[0.07, 0.095, 24]} />
+        <meshStandardMaterial color={BRASS} metalness={0.9} roughness={0.3} />
       </mesh>
       <mesh position={[0, 1.032, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[0.3, 32]} />
@@ -398,18 +414,18 @@ function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, on
         <coneGeometry args={[0.36, 2.7, 24, 1, true]} />
         <meshBasicMaterial ref={cone} color="#fff3dc" transparent opacity={0.05} side={THREE.DoubleSide} depthWrite={false} />
       </mesh>
-      {/* Glaskasse med fine kanter */}
-      <lineSegments position={[0, 1.39, 0]} geometry={GLASS_EDGES}>
-        <lineBasicMaterial color="#ffffff" transparent opacity={0.6} />
-      </lineSegments>
+      {/* Glaskasse med fin messingramme. Glasset spejler butikkens lys */}
+      <mesh position={[0, 1.39, 0]} geometry={GLASS_FRAME}>
+        <meshStandardMaterial color="#e0c088" metalness={0.8} roughness={0.28} envMapIntensity={2} />
+      </mesh>
       <mesh position={[0, 1.39, 0]}>
         <boxGeometry args={[0.7, 0.72, 0.7]} />
-        <meshPhysicalMaterial color="#ffffff" transparent opacity={0.08} roughness={0.02} metalness={0} clearcoat={1} clearcoatRoughness={0.02} reflectivity={0.9} envMapIntensity={2.6} depthWrite={false} />
+        <meshPhysicalMaterial color="#f4fbff" transparent opacity={0.1} roughness={0} metalness={0} ior={1.5} specularIntensity={1} clearcoat={1} clearcoatRoughness={0} envMapIntensity={3} depthWrite={false} />
       </mesh>
       {/* Urpude i ruskind, som uret står på */}
       {!still && b.image && (
         <RoundedBox args={[0.3, 0.09, 0.2]} radius={0.04} smoothness={3} position={[0, 1.075, 0]} castShadow>
-          <meshStandardMaterial color="#c9b79e" roughness={1} />
+          <meshStandardMaterial {...velvet} color="#cdbca2" roughness={1} />
         </RoundedBox>
       )}
       <group ref={product} position={[0, base, 0]}>
@@ -422,7 +438,7 @@ function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, on
       {/* Messingplade med navnet */}
       <mesh position={[0, 0.8, 0.385]}>
         <boxGeometry args={[0.62, 0.15, 0.012]} />
-        <meshStandardMaterial color="#d2b37c" metalness={0.35} roughness={0.4} />
+        <meshStandardMaterial color="#d6b67e" metalness={0.45} roughness={0.35} envMapIntensity={1.2} />
       </mesh>
       <mesh position={[0, 0.8, 0.393]}>
         <planeGeometry args={[0.6, 0.13]} />
@@ -439,6 +455,8 @@ function Vitrine({ slot, active, hover, showProduct, still, dragRot, onHover, on
 
 /** Barstol med grønt sæde i læder og træben (som i Rolex-afdelingen). Benene spreder sig ud mod gulvet */
 function Stool({ x, z }: { x: number; z: number }) {
+  const velvet = useMaps("velvet", 1.5, 1.5);
+  const wood = useMaps("walnut", 0.05, 0.6);
   const legs = [0, 1, 2, 3].map((k) => {
     const a = (k / 4) * Math.PI * 2 + Math.PI / 4;
     const top = new THREE.Vector3(Math.cos(a) * 0.11, 0.63, Math.sin(a) * 0.11);
@@ -452,17 +470,17 @@ function Stool({ x, z }: { x: number; z: number }) {
       <Blob w={0.62} d={0.62} opacity={0.7} />
       <mesh position={[0, 0.67, 0]} castShadow>
         <cylinderGeometry args={[0.2, 0.18, 0.08, 28]} />
-        <meshStandardMaterial color="#2f7d52" roughness={0.55} />
+        <meshStandardMaterial {...velvet} color="#2c7a50" roughness={1} />
       </mesh>
       <mesh position={[0, 0.71, 0]}>
         <sphereGeometry args={[0.2, 24, 8, 0, Math.PI * 2, 0, Math.PI / 6]} />
-        <meshStandardMaterial color="#2f7d52" roughness={0.55} />
+        <meshStandardMaterial {...velvet} color="#2c7a50" roughness={1} />
       </mesh>
       {legs.map((l, k) => (
         <group key={k}>
           <mesh position={l.mid} quaternion={l.q}>
             <cylinderGeometry args={[0.017, 0.014, l.len, 8]} />
-            <meshStandardMaterial color="#6e4127" roughness={0.5} />
+            <meshStandardMaterial {...wood} color="#8a5434" roughness={0.8} />
           </mesh>
           {/* Filtdup under benet */}
           <mesh position={[l.foot.x, 0.006, l.foot.z]}>
@@ -481,17 +499,17 @@ function Stool({ x, z }: { x: number; z: number }) {
 
 /** Rådgivningsbord i træ med stenplade og to grønne stole. Over bordet hænger zonens navn på væggen */
 function Counter({ gap }: { gap: Gap }) {
+  const wood = useMaps("walnut", 1, 0.6);
+  const stone = useMaps("stone", 0.4, 0.2, 0.05, 0.3);
   return (
     <group position={[gap.wx + gap.nx * 0.5, 0, gap.wz + gap.nz * 0.5]} rotation={[0, gap.rotY, 0]}>
       <Blob w={2.0} d={1.1} opacity={0.6} />
-      <mesh position={[0, 0.47, 0]} castShadow receiveShadow>
-        <boxGeometry args={[1.5, 0.94, 0.6]} />
-        <meshStandardMaterial color="#7e4c2e" roughness={0.5} />
-      </mesh>
-      <mesh position={[0, 0.965, 0.05]}>
-        <boxGeometry args={[1.6, 0.05, 0.74]} />
-        <meshStandardMaterial color="#efe6d6" roughness={0.35} />
-      </mesh>
+      <RoundedBox args={[1.5, 0.94, 0.6]} radius={0.012} smoothness={2} position={[0, 0.47, 0]}>
+        <meshStandardMaterial {...wood} color="#b08a68" roughness={0.9} />
+      </RoundedBox>
+      <RoundedBox args={[1.6, 0.05, 0.74]} radius={0.01} smoothness={2} position={[0, 0.965, 0.05]}>
+        <meshStandardMaterial {...stone} color="#fbf6ee" roughness={1} />
+      </RoundedBox>
       {/* Bordlampe i messing */}
       <mesh position={[0.55, 1.12, -0.1]}>
         <cylinderGeometry args={[0.012, 0.05, 0.26, 12]} />
@@ -503,7 +521,7 @@ function Counter({ gap }: { gap: Gap }) {
       </mesh>
       <Stool x={-0.4} z={0.75} />
       <Stool x={0.4} z={0.75} />
-      <mesh position={[0, 2.7, -0.48]}>
+      <mesh position={[0, 2.7, -0.45]}>
         <planeGeometry args={[1.9, 0.6]} />
         <meshBasicMaterial map={signTexture(zoneLabels[gap.zone], "")} toneMapped={false} />
       </mesh>
@@ -513,7 +531,8 @@ function Counter({ gap }: { gap: Gap }) {
 
 /** Lænestol i mørkegrøn velour */
 function Armchair({ x, z, rotY }: { x: number; z: number; rotY: number }) {
-  const mat = <meshStandardMaterial color="#1e4636" roughness={0.9} />;
+  const velvet = useMaps("velvet", 2, 2);
+  const mat = <meshStandardMaterial {...velvet} color="#1f4a38" roughness={1} />;
   return (
     <group position={[x, 0, z]} rotation={[0, rotY, 0]}>
       <Blob w={1.1} d={1.0} opacity={0.65} />
@@ -530,26 +549,43 @@ function Armchair({ x, z, rotY }: { x: number; z: number; rotY: number }) {
   );
 }
 
-/** Plante i keramikkrukke */
+/** Svigermors tunge (Sansevieria) i stenkrukke: lange, spidse blade */
+const BLADE = new THREE.ConeGeometry(0.045, 1, 5, 1).scale(1, 1, 0.22).translate(0, 0.5, 0);
 function Plant({ x, z, s = 1 }: { x: number; z: number; s?: number }) {
-  const leaves = useMemo(() => {
+  const ref = useRef<THREE.InstancedMesh>(null);
+  const n = 22;
+  useLayoutEffect(() => {
+    const m = ref.current;
+    if (!m) return;
     let seed = Math.round((x * 31 + z * 17) * 100) || 7;
     const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
-    return Array.from({ length: 14 }, () => ({ p: [(rnd() - 0.5) * 0.5, 0.75 + rnd() * 0.75, (rnd() - 0.5) * 0.5] as [number, number, number], r: 0.13 + rnd() * 0.12, c: rnd() > 0.5 ? "#2f5a34" : "#3d6b3c" }));
+    const o = new THREE.Object3D(), c = new THREE.Color();
+    for (let i = 0; i < n; i++) {
+      const a = rnd() * Math.PI * 2, r = rnd() * 0.13;
+      o.position.set(Math.cos(a) * r, 0.56, Math.sin(a) * r);
+      o.rotation.set(Math.sin(a) * (0.05 + r * 1.2), rnd() * Math.PI, -Math.cos(a) * (0.05 + r * 1.2));
+      o.scale.set(0.8 + rnd() * 0.6, 0.55 + rnd() * 0.75, 1);
+      o.updateMatrix();
+      m.setMatrixAt(i, o.matrix);
+      m.setColorAt(i, c.setHSL(0.27 + rnd() * 0.05, 0.35 + rnd() * 0.15, 0.17 + rnd() * 0.1));
+    }
+    m.instanceMatrix.needsUpdate = true;
+    if (m.instanceColor) m.instanceColor.needsUpdate = true;
   }, [x, z]);
   return (
     <group position={[x, 0, z]} scale={s}>
       <Blob w={0.9} d={0.9} opacity={0.6} />
       <mesh position={[0, 0.3, 0]}>
-        <cylinderGeometry args={[0.24, 0.18, 0.6, 28]} />
-        <meshStandardMaterial color="#e8dfd0" roughness={0.4} />
+        <cylinderGeometry args={[0.24, 0.2, 0.6, 32]} />
+        <meshStandardMaterial color="#d9d0c2" roughness={0.55} />
       </mesh>
-      {leaves.map((l, i) => (
-        <mesh key={i} position={l.p} scale={[1, 1.4, 1]}>
-          <icosahedronGeometry args={[l.r, 0]} />
-          <meshStandardMaterial color={l.c} roughness={0.8} flatShading />
-        </mesh>
-      ))}
+      <mesh position={[0, 0.585, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[0.225, 24]} />
+        <meshStandardMaterial color="#3a2a1e" roughness={1} />
+      </mesh>
+      <instancedMesh ref={ref} args={[BLADE, undefined, n]} frustumCulled={false}>
+        <meshStandardMaterial roughness={0.45} side={THREE.DoubleSide} />
+      </instancedMesh>
     </group>
   );
 }
@@ -610,48 +646,100 @@ function Pendant({ x, z, r = 0.42 }: { x: number; z: number; r?: number }) {
   );
 }
 
+const rugW_ = (l: Loop) => l.a * 2 - 1.6;
+const rugD_ = (l: Loop) => l.b * 2 - 1.6;
+
+type Wall = { ax: number; az: number; bx: number; bz: number; nx: number; nz: number; skip?: [number, number] };
+const SLAT_W = 0.085, SLAT_D = 0.035, SLAT_PITCH = 0.12;
+/** Lodrette valnøddelameller langs alle vægge, som i Rolex-afdelingen. Ét kald til grafikkortet for dem alle */
+function Slats({ walls }: { walls: Wall[] }) {
+  const walnut = useMaps("walnut", 0.09, 1.6);
+  const ref = useRef<THREE.InstancedMesh>(null);
+  const items = useMemo(() => {
+    const out: { x: number; z: number; r: number }[] = [];
+    for (const w of walls) {
+      const len = Math.hypot(w.bx - w.ax, w.bz - w.az), ux = (w.bx - w.ax) / len, uz = (w.bz - w.az) / len;
+      for (let d = SLAT_PITCH / 2; d < len; d += SLAT_PITCH) {
+        const x = w.ax + ux * d + w.nx * SLAT_D / 2, z = w.az + uz * d + w.nz * SLAT_D / 2;
+        if (w.skip && (w.nz ? x : z) > w.skip[0] && (w.nz ? x : z) < w.skip[1]) continue;
+        out.push({ x, z, r: Math.atan2(w.nx, w.nz) });
+      }
+    }
+    return out;
+  }, [walls]);
+  useLayoutEffect(() => {
+    const m = ref.current;
+    if (!m) return;
+    const o = new THREE.Object3D(), c = new THREE.Color();
+    let seed = 5;
+    const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+    items.forEach((it, i) => {
+      o.position.set(it.x, CEIL / 2, it.z); o.rotation.set(0, it.r, 0); o.updateMatrix();
+      m.setMatrixAt(i, o.matrix);
+      const v = 0.86 + rnd() * 0.22;
+      m.setColorAt(i, c.setRGB(v, v * (0.97 + rnd() * 0.04), v * (0.95 + rnd() * 0.05)));
+    });
+    m.instanceMatrix.needsUpdate = true;
+    if (m.instanceColor) m.instanceColor.needsUpdate = true;
+  }, [items]);
+  return (
+    <instancedMesh key={items.length} ref={ref} args={[undefined, undefined, items.length]} frustumCulled={false}>
+      <boxGeometry args={[SLAT_W, CEIL, SLAT_D]} />
+      <meshStandardMaterial {...walnut} color="#b48e6c" roughness={1} envMapIntensity={0.8} />
+    </instancedMesh>
+  );
+}
+
 function Room({ slots, gaps, backZ, loop, hq }: { slots: Slot[]; gaps: Gap[]; backZ: number; loop: Loop; hq: boolean }) {
   const W = ROOM_HALF * 2;
   const D = FRONT_Z - backZ;
   const zMid = (FRONT_Z + backZ) / 2;
-  const floor = useMemo(() => { const t = marbleTexture().clone(); t.needsUpdate = true; t.repeat.set(W / 2, D / 2); return t; }, [W, D]);
-  const sideWall = useMemo(() => { const t = walnutTexture().clone(); t.needsUpdate = true; t.repeat.set(D / 0.96, 1); return t; }, [D]);
-  const endWall = useMemo(() => { const t = walnutTexture().clone(); t.needsUpdate = true; t.repeat.set(W / 0.96, 1); return t; }, [W]);
-  const rugW = loop.a * 2 - 1.6, rugD = loop.b * 2 - 1.6;
+  // Travertinfliserne i teksturen er ca. 60 cm, så ét billede dækker 2,4 m
+  const floor = useMaps("stone", W / 2.4, D / 2.4);
+  const ceil = useMaps("plaster", W / 3, D / 3);
+  const rugFiber = useMaps("velvet", rugW_(loop) * 2, rugD_(loop) * 2);
+  const rugW = rugW_(loop), rugD = rugD_(loop);
   const lounges = rugD > 6 ? [loop.cz + rugD / 4, loop.cz - rugD / 4] : [loop.cz];
-  const wallMat = (map: THREE.Texture) => <meshStandardMaterial map={map} bumpMap={map} bumpScale={4} roughness={0.6} />;
+  const wallMat = () => <meshStandardMaterial color="#2a1a10" roughness={0.9} />;
+  const walls = useMemo<Wall[]>(() => [
+    { ax: -ROOM_HALF, az: FRONT_Z, bx: -ROOM_HALF, bz: backZ, nx: 1, nz: 0 },
+    { ax: ROOM_HALF, az: backZ, bx: ROOM_HALF, bz: FRONT_Z, nx: -1, nz: 0 },
+    { ax: -ROOM_HALF, az: backZ, bx: ROOM_HALF, bz: backZ, nx: 0, nz: 1 },
+    { ax: ROOM_HALF, az: FRONT_Z, bx: -ROOM_HALF, bz: FRONT_Z, nx: 0, nz: -1, skip: [-1.45, 1.45] },
+  ], [backZ]);
   return (
     <>
       {/* Travertingulv */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, zMid]} receiveShadow>
         <planeGeometry args={[W, D]} />
         {hq ? (
-          <MeshReflectorMaterial map={floor} blur={[400, 120]} resolution={256} mixBlur={1} mixStrength={0.5} mirror={0.3}
-            roughness={0.5} depthScale={0.6} minDepthThreshold={0.4} maxDepthThreshold={1.3} metalness={0.05} color="#ffffff" />
+          <MeshReflectorMaterial {...floor} normalScale={new THREE.Vector2(0.5, 0.5)} blur={[300, 80]} resolution={512} mixBlur={0.8} mixStrength={0.9} mirror={0.4}
+            roughness={0.85} depthScale={0.8} minDepthThreshold={0.3} maxDepthThreshold={1.4} metalness={0} color="#f7f2ec" />
         ) : (
-          <meshStandardMaterial map={floor} roughness={0.3} metalness={0.02} envMapIntensity={1.1} />
+          <meshStandardMaterial {...floor} roughness={0.8} metalness={0} envMapIntensity={1} color="#f7f2ec" />
         )}
       </mesh>
       {/* Tæppe under loungen i midten */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.006, loop.cz]}>
         <planeGeometry args={[rugW, rugD]} />
-        <meshStandardMaterial map={rugTexture()} roughness={1} />
+        <meshStandardMaterial map={rugTexture()} normalMap={rugFiber.normalMap} roughness={1} />
       </mesh>
       {/* Vægge med træ-lameller */}
       {[-1, 1].map((k) => (
         <mesh key={k} position={[k * ROOM_HALF, CEIL / 2, zMid]} rotation={[0, -k * Math.PI / 2, 0]}>
           <planeGeometry args={[D, CEIL]} />
-          {wallMat(sideWall)}
+          {wallMat()}
         </mesh>
       ))}
       <mesh position={[0, CEIL / 2, backZ]}>
         <planeGeometry args={[W, CEIL]} />
-        {wallMat(endWall)}
+        {wallMat()}
       </mesh>
       <mesh position={[0, CEIL / 2, FRONT_Z]} rotation={[0, Math.PI, 0]}>
         <planeGeometry args={[W, CEIL]} />
-        {wallMat(endWall)}
+        {wallMat()}
       </mesh>
+      <Slats walls={walls} />
       {/* Indgangen: glasdør med dagslys udefra */}
       <mesh position={[0, 1.35, FRONT_Z - 0.01]} rotation={[0, Math.PI, 0]}>
         <planeGeometry args={[2.2, 2.7]} />
@@ -672,7 +760,7 @@ function Room({ slots, gaps, backZ, loop, hq }: { slots: Slot[]; gaps: Gap[]; ba
         <meshBasicMaterial map={signTexture("Knud Pedersen", "Skt. Clemens Torv · Aarhus")} toneMapped={false} />
       </mesh>
       {/* Sokkel i mørkt træ langs alle vægge */}
-      {[[-ROOM_HALF + 0.03, zMid, D, Math.PI / 2], [ROOM_HALF - 0.03, zMid, D, -Math.PI / 2], [0, backZ + 0.03, W, 0], [0, FRONT_Z - 0.03, W, Math.PI]].map(([x, z, len, r], i) => (
+      {[[-ROOM_HALF + 0.05, zMid, D, Math.PI / 2], [ROOM_HALF - 0.05, zMid, D, -Math.PI / 2], [0, backZ + 0.05, W, 0], [0, FRONT_Z - 0.05, W, Math.PI]].map(([x, z, len, r], i) => (
         <mesh key={i} position={[x, 0.06, z]} rotation={[0, r, 0]}>
           <boxGeometry args={[len, 0.12, 0.03]} />
           <meshStandardMaterial color="#2a1a10" roughness={0.5} />
@@ -681,7 +769,7 @@ function Room({ slots, gaps, backZ, loop, hq }: { slots: Slot[]; gaps: Gap[]; ba
       {/* Loft med lysliste langs alle vægge */}
       <mesh position={[0, CEIL, zMid]} rotation={[Math.PI / 2, 0, 0]}>
         <planeGeometry args={[W, D]} />
-        <meshStandardMaterial color="#f3ede4" roughness={1} />
+        <meshStandardMaterial {...ceil} map={undefined} color="#f3ede4" roughness={1} />
       </mesh>
       {[[-(ROOM_HALF - 0.25), zMid, 0.06, D], [ROOM_HALF - 0.25, zMid, 0.06, D], [0, backZ + 0.25, W - 0.5, 0.06], [0, FRONT_Z - 0.25, W - 0.5, 0.06]].map(([x, z, w, d], i) => (
         <mesh key={i} position={[x, CEIL - 0.01, z]} rotation={[Math.PI / 2, 0, 0]}>
@@ -749,14 +837,14 @@ export default function ShowroomScene({ brands, active, hover, lookAngle, mobile
 
   const pose = useMemo<Pose | null>(() => {
     const a = bySlot(active);
-    if (a) return focusPose(a, mobile, mobile);
-    if (mobile) { const c = bySlot(current); if (c) return focusPose(c, true); }
+    if (a) return focusPose(a, mobile, mobile, backZ);
+    if (mobile) { const c = bySlot(current); if (c) return focusPose(c, true, false, backZ); }
     if (lookAngle != null) return overviewPose(loop, lookAngle);
     return null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, lookAngle, mobile, current, slots, loop]);
 
-  const start = mobile ? focusPose(slots[0], true) : overviewPose(loop, 0);
+  const start = mobile ? focusPose(slots[0], true, false, backZ) : overviewPose(loop, 0);
   const near = (i: number) => {
     if (!mobile) return true;
     const a = slots.findIndex((s) => s.index === current);
@@ -788,16 +876,24 @@ export default function ShowroomScene({ brands, active, hover, lookAngle, mobile
     >
       <color attach="background" args={["#2e2219"]} />
       <fog attach="fog" args={["#3a2b20", 16, 34]} />
-      <ambientLight intensity={0.7} color="#fff3e2" />
-      <hemisphereLight args={["#fff6e8", "#8a7560", 0.55]} />
-      <directionalLight position={[0, 6, 2]} intensity={0.45} color="#fff0da" />
+      {/* Lyset: blødt, varmt butikslys ovenfra med dybere skygger end før, så rummet får dybde */}
+      <ambientLight intensity={0.45} color="#fff1de" />
+      <hemisphereLight args={["#fff4e2", "#8a7058", 0.7]} />
+      <directionalLight position={[2, 6, 3]} intensity={0.6} color="#ffeccf" />
       <Environment resolution={mobile ? 64 : 256} frames={1}>
-        {/* Blødt butikslys uden at hente en HDRI udefra */}
-        <Lightformer form="rect" intensity={2.4} position={[0, 5, -6]} scale={[6, 20, 1]} rotation-x={Math.PI / 2} color="#fff3e0" />
-        <Lightformer form="rect" intensity={1.2} position={[-4, 2, -6]} rotation-y={Math.PI / 2} scale={[20, 2, 1]} color="#ffe9c8" />
-        <Lightformer form="rect" intensity={1.2} position={[4, 2, -6]} rotation-y={-Math.PI / 2} scale={[20, 2, 1]} color="#ffe9c8" />
+        {/* Butikkens lys som spejlinger i glas, messing og sten: loftspots, lyslister og dagslys fra døren */}
+        <Lightformer form="rect" intensity={1.6} position={[0, 5, -6]} scale={[6, 20, 1]} rotation-x={Math.PI / 2} color="#fff3e0" />
+        {[-6, -3, 0, 3, 6].map((z) => [-2.5, 2.5].map((x) => (
+          <Lightformer key={`${x}${z}`} form="circle" intensity={6} position={[x, 4.5, z - 4]} scale={0.5} rotation-x={Math.PI / 2} color="#fff2d8" />
+        )))}
+        <Lightformer form="rect" intensity={1.4} position={[-5, 3.6, -6]} rotation-y={Math.PI / 2} scale={[24, 0.3, 1]} color="#ffe2b4" />
+        <Lightformer form="rect" intensity={1.4} position={[5, 3.6, -6]} rotation-y={-Math.PI / 2} scale={[24, 0.3, 1]} color="#ffe2b4" />
+        <Lightformer form="rect" intensity={0.5} position={[-5, 1.5, -6]} rotation-y={Math.PI / 2} scale={[24, 3, 1]} color="#8a5a38" />
+        <Lightformer form="rect" intensity={0.5} position={[5, 1.5, -6]} rotation-y={-Math.PI / 2} scale={[24, 3, 1]} color="#8a5a38" />
+        <Lightformer form="rect" intensity={3} position={[0, 1.6, 4]} rotation-y={Math.PI} scale={[2.4, 3, 1]} color="#fffaf0" />
       </Environment>
       <Suspense fallback={null}>
+        <PbrProvider>
         <Room slots={slots} gaps={gaps} backZ={backZ} loop={loop} hq={!mobile && !low} />
         {slots.map((s) => (
           <Vitrine key={s.brand.slug} slot={s} active={active === s.index} hover={hover === s.index}
@@ -807,12 +903,15 @@ export default function ShowroomScene({ brands, active, hover, lookAngle, mobile
         <MovingSpot slot={bySlot(hover ?? active)} />
         <ContactShadows position={[0, 0.008, (FRONT_Z + backZ) / 2]} scale={[ROOM_HALF * 2, FRONT_Z - backZ]} resolution={mobile || low ? 256 : 512} blur={2.2} opacity={0.4} far={1.2} frames={1} color="#3a2a1a" />
         <Ready onReady={onReady} />
+        </PbrProvider>
       </Suspense>
       {/* Kører computeren for tungt, skrues der automatisk ned for effekterne, så gåturen forbliver glat */}
       <PerformanceMonitor onDecline={() => setLow(true)} flipflops={1} />
       {!mobile && !low && (
         <EffectComposer multisampling={2} enableNormalPass={false}>
-          <Bloom mipmapBlur luminanceThreshold={0.92} luminanceSmoothing={0.2} intensity={0.45} />
+          {/* Bløde skygger i hjørner, under møbler og mellem lamellerne */}
+          <N8AO halfRes quality="performance" aoRadius={0.55} distanceFalloff={0.6} intensity={1.6} color="#2a1a10" />
+          <Bloom mipmapBlur luminanceThreshold={0.92} luminanceSmoothing={0.2} intensity={0.5} />
           <Vignette offset={0.32} darkness={0.55} />
           <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
         </EffectComposer>
