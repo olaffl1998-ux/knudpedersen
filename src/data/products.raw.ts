@@ -5,6 +5,8 @@
  * Format pr. linje (adskilt af |):
  * mærke | gammelt produkt-id | navn | reference | pris DKK | billedfil | kollektion | diameter | rem/lænke | materiale | urværk | vandtæthed | skive
  *
+ * Breitling-urene (mærke "breitling") er Knud Pedersens Breitling-udvalg fra Breitlings forhandlermodul på knudpedersen.dk/shop/10-breitling
+ * (27. nov. 2026), med Breitlings vejledende priser og produktbilleder i public/billeder/shop/breitling.
  * Billedfil uden https:// ligger på https://shop16933.sfstatic.io/upload_dir/shop/<fil>.
  * Billederne skal flyttes til det nye site, før den gamle webshop lukkes.
  */
@@ -402,4 +404,51 @@ grand-seiko|1573|Sport|SBGN029|28400|https://shop16933.sfstatic.io/upload_dir/pi
 grand-seiko|1574|Sport|SBGN027|28400|https://shop16933.sfstatic.io/upload_dir/pics/Grand_Seiko/SBGN027.jpg|Sport||||Quartz||Sort
 grand-seiko|1575|Sport|SBGE257|52300|https://shop16933.sfstatic.io/upload_dir/pics/Grand_Seiko/SBGE257.jpg|Sport||||||
 grand-seiko|1576|Sport|SBGE255|52300|https://shop16933.sfstatic.io/upload_dir/pics/Grand_Seiko/SBGE255.jpg|Sport||||||
+breitling|0|Navitimer B01 Chronograph 46|AB0137211B1P1|76100|breitling/ab0137211b1p1.webp|Navitimer|46 mm|||||
+breitling|0|Navitimer B01 Chronograph 46|AB0137241L1A1|79000|breitling/ab0137241l1a1.webp|Navitimer|46 mm|||||
+breitling|0|Navitimer B01 Chronograph 43|AB0138211B1P1|75200|breitling/ab0138211b1p1.webp|Navitimer|43 mm|||||
+breitling|0|Navitimer Automatic 41|A17329161C1A1|46000|breitling/a17329161c1a1.webp|Navitimer|41 mm|||||
+breitling|0|Navitimer Automatic 41|A17329371L1A1|46000|breitling/a17329371l1a1.webp|Navitimer|41 mm|||||
+breitling|0|Navitimer 32|A77320171C1A1|37600|breitling/a77320171c1a1.webp|Navitimer|32 mm|||||
+breitling|0|Chronomat B01 Chronograph 42|UB0158101B1U1|117400|breitling/ub0158101b1u1.webp|Chronomat|42 mm|||||
+breitling|0|Chronomat B01 Chronograph 42|AB0158101A1A1|74800|breitling/ab0158101a1a1.webp|Chronomat|42 mm|||||
+breitling|0|Chronomat B31 Automatic 40|AB3114101L1A1|51300|breitling/ab3114101l1a1.webp|Chronomat|40 mm|||||
+breitling|0|Chronomat B31 Automatic 40|AB3114101C1A1|51300|breitling/ab3114101c1a1.webp|Chronomat|40 mm|||||
+breitling|0|Chronomat Automatic 36|U10320101A1U1|95700|breitling/u10320101a1u1.webp|Chronomat|36 mm|||||
+breitling|0|Chronomat Automatic 36|A10320101A1A1|53500|breitling/a10320101a1a1.webp|Chronomat|36 mm|||||
+breitling|0|Chronomat 32|A77310101A4A1|43000|breitling/a77310101a4a1.webp|Chronomat|32 mm|||||
+breitling|0|Chronomat 32|A77310101L1A1|40500|breitling/a77310101l1a1.webp|Chronomat|32 mm|||||
+breitling|0|Superocean Heritage B01 Chronograph 42|AB0156161C1A1|73600|breitling/ab0156161c1a1.webp|Superocean Heritage|42 mm|||||
+breitling|0|Superocean Heritage B31 Automatic 44|UB3112161C1S1|70000|breitling/ub3112161c1s1.webp|Superocean Heritage|44 mm|||||
+breitling|0|Superocean Heritage B31 Automatic 44|AB3112361L1A1|52500|breitling/ab3112361l1a1.webp|Superocean Heritage|44 mm|||||
+breitling|0|Superocean Heritage B31 Automatic 42|AB3111241B1A1|52500|breitling/ab3111241b1a1.webp|Superocean Heritage|42 mm|||||
+breitling|0|Superocean Heritage B31 Automatic 42|AB3111161C1A1|52500|breitling/ab3111161c1a1.webp|Superocean Heritage|42 mm|||||
+breitling|0|Superocean Heritage B31 Automatic 42|AB3111361L1A1|52500|breitling/ab3111361l1a1.webp|Superocean Heritage|42 mm|||||
+breitling|0|Superocean Heritage B31 Automatic 40|AB3110361L1S1|49900|breitling/ab3110361l1s1.webp|Superocean Heritage|40 mm|||||
+breitling|0|Superocean Heritage B31 Automatic 40|AB3110241B1A1|52500|breitling/ab3110241b1a1.webp|Superocean Heritage|40 mm|||||
+breitling|0|Avenger Automatic 42|A17328101B1A1|40500|breitling/a17328101b1a1.webp|Avenger|42 mm|||||
+breitling|0|Avenger Automatic 42|A17328101C1A1|40500|breitling/a17328101c1a1.webp|Avenger|42 mm|||||
+breitling|0|Superocean Automatic 42|A17375E71C1A1|43900|breitling/a17375e71c1a1.webp|Superocean|42 mm|||||
+breitling|0|Superocean Automatic 42|N17375201L1S1|49300|breitling/n17375201l1s1.webp|Superocean|42 mm|||||
+breitling|0|Superocean Automatic 42|A17375211B1A1|43900|breitling/a17375211b1a1.webp|Superocean|42 mm|||||
+breitling|0|Superocean Automatic 36|A17377211A1A1|43500|breitling/a17377211a1a1.webp|Superocean|36 mm|||||
+breitling|0|Endurance Pro 44|X82310D51B1S2|28800|breitling/x82310d51b1s2.webp|Endurance Pro|44 mm|||||
+breitling|0|Endurance Pro 44|X82310A51B1S2|28800|breitling/x82310a51b1s2.webp|Endurance Pro|44 mm|||||
+breitling|0|Navitimer B01 Chronograph 46|AB0137211C1A1|79000|breitling/ab0137211c1a1.webp|Navitimer|46 mm|||||
+breitling|0|Chronomat 28|U72310531A1U1|86600|breitling/u72310531a1u1.webp|Chronomat|28 mm|||||
+breitling|0|Superocean Heritage B01 Chronograph 42|AB0156161C1S1|71000|breitling/ab0156161c1s1.webp|Superocean Heritage|42 mm|||||
+breitling|0|Superocean Heritage B31 Automatic 44|AB3112361L1S1|49900|breitling/ab3112361l1s1.webp|Superocean Heritage|44 mm|||||
+breitling|0|Superocean Heritage B31 Automatic 44|AB3112241B1A1|52500|breitling/ab3112241b1a1.webp|Superocean Heritage|44 mm|||||
+breitling|0|Superocean Heritage B31 Automatic 42|UB3111241B1S1|70000|breitling/ub3111241b1s1.webp|Superocean Heritage|42 mm|||||
+breitling|0|Superocean Heritage B31 Automatic 42|AB3111161C1S1|49900|breitling/ab3111161c1s1.webp|Superocean Heritage|42 mm|||||
+breitling|0|Superocean Heritage B31 Automatic 40|AB3110241B1S1|49900|breitling/ab3110241b1s1.webp|Superocean Heritage|40 mm|||||
+breitling|0|Superocean Heritage B31 Automatic 40|AB3110361L1A1|52500|breitling/ab3110361l1a1.webp|Superocean Heritage|40 mm|||||
+breitling|0|Superocean Heritage Automatic 36|A10390161C1S1|42600|breitling/a10390161c1s1.webp|Superocean Heritage|36 mm|||||
+breitling|0|Premier B01 Chronograph 42|AB0145171C1A1|76500|breitling/ab0145171c1a1.webp|Premier|42 mm|||||
+breitling|0|Top Time B31|AB3113A71C1X1|45600|breitling/ab3113a71c1x1.webp|Top Time||||||
+breitling|0|Superocean Automatic 44|A17376A31L1S1|42600|breitling/a17376a31l1s1.webp|Superocean|44 mm|||||
+breitling|0|Superocean Automatic 44|A17376211L2S1|42600|breitling/a17376211l2s1.webp|Superocean|44 mm|||||
+breitling|0|Superocean Automatic 44|A17376211B1A1|44300|breitling/a17376211b1a1.webp|Superocean|44 mm|||||
+breitling|0|Superocean Automatic 42|A17375E71G1S1|42200|breitling/a17375e71g1s1.webp|Superocean|42 mm|||||
+breitling|0|Endurance Pro 44 IRONMAN® 70.3 World Championship 2026|E823107A1O1S1|33000|breitling/e823107a1o1s1.webp|Endurance Pro|44 mm|||||
 `;
