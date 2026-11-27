@@ -26,7 +26,7 @@ export default function Accessories() {
             <li key={a.slug}>
               <Link href={`/rolex/accessories/${a.slug}`} className="rx-model-card">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                {a.packshot && <img src={a.packshot} alt={a.title} loading="lazy" />}
+                {a.packshot && <img src={a.packshot} alt={a.title} loading="eager" />}
                 <span className="rx-eyebrow">Rolex</span>
                 <strong>{a.name}</strong>
                 <span>{a.material}</span>

@@ -33,7 +33,7 @@ export default function KnudPedersenRolex() {
           <article key={c.title} className={i % 2 ? "rev" : ""}>
             {c.img ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={c.img} alt={`${RETAILER.name}: ${c.title}`} loading="lazy" />
+              <img src={c.img} alt={`${RETAILER.name}: ${c.title}`} loading="eager" />
             ) : <div className="rx-ph" role="img" aria-label="Pladsholder">[Billede: {c.title}]</div>}
             <div><h2>{c.title}</h2><p>{c.text}</p></div>
           </article>

@@ -52,7 +52,7 @@ function ModelCard({ m }: { m: RolexModel }) {
     <li>
       <Link href={modelHref(m)} className="rx-model-card">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={packshot(m)} alt={`Rolex ${m.family}, ${m.caseline}`} loading="lazy" />
+        <img src={packshot(m)} alt={`Rolex ${m.family}, ${m.caseline}`} loading="eager" />
         <span className="rx-eyebrow">Rolex</span>
         <strong>{m.family}</strong>
         <span>{m.caseline}</span>

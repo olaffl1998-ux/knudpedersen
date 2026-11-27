@@ -42,7 +42,7 @@ export default function WatchDetail({ brand, brandSlug, name, variants, initial,
                 <li key={x.key}>
                   <button type="button" role="radio" aria-checked={i === sel} className={i === sel ? "is-on" : ""} onClick={() => setSel(i)} title={`${x.strap} · ${x.ref}`}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    {x.image && <img src={x.image} alt="" loading="lazy" />}
+                    {x.image && <img src={x.image} alt="" loading="eager" />}
                     <span>{x.strap}</span>
                   </button>
                 </li>

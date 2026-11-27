@@ -26,7 +26,7 @@ export default function WatchDetail({ brand, brandSlug, name, variants, initial,
             <ul>
               {variants.map((x, i) => (<li key={x.key}>
                   <button type="button" role="radio" aria-checked={i === sel} className={i === sel ? "is-on" : ""} onClick={() => setSel(i)} title={`${x.strap} · ${x.ref}`}>
-                                        {x.image && <img src={x.image} alt="" loading="lazy"/>}
+                                        {x.image && <img src={x.image} alt="" loading="eager"/>}
                     <span>{x.strap}</span>
                   </button>
                 </li>))}

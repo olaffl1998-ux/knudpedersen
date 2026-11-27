@@ -63,7 +63,7 @@ export default function Footer() {
         <div className="footer-news">
           <h2>Officiel forhandler</h2>
           <Link className="footer-rolex" href="/rolex/discover" aria-label="Officiel Rolex-forhandler, Udforsk Rolex">
-                        <img src={rolexAssets.plaque} alt="Officiel Rolex-forhandler" width={120} height={60} loading="lazy"/>
+                        <img src={rolexAssets.plaque} alt="Officiel Rolex-forhandler" width={120} height={60} loading="eager"/>
           </Link>
         </div>
       </div>

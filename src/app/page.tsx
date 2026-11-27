@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { brands, models, genderOf } from "@/data/catalog";
-import { pieces } from "@/data/jewellery";
-import { jewelleryBrandList } from "@/data/jewellery";
+import { models, genderOf } from "@/data/catalog";
+import { showroomBrands } from "@/data/brands";
+import BrandShowroom from "@/components/showroom/BrandShowroom";
 import { rolexAssets } from "@/data/rolex";
 import CampaignHero, { type Campaign } from "@/components/CampaignHero";
 import FeatureWatch from "@/components/FeatureWatch";
@@ -73,15 +73,7 @@ export default function Home() {
     { href: "/smykker", title: "Smykker og ringe", img: ETERNITY_WG, big: true },
     { href: "/service", title: "Service og reparation", img: focus?.image, big: false },
   ];
-  const watchGroup = ["glashutte-original", "breitling", "omega", "grand-seiko", "tag-heuer", "longines", "baume-mercier", "oris", "doxa", "montblanc"];
-  const jewelGroup = ["chopard", "georg-jensen", "gucci", "marselis", "ole-mathiesen"];
-  const nameOf = (slug: string) => brands.find((b) => b.slug === slug) ?? jewelleryBrandList.find((b) => b.slug === slug);
-  const jewelHref = (slug: string) => (jewelleryBrandList.some((b) => b.slug === slug) && !brands.some((b) => b.slug === slug) ? `/smykker/${slug}` : `/maerker/${slug}`);
-  const brandGroups = [
-    { label: "Ure", items: watchGroup.filter(nameOf).map((sl) => ({ href: `/maerker/${sl}`, name: nameOf(sl)!.name })) },
-    { label: "Smykker", items: jewelGroup.filter(nameOf).map((sl) => ({ href: jewelHref(sl), name: nameOf(sl)!.name })) },
-  ];
-  const brandCount = 2 + brandGroups.reduce((n, g) => n + g.items.length, 0);
+  const brandCount = showroomBrands.length;
 
   return (
     <>
@@ -132,7 +124,7 @@ export default function Home() {
             {tiles.map((t) => (
               <li key={t.href}>
                 <Link href={t.href} className={`cat-card${t.big ? " cat-card--big" : ""}`}>
-                  <span className="cat-card__media">{t.img && /* eslint-disable-next-line @next/next/no-img-element */ <img src={t.img} alt="" loading="lazy" />}</span>
+                  <span className="cat-card__media">{t.img && /* eslint-disable-next-line @next/next/no-img-element */ <img src={t.img} alt="" loading="eager" />}</span>
                   <strong>{t.title}</strong>
                   <span className="cat-card__cta">Udforsk</span>
                 </Link>
@@ -154,7 +146,7 @@ export default function Home() {
               <li key={st.title}>
                 <Link href={st.href} className="story-card">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <span className="story-card__media"><img src={st.img} alt={st.alt} loading="lazy" /></span>
+                  <span className="story-card__media"><img src={st.img} alt={st.alt} loading="eager" /></span>
                   <h3>{st.title}</h3>
                   <p>{st.text}</p>
                   <span className="link-arrow">{st.cta}</span>
@@ -165,24 +157,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. Mærker: Rolex og Tudor for sig, derefter ure og smykker */}
-      <section className="hp-section hp-brands" aria-labelledby="maerker-h">
-        <div className="container">
-          <div className="hp-head hp-head--center"><span className="label">Mærker</span><h2 id="maerker-h">{brandCount} mærker under ét tag</h2><Link className="link-arrow" href="/maerker">Alle mærker</Link></div>
-          <ul className="brand-official">
-            <li><Link href="/rolex/discover" aria-label="Rolex, officiel forhandler">{/* eslint-disable-next-line @next/next/no-img-element */}<img src={rolexAssets.plaque} alt="Officiel Rolex-forhandler" width={120} height={60} loading="lazy" /></Link></li>
-            <li><Link href="/maerker/tudor" className="brand-official__tudor"><strong>Tudor</strong><small>Officiel forhandler</small></Link></li>
-          </ul>
-          {brandGroups.map((g) => (
-            <div key={g.label} className="brand-group">
-              <span className="label">{g.label}</span>
-              <ul className="hp-brand-grid">
-                {g.items.map((x) => <li key={x.href}><Link href={x.href}><span className="bn">{x.name}</span><span className="ba" aria-hidden="true">→</span></Link></li>)}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* 6. Mærker: interaktivt 3D-showroom med vitriner (falder tilbage til en liste) */}
+      <BrandShowroom plaque={rolexAssets.plaque} />
 
       {/* 7. Rolex-banner #2 og point of sale-banner */}
       <section className="ed-bleed" aria-label="Rolex hos Knud Pedersen">
@@ -206,7 +182,7 @@ export default function Home() {
             </div>
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <div className="hp-jewel__media"><img src={ETERNITY_YG} alt="Marselis Eternity-ring i gult guld med diamanter" loading="lazy" /></div>
+          <div className="hp-jewel__media"><img src={ETERNITY_YG} alt="Marselis Eternity-ring i gult guld med diamanter" loading="eager" /></div>
         </div>
       </section>
 
@@ -223,7 +199,7 @@ export default function Home() {
           <p className="hp-bridal__extras">Gravering · Tilpasning af størrelse · Personlig rådgivning</p>
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <div className="hp-bridal__media"><img src={AISLING_ROUNDS} alt="Forlovelsesring med diamanter" loading="lazy" /></div>
+        <div className="hp-bridal__media"><img src={AISLING_ROUNDS} alt="Forlovelsesring med diamanter" loading="eager" /></div>
       </section>
 
       {/* 9. Værksted og services */}

@@ -44,11 +44,11 @@ export function Blocks({ blocks, skipH1 = true }: { blocks: Block[]; skipH1?: bo
           }
           case "img":
             // eslint-disable-next-line @next/next/no-img-element
-            return <img key={i} className="rx-media" src={b.src} alt={b.alt?.trim() || ""} loading="lazy" />;
+            return <img key={i} className="rx-media" src={b.src} alt={b.alt?.trim() || ""} loading="eager" />;
           case "iframe":
             return b.src && /youtube/.test(b.src) ? (
               <div key={i} className="rx-video">
-                <iframe src={b.src.replace("youtube.com", "youtube-nocookie.com")} title="Rolex-video" loading="lazy" allow="encrypted-media; picture-in-picture" allowFullScreen />
+                <iframe src={b.src.replace("youtube.com", "youtube-nocookie.com")} title="Rolex-video" loading="eager" allow="encrypted-media; picture-in-picture" allowFullScreen />
               </div>
             ) : null;
           default:
@@ -91,7 +91,7 @@ export function KeepExploring({ current }: { current: string }) {
           <li key={n.href}>
             <Link href={n.href}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={n.img} alt="" loading="lazy" />
+              <img src={n.img} alt="" loading="eager" />
               <span>{n.label}</span>
             </Link>
           </li>

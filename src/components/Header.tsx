@@ -49,7 +49,7 @@ function BridalCard() {
     <div className="bridal-card">
       <Link href="/vielsesringe" className="bridal-card__media" tabIndex={-1} aria-hidden="true">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={BRIDAL_IMG} alt="" loading="lazy" />
+        <img src={BRIDAL_IMG} alt="" loading="eager" />
       </Link>
       <div className="bridal-card__text">
         <strong>Vielsesringe</strong>

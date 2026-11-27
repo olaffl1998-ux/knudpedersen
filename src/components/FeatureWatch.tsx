@@ -11,7 +11,7 @@ export default function FeatureWatch({ model, kicker, text }: { model: Model; ki
       <div className="fx__media">
         <span className="fx__glow" aria-hidden="true" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={model.image} alt={`${b.name} ${model.name}, reference ${model.ref}`} loading="lazy" />
+        <img src={model.image} alt={`${b.name} ${model.name}, reference ${model.ref}`} loading="eager" />
       </div>
       <div className="fx__text">
         <span className="label">{kicker}</span>

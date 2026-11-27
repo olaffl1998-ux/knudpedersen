@@ -53,7 +53,7 @@ export default function OmOs() {
             {ch.map((c) => (<li key={c.title + c.year}>
                 <span className="year">{c.year}</span>
                 <div><h3>{c.title}</h3><p>{c.text}</p></div>
-                                {HISTORY_PHOTOS[c.year] ? <img className="timeline__photo" src={HISTORY_PHOTOS[c.year]} alt={`Knud Pedersen, ${c.title} ${c.year}`} loading="lazy"/> : <span />}
+                                {HISTORY_PHOTOS[c.year] ? <img className="timeline__photo" src={HISTORY_PHOTOS[c.year]} alt={`Knud Pedersen, ${c.title} ${c.year}`} loading="eager"/> : <span />}
               </li>))}
           </ol>
         </div>

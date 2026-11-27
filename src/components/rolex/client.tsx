@@ -69,7 +69,7 @@ export function RolexGallery({ images, alt }: { images: string[]; alt: string })
           <li key={src}>
             <button type="button" onClick={() => setI(k)} aria-label={`Vis billede ${k + 1} af ${n} i fuld størrelse`}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={src} alt={`${alt}, billede ${k + 1}`} loading="lazy" />
+              <img src={src} alt={`${alt}, billede ${k + 1}`} loading="eager" />
             </button>
           </li>
         ))}

@@ -1495,3 +1495,64 @@ p { color: inherit; }
 .cx__slide.is-on img, .cx__slide.is-prev img { transform: scale(1); }
 .cx__slide:not(.is-on) { pointer-events: none; }
 .rx-pos__in, .rx-pos__in:hover { color: #fff; }
+
+/* ============================================================
+   3D-showroom med mærkerne (forsiden)
+   ============================================================ */
+.showroom { padding-bottom: 0; }
+.showroom__intro { color: var(--grey); font-size: 16px; margin: 0; }
+.showroom__stage { position: relative; height: min(78vh, 760px); min-height: 520px; background: #efe7dc; overflow: hidden; }
+.showroom__stage canvas { display: block; touch-action: pan-y; opacity: 0; transition: opacity .8s ease; }
+.showroom__stage.is-ready canvas { opacity: 1; }
+.showroom__loader { position: absolute; left: 50%; top: 50%; width: 160px; height: 1px; transform: translate(-50%, -50%); background: rgba(154,123,79,.25); overflow: hidden; }
+.showroom__loader i { position: absolute; inset: 0; background: var(--brass); transform-origin: left; animation: sr-load 3.5s cubic-bezier(.2,.6,.2,1) forwards; }
+@keyframes sr-load { from { transform: scaleX(0); } to { transform: scaleX(.92); } }
+/* Navne i scenen */
+.sr3d-plate { display: block; font-family: var(--font-display); font-size: 15px; color: #2a2016; letter-spacing: .04em; white-space: nowrap; text-align: center; user-select: none; }
+.sr3d-label { display: block; padding: 6px 12px; background: rgba(250,248,245,.94); border: 1px solid rgba(154,123,79,.35); font-family: var(--font-display); font-size: 18px; color: var(--ink); white-space: nowrap; transform: translateY(-6px); animation: fade-in .2s ease; }
+.sr3d-zone { display: block; font-family: var(--font-body); font-size: 13px; letter-spacing: .3em; text-transform: uppercase; color: rgba(31,27,24,.55); white-space: nowrap; user-select: none; }
+/* Tastaturknapper: usynlige, indtil de får fokus */
+.showroom__keys { position: absolute; left: 16px; top: 16px; z-index: 6; list-style: none; margin: 0; padding: 0; }
+.showroom__keys li { position: absolute; }
+.showroom__keys button { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; padding: 0; background: none; }
+.showroom__keys button:focus-visible { width: auto; height: auto; clip: auto; overflow: visible; padding: 10px 16px; background: var(--ink); color: #fff; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; outline: 2px solid var(--brass); }
+/* Info-panelet glider ind fra højre */
+.showroom__panel { position: absolute; top: 0; right: 0; bottom: 0; z-index: 8; width: min(420px, 92vw); padding: 56px 40px 40px; background: var(--cream); box-shadow: -24px 0 48px -32px rgba(0,0,0,.35); transform: translateX(105%); transition: transform .55s cubic-bezier(.2,.7,.2,1); overflow-y: auto; }
+.showroom__panel.is-open { transform: none; }
+.showroom__panel h3 { font-size: clamp(32px, 3vw, 44px); font-weight: 300; margin: 0 0 var(--s2); }
+.showroom__panel p { color: var(--grey); font-size: 15px; }
+.showroom__official { font-size: 11px !important; letter-spacing: .15em; text-transform: uppercase; color: var(--brass-ink) !important; margin-top: -8px; }
+.showroom__product { display: grid; gap: 2px; margin: var(--s3) 0 var(--s4); color: var(--ink) !important; font-family: var(--font-display); font-size: 20px !important; }
+.showroom__product small { font-family: var(--font-body); font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--grey); }
+.showroom__close { position: absolute; top: 16px; right: 20px; background: none; border: 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; color: var(--ink); display: inline-flex; gap: 8px; align-items: center; min-height: 40px; }
+.showroom__arrows { display: flex; gap: 8px; margin-top: var(--s5); }
+.showroom__arrows button, .showroom__swipe > button:not(.showroom__current) { width: 40px; height: 40px; border: 1px solid var(--ink); background: transparent; cursor: pointer; font-size: 15px; color: var(--ink); }
+.showroom__arrows button:hover { background: var(--ink); color: #fff; }
+/* Fast bjælke i bunden */
+.showroom__bar { position: absolute; left: 50%; bottom: 20px; z-index: 7; transform: translateX(-50%); display: flex; align-items: center; gap: var(--s4); padding: 10px 22px; background: rgba(250,248,245,.92); border: 1px solid var(--line); backdrop-filter: blur(6px); white-space: nowrap; transition: transform .5s ease; }
+.showroom__stage.has-panel .showroom__bar { transform: translateX(calc(-50% - 210px)); }
+.showroom__bar nav { display: flex; align-items: center; gap: 12px; }
+.showroom__bar nav i { font-style: normal; color: var(--brass); margin-right: 12px; }
+.showroom__bar button { background: none; border: 0; padding: 6px 0; cursor: pointer; font-size: 11px; font-weight: 500; letter-spacing: .15em; text-transform: uppercase; color: var(--ink); background-image: linear-gradient(currentColor, currentColor); background-size: 0 1px; background-position: left bottom; background-repeat: no-repeat; transition: background-size .25s ease; }
+.showroom__bar button:hover { background-size: 100% 1px; }
+.showroom__toggle { border-left: 1px solid var(--line) !important; padding-left: var(--s3) !important; color: var(--grey) !important; }
+.showroom__list { padding-block: var(--s6) 0; }
+.showroom__back { text-align: center; margin-top: var(--s5); }
+.showroom__back button { background: none; border: 0; cursor: pointer; }
+.showroom + section, .showroom { margin-bottom: 0; }
+/* Mobil: swipe-knapper og bottom sheet */
+.showroom__swipe { position: absolute; left: 16px; right: 16px; bottom: 76px; z-index: 6; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.showroom__swipe > button:not(.showroom__current) { background: rgba(250,248,245,.9); }
+.showroom__current { flex: 1; display: grid; gap: 2px; background: rgba(250,248,245,.92); border: 1px solid var(--line); padding: 10px; font-family: var(--font-display); font-size: 22px; color: var(--ink); cursor: pointer; }
+.showroom__current small { font-family: var(--font-body); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--grey); }
+@media (max-width: 767px) {
+  .showroom__stage { height: 74vh; min-height: 480px; }
+  .showroom__panel { top: auto; left: 0; width: 100%; max-height: 58%; padding: 48px 24px 28px; transform: translateY(105%); box-shadow: 0 -24px 48px -32px rgba(0,0,0,.35); }
+  .showroom__panel.is-open { transform: none; }
+  .showroom__bar { left: 12px; right: 12px; bottom: 12px; transform: none; justify-content: space-between; gap: 8px; padding: 8px 12px; }
+  .showroom__stage.has-panel .showroom__bar { transform: none; opacity: 0; pointer-events: none; }
+  .showroom__bar nav { gap: 6px; } .showroom__bar nav i { margin-right: 6px; }
+  .showroom__bar button { font-size: 10px; letter-spacing: .1em; }
+  .showroom__toggle { padding-left: 10px !important; }
+}
+.showroom__bar { z-index: 40; } .showroom__swipe { z-index: 40; } .showroom__panel { z-index: 50; } .showroom__keys { z-index: 45; }

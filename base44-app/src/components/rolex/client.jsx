@@ -67,7 +67,7 @@ export function RolexGallery({ images, alt }) {
       <ul className="rx-gallery">
         {images.map((src, k) => (<li key={src}>
             <button type="button" onClick={() => setI(k)} aria-label={`Vis billede ${k + 1} af ${n} i fuld størrelse`}>
-                            <img src={src} alt={`${alt}, billede ${k + 1}`} loading="lazy"/>
+                            <img src={src} alt={`${alt}, billede ${k + 1}`} loading="eager"/>
             </button>
           </li>))}
       </ul>

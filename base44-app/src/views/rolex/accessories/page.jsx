@@ -20,7 +20,7 @@ export default function Accessories() {
         <ul className="rx-grid">
           {rolexAccessories.map((a) => (<li key={a.slug}>
               <Link href={`/rolex/accessories/${a.slug}`} className="rx-model-card">
-                                {a.packshot && <img src={a.packshot} alt={a.title} loading="lazy"/>}
+                                {a.packshot && <img src={a.packshot} alt={a.title} loading="eager"/>}
                 <span className="rx-eyebrow">Rolex</span>
                 <strong>{a.name}</strong>
                 <span>{a.material}</span>

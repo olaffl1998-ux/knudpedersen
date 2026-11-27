@@ -3,6 +3,8 @@
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
+const REVEAL_DISABLED = true;
+
 const SELECTOR = [
   ".section-head", ".ed-head", ".ed-statement", ".ed-facts li", ".ed-tile", ".cards > li", ".feature",
   ".ed-brands li", ".services li", ".ed-cine", ".split__media", ".split__text", ".fx__media", ".fx__text", ".visit > *", ".page-head", ".timeline li", ".footer-brand > *", ".col-tiles li",
@@ -12,7 +14,8 @@ const SELECTOR = [
 export default function Reveal() {
   const path = usePathname();
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
+    // Knud Pedersen ønsker, at alt indhold vises med det samme (ingen indtoning ved scroll)
+    if (REVEAL_DISABLED || window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
     let io: IntersectionObserver | null = null;
     // Vent til siden er hydreret, så klasserne ikke kolliderer med den server-renderede HTML
     const start = () => {

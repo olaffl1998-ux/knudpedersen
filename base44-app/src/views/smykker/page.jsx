@@ -23,7 +23,7 @@ export default function Smykker() {
             return (<li key={b.slug}>
                 <Link href={`/smykker/${b.slug}`} className="feature">
                   <span className="feature__media" style={{ background: "var(--white)" }}>
-                                        {first && <img src={first.image} alt={`${b.name} smykke`} loading="lazy" style={{ objectFit: "contain", padding: "10%" }}/>}
+                                        {first && <img src={first.image} alt={`${b.name} smykke`} loading="eager" style={{ objectFit: "contain", padding: "10%" }}/>}
                   </span>
                   <h2 className="h3" style={{ marginTop: 24 }}>{b.name}</h2>
                   <p>{b.intro}</p>
@@ -35,7 +35,7 @@ export default function Smykker() {
       </section>
       <section className="section">
         <div className="container split">
-          <div className="split__media">{/* [Foto: smykker i vinduet på Skt. Clemens Torv] */}{(() => { const r = pieces.find((p) => p.image && /Aisling-Ring-Oval/.test(p.image)); return r ?  <img src={r.image} alt={r.name} loading="lazy" className="on-stage"/> : null; })()}</div>
+          <div className="split__media">{/* [Foto: smykker i vinduet på Skt. Clemens Torv] */}{(() => { const r = pieces.find((p) => p.image && /Aisling-Ring-Oval/.test(p.image)); return r ?  <img src={r.image} alt={r.name} loading="eager" className="on-stage"/> : null; })()}</div>
           <div className="split__text">
             <span className="label">Værkstedet</span>
             <h2>Vielsesringe, omtrækning og tilpasning</h2>

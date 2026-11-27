@@ -62,7 +62,7 @@ export default function DiscoverRolex() {
           {exploreImgs.map((e, i) => (
             <Link key={e.src} href={exploreHref[i]} className="rx-tile">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={e.src} alt={e.alt || exploreText[i]} loading="lazy" />
+              <img src={e.src} alt={e.alt || exploreText[i]} loading="eager" />
               <span className="rx-eyebrow">Udforsk</span>
               <strong>{exploreText[i]}</strong>
             </Link>

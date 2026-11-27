@@ -60,7 +60,7 @@ export default function BrandPage({ params }) {
                 const g = list.filter((m) => m.collection === c);
                 const img = g.find((m) => m.image)?.image;
                 return (<li key={c}><Link href={`/maerker/${b.slug}/${collectionSlug(c)}`} className="col-tile">
-                                        <span className="col-tile__media">{img && <img src={img} alt="" loading="lazy"/>}</span>
+                                        <span className="col-tile__media">{img && <img src={img} alt="" loading="eager"/>}</span>
                     <strong>{c}</strong><span>{g.length} {g.length === 1 ? "ur" : "ure"}</span>
                   </Link></li>);
             })}

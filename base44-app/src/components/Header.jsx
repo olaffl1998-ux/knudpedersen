@@ -36,7 +36,7 @@ const BRIDAL_IMG = "/billeder/shop/R-ASO4-S-GG-Aisling-Ring-Oval-Center-Round-Si
 function BridalCard() {
     return (<div className="bridal-card">
       <Link href="/vielsesringe" className="bridal-card__media" tabIndex={-1} aria-hidden="true">
-                <img src={BRIDAL_IMG} alt="" loading="lazy"/>
+                <img src={BRIDAL_IMG} alt="" loading="eager"/>
       </Link>
       <div className="bridal-card__text">
         <strong>Vielsesringe</strong>

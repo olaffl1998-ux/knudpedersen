@@ -37,10 +37,10 @@ export function Blocks({ blocks, skipH1 = true }) {
                     return b.href && !b.href.startsWith("#") ? <Link key={i} href={b.href} className="rx-media-link">{pic}</Link> : <div key={i}>{pic}</div>;
                 }
                 case "img":
-                    return <img key={i} className="rx-media" src={b.src} alt={b.alt?.trim() || ""} loading="lazy"/>;
+                    return <img key={i} className="rx-media" src={b.src} alt={b.alt?.trim() || ""} loading="eager"/>;
                 case "iframe":
                     return b.src && /youtube/.test(b.src) ? (<div key={i} className="rx-video">
-                <iframe src={b.src.replace("youtube.com", "youtube-nocookie.com")} title="Rolex-video" loading="lazy" allow="encrypted-media; picture-in-picture" allowFullScreen/>
+                <iframe src={b.src.replace("youtube.com", "youtube-nocookie.com")} title="Rolex-video" loading="eager" allow="encrypted-media; picture-in-picture" allowFullScreen/>
               </div>) : null;
                 default:
                     return null;
@@ -70,7 +70,7 @@ export function KeepExploring({ current }) {
       <ul>
         {links.map((n) => (<li key={n.href}>
             <Link href={n.href}>
-                            <img src={n.img} alt="" loading="lazy"/>
+                            <img src={n.img} alt="" loading="eager"/>
               <span>{n.label}</span>
             </Link>
           </li>))}
