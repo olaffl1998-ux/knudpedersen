@@ -1985,3 +1985,15 @@ p { color: inherit; }
 .bs--chopard .bs-hero--c { --bs-shade: linear-gradient(0deg, rgba(0,0,0,.5), rgba(0,0,0,0) 55%); }
 .bs-hero__media.is-pack { display: grid; place-items: center; background: var(--bs-card); }
 .bs-hero__media.is-pack img { width: 70%; height: 80%; object-fit: contain; mix-blend-mode: multiply; }
+/* Kampagnebilleder med mærkets egen tekst i billedet: billedet vises helt, og vores tekst står under det */
+.bs-hero--below { display: block; min-height: 0; }
+.bs-hero--below .bs-hero__media { position: relative; }
+.bs-hero--below .bs-hero__media img { height: auto; }
+.bs-hero--below .bs-hero__media::after { display: none; }
+.bs-hero--below .bs-hero__text { max-width: none; padding: 40px max(24px, 4vw) 48px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 32px; }
+.bs-hero--below .bs-eyebrow { flex-basis: 100%; margin: 0; }
+.bs-hero--below .bs-h1 { font-size: clamp(28px, 3vw, 46px); }
+.bs-hero--below .bs-btn { margin: 0 0 0 auto; }
+.bs--gucci .bs-hero--below { background: #fff; color: #000; }
+.bs--gucci .bs-hero--below .bs-eyebrow { color: #666; }
+@media (max-width: 760px) { .bs-hero--below .bs-btn { margin: 12px 0 0; } }

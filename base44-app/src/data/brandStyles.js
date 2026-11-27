@@ -63,7 +63,7 @@ export const brandStyles = {
     },
     "tag-heuer": {
         font: gf("family=Inter+Tight:wght@400;600;800"),
-        heroLayout: "bl",
+        heroLayout: "below",
         hero: { image: T + "2400x1100px_TAGH-DTW26-HolidaySeason_NESE_KnudPedersen.w2400.h880.jpg", imageMobile: T + "640x640px_TAGH-DTW26-HolidaySeason_NESE_KnudPedersen.w640.h640.jpg", eyebrow: "TAG Heuer", title: "Julens udvalg", cta: { label: "Se urene", href: "#udvalgte" } },
         featuredTitle: "Udvalgte TAG Heuer-ure",
         collections: "tiles",
@@ -80,7 +80,7 @@ export const brandStyles = {
     },
     gucci: {
         font: gf("family=Work+Sans:wght@400;500;600"),
-        heroLayout: "c",
+        heroLayout: "below",
         hero: { image: T + "Gucci_GUCCI_INTERLOCKING_BANGLE_2400x1100.w2400.h880.jpg", imageMobile: T + "Gucci_GUCCI_INTERLOCKING_BANGLE_640x640.w640.h640.jpg", eyebrow: "Gucci", title: "Ure og smykker", cta: { label: "Se urene", href: "#udvalgte" } },
         featuredTitle: "Udvalgte Gucci-ure",
         collections: "rail",
