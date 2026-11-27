@@ -88,26 +88,11 @@ export default function BrandShowcase({ featured, grid, total }) {
             band?.removeEventListener("pointerleave", go);
         };
     }, []);
-    // Cursor, spotlys og tilt (kun med mus)
+    // Magnetisk "Alle mærker" (kun med mus)
     useEffect(() => {
         const el = root.current;
         if (!el || !window.matchMedia("(hover: hover) and (pointer: fine)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
             return;
-        el.classList.add("has-cursor");
-        const cur = el.querySelector(".bx-cursor");
-        const cx = gsap.quickTo(cur, "x", { duration: 0.25, ease: "power3" }), cy = gsap.quickTo(cur, "y", { duration: 0.25, ease: "power3" });
-        const onMove = (e) => {
-            cx(e.clientX);
-            cy(e.clientY);
-            const t = e.target;
-            const over = t.closest("[data-see]");
-            cur.classList.toggle("is-big", !!over);
-            cur.classList.add("is-on");
-        };
-        const onLeave = () => cur.classList.remove("is-on");
-        el.addEventListener("pointermove", onMove);
-        el.addEventListener("pointerleave", onLeave);
-        // Magnetisk "Alle mærker"
         const mag = el.querySelector(".bx-all");
         const mx = mag && gsap.quickTo(mag, "x", { duration: 0.5, ease: "power3" }), my = mag && gsap.quickTo(mag, "y", { duration: 0.5, ease: "power3" });
         const onMag = (e) => {
@@ -120,12 +105,11 @@ export default function BrandShowcase({ featured, grid, total }) {
             my(near ? dy * 0.35 : 0);
         };
         window.addEventListener("pointermove", onMag);
-        return () => { el.removeEventListener("pointermove", onMove); el.removeEventListener("pointerleave", onLeave); window.removeEventListener("pointermove", onMag); el.classList.remove("has-cursor"); };
+        return () => window.removeEventListener("pointermove", onMag);
     }, []);
     const words = ["mærker", "under", "ét", "tag"];
     return (<div ref={root} className="bx">
       <div className="bx-grain" aria-hidden="true"/>
-      <div className="bx-cursor" aria-hidden="true"><span>Se</span></div>
 
       {/* 1. Intro */}
       <section className="bx-intro">

@@ -30,20 +30,16 @@ export default function KnudPedersenRolex() {
       </section>
       <section className="rx-chapters" aria-label="Vores historie">
         {chapters.map((c, i) => (
-          <article key={c.title} className={i % 2 ? "rev" : ""}>
+          <article key={c.title} className={c.img ? (i % 2 ? "rev" : "") : "noimg"}>
             {c.img ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={c.img} alt={`${RETAILER.name}: ${c.title}`} loading="eager" />
-            ) : <div className="rx-ph" role="img" aria-label="Pladsholder">[Billede: {c.title}]</div>}
+            ) : null}
             <div><h2>{c.title}</h2><p>{c.text}</p></div>
           </article>
         ))}
       </section>
-      <section className="rx-tiles rx-tiles-3" aria-label="Vores hold og showroom">
-        <div className="rx-tile"><div className="rx-ph">[Billede af Rolex-holdet]</div><strong>Vores hold</strong><span>[Kort præsentation af Rolex-rådgiverne og urmagerne]</span></div>
-        <div className="rx-tile"><div className="rx-ph">[Billede af Rolex-afdelingen]</div><strong>Vores showroom</strong><span>[Tekst om Rolex-afdelingen fra ombygningen i 2019]</span></div>
-        <div className="rx-tile"><div className="rx-ph">[Billede fra værkstedet]</div><strong>Vores værksted</strong><span>[Tekst om det autoriserede Rolex-servicecenter]</span></div>
-      </section>
+      {/* Afsnittene "Vores hold", "Vores showroom" og "Vores værksted" kommer tilbage, når vi har billeder og tekster fra Knud Pedersen */}
       <p className="rx-center"><Link className="rx-btn" href="/rolex/contact-aarhus">Kontakt os</Link></p>
     </RolexPage>
   );

@@ -164,6 +164,7 @@
 .rx-features article, .rx-chapters article { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; padding-bottom: 72px; }
 .rx-features article.rev > :first-child, .rx-chapters article.rev > :first-child { order: 2; }
 .rx-chapters img { width: 100%; height: auto; }
+.rx-chapters article.noimg { grid-template-columns: minmax(0, 720px); justify-content: center; }
 @media (max-width: 767px) {
   .rx-guarantee, .rx-features article, .rx-chapters article { grid-template-columns: 1fr; gap: 24px; padding-bottom: 48px; }
   .rx-features article.rev > :first-child, .rx-chapters article.rev > :first-child { order: 0; }

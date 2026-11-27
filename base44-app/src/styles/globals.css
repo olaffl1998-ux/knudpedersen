@@ -1661,3 +1661,14 @@ p { color: inherit; }
   .bx-marquee__track { transform: none !important; }
   .bx-cell__in { transform: none !important; }
 }
+
+/* Kort med ure og smykker: navnet fylder altid to linjer, så reference og pris står på samme række i hele gitteret */
+.card__name { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; min-height: 2.4em; background: none; }
+.card:hover .card__name { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+.card__meta { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 1.5em; }
+
+/* Mærker: urene står altid i fuld farve. Ved hover løftes de en anelse */
+.bx-cell__img .g { display: none; }
+.bx-cell__img .c { opacity: 1; transform: scale(.94); }
+.bx-cell__in:hover .c, .bx-cell__in:focus-visible .c { transform: scale(1) rotate(2deg); }
+.bx-grid:hover .bx-cell:not(:hover), .bx-grid:focus-within .bx-cell:not(:focus-within) { opacity: .75; }
