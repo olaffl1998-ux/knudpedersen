@@ -58,7 +58,17 @@ export default function WatchPage({ params }) {
     const related = getModelsForBrand(b.slug).filter((x) => !group.includes(x) && (x.collection === m.collection || !m.collection)).slice(0, 4);
     return (<>
       <div className="container"><Breadcrumbs items={[{ name: "Ure", href: "/ure" }, { name: b.name, href: `/maerker/${b.slug}` }, { name: `${m.name} ${m.ref}`, href: modelHref(m) }]}/></div>
-      <WatchDetail brand={b.name} brandSlug={b.slug} name={m.name} variants={variants} initial={group.indexOf(m)} phone={business.phone} phoneE164={business.phoneE164} street={business.street}/>
+      {b.slug === "tudor" ? (
+        // Tudor: samme opbygning som tudorwatch.com (stort produktbillede, navn med versaler, varianter og garanti)
+        <div className="td td-pdp">
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,600..900&display=swap" precedence="default"/>
+          <WatchDetail brand={b.name} brandSlug={b.slug} name={m.name} variants={variants} initial={group.indexOf(m)} phone={business.phone} phoneE164={business.phoneE164} street={business.street}/>
+          <ul className="container td-pdp__checks">
+            <li><span aria-hidden="true">✓</span>Tudors femårige garanti, som kan overdrages</li>
+            <li><span aria-hidden="true">✓</span>Officiel Tudor-forhandler i Aarhus</li>
+            <li><span aria-hidden="true">✓</span>Se og prøv uret i butikken på {business.street}</li>
+          </ul>
+        </div>) : (<WatchDetail brand={b.name} brandSlug={b.slug} name={m.name} variants={variants} initial={group.indexOf(m)} phone={business.phone} phoneE164={business.phoneE164} street={business.street}/>)}
       {related.length > 0 && (<section className="section container">
           <div className="section-head"><h2>Flere fra {b.name}</h2><Link className="link-arrow" href={`/maerker/${b.slug}`}>Se alle</Link></div>
           <ul className="cards">{related.map((x) => <li key={x.slug}><ModelCard model={x}/></li>)}</ul>

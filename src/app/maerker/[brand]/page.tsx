@@ -11,6 +11,7 @@ import Catalog from "@/components/Catalog";
 import { priceBands } from "@/data/catalog";
 import { toItems } from "@/lib/watchItems";
 import { brandMedia } from "@/data/brandMedia";
+import TudorPage from "@/components/tudor/TudorPage";
 
 type P = { params: Promise<{ brand: string }> };
 export const dynamicParams = false;
@@ -30,6 +31,7 @@ export async function generateMetadata({ params }: P): Promise<Metadata> {
 export default async function BrandPage({ params }: P) {
   const b = getBrand((await params).brand);
   if (!b || b.rolex) notFound();
+  if (b.slug === "tudor") return <TudorPage />;
   const list = getModelsForBrand(b.slug);
   const tudor = b.slug === "tudor";
   const collections = Array.from(new Set(list.map((m) => m.collection).filter(Boolean))) as string[];

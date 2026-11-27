@@ -10,6 +10,7 @@ import Catalog from "@/components/Catalog";
 import { priceBands } from "@/data/catalog";
 import { toItems } from "@/lib/watchItems";
 import { brandMedia } from "@/data/brandMedia";
+import TudorPage from "@/components/tudor/TudorPage";
 export const dynamicParams = false;
 export const generateStaticParams = () => nonRolexBrands.map((b) => ({ brand: b.slug }));
 export function generateMetadata({ params }) {
@@ -27,6 +28,8 @@ export default function BrandPage({ params }) {
     const b = getBrand(params.brand);
     if (!b || b.rolex)
         notFound();
+    if (b.slug === "tudor")
+        return <TudorPage />;
     const list = getModelsForBrand(b.slug);
     const tudor = b.slug === "tudor";
     const collections = Array.from(new Set(list.map((m) => m.collection).filter(Boolean)));
