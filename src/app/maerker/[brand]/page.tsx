@@ -12,6 +12,8 @@ import { priceBands } from "@/data/catalog";
 import { toItems } from "@/lib/watchItems";
 import { brandMedia } from "@/data/brandMedia";
 import TudorPage from "@/components/tudor/TudorPage";
+import BrandStylePage from "@/components/brand/BrandStylePage";
+import { brandStyles } from "@/data/brandStyles";
 
 type P = { params: Promise<{ brand: string }> };
 export const dynamicParams = false;
@@ -32,6 +34,7 @@ export default async function BrandPage({ params }: P) {
   const b = getBrand((await params).brand);
   if (!b || b.rolex) notFound();
   if (b.slug === "tudor") return <TudorPage />;
+  if (brandStyles[b.slug]) return <BrandStylePage b={b} s={brandStyles[b.slug]} />;
   const list = getModelsForBrand(b.slug);
   const tudor = b.slug === "tudor";
   const collections = Array.from(new Set(list.map((m) => m.collection).filter(Boolean))) as string[];

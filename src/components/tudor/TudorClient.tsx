@@ -2,7 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import type { TudorSlide, TudorVideo } from "@/data/tudor";
+import type { TudorSlide } from "@/data/tudor";
+
+/** En video i tre udgaver: AV1 (valgfri), H.264 og en lille mobiludgave, plus et stillbillede */
+export type SiteVideo = { av1?: string; h264: string; mobile: string; poster: string };
 
 const AV1 = 'video/mp4; codecs="av01.0.08M.08"';
 
@@ -11,7 +14,7 @@ const AV1 = 'video/mp4; codecs="av01.0.08M.08"';
  * `lazy`: videoen hentes først, når den er tæt på skærmen, og står stille, når den er ude af syne.
  */
 export function TudorVideoEl({ v, active = true, loop = true, onTime, onEnd, lazy }: {
-  v: TudorVideo; active?: boolean; loop?: boolean; lazy?: boolean;
+  v: SiteVideo; active?: boolean; loop?: boolean; lazy?: boolean;
   onTime?: (p: number) => void; onEnd?: () => void;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
@@ -37,7 +40,7 @@ export function TudorVideoEl({ v, active = true, loop = true, onTime, onEnd, laz
       onEnded={onEnd}>
       {seen && <>
         <source src={v.mobile} type="video/mp4" media="(max-width: 700px)" />
-        <source src={v.av1} type={AV1} />
+        {v.av1 && <source src={v.av1} type={AV1} />}
         <source src={v.h264} type="video/mp4" />
       </>}
     </video>

@@ -1816,3 +1816,172 @@ p { color: inherit; }
 .site-footer .linklike { color: var(--grey); }
 .site-footer .footer-bottom, .site-footer .footer-bottom .linklike { color: var(--grey); }
 .type-panel small { color: #b39465; }
+
+/* ============ Mærkesider i mærkernes egen stil (/maerker/<mærke>), se src/data/brandStyles.ts ============ */
+.bs { --bs-head: inherit; --bs-body: inherit; --bs-hw: 400; --bs-case: none; --bs-track: 0; --bs-ink: #111; --bs-muted: #5d5d5d; --bs-bg: #fff; --bs-alt: #f5f5f5;
+  --bs-accent: #111; --bs-btn-bg: #111; --bs-btn-ink: #fff; --bs-radius: 0; --bs-card: #f4f4f4; --bs-h1: clamp(34px, 4.6vw, 72px); --bs-shade: linear-gradient(0deg, rgba(0,0,0,.55), rgba(0,0,0,0) 60%);
+  background: var(--bs-bg); color: var(--bs-ink); font-family: var(--bs-body); }
+.bs-h1, .bs-h2, .bs-h3, .bs-card strong, .bs-tile strong, .bs-col strong, .bs-quote p { font-family: var(--bs-head); font-weight: var(--bs-hw); text-transform: var(--bs-case) !important; letter-spacing: var(--bs-track); line-height: 1.08; margin: 0; color: inherit; }
+.bs-h1 { font-size: var(--bs-h1); }
+.bs-h2 { font-size: clamp(26px, 2.8vw, 42px); }
+.bs-h3 { font-size: clamp(22px, 2vw, 30px); }
+.bs-eyebrow { font-family: var(--bs-body); font-size: 12px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; margin: 0 0 12px; color: #fff; }
+.bs-eyebrow--dark { color: var(--bs-muted); }
+.bs-lead { max-width: 520px; font-size: 16px; line-height: 1.6; margin: 16px 0 0; opacity: .92; }
+.bs-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 28px; margin-top: 26px; border-radius: var(--bs-radius); background: var(--bs-btn-bg); color: var(--bs-btn-ink); font-family: var(--bs-body); font-size: 12px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; transition: opacity .2s, background .2s, color .2s; border: 1px solid var(--bs-btn-bg); }
+.bs-btn:hover { opacity: .85; }
+.bs-btn--light { background: #fff; color: #111; border-color: #fff; }
+.bs-btn--line { background: none; color: var(--bs-ink); border-color: currentColor; }
+.bs-link { display: inline-block; font-family: var(--bs-body); font-size: 12px; font-weight: 500; font-style: normal; letter-spacing: .14em; text-transform: uppercase; color: var(--bs-accent); text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1px; }
+
+/* Toppen */
+.bs-hero { position: relative; overflow: hidden; color: #fff; background: #000; min-height: min(86vh, 820px); display: grid; }
+.bs-hero__media, .bs-banner__media { position: absolute; inset: 0; }
+.bs-hero__media img, .bs-banner__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bs-hero__media::after, .bs-banner__media::after { content: ""; position: absolute; inset: 0; background: var(--bs-shade); pointer-events: none; }
+.bs-hero__text { position: relative; z-index: 1; align-self: end; padding: 0 6vw 9vh; max-width: 780px; }
+.bs-hero--c .bs-hero__text { justify-self: center; align-self: center; text-align: center; padding: 12vh 24px; }
+.bs-hero--c .bs-lead { margin-inline: auto; }
+.bs-hero--c { --bs-shade: radial-gradient(ellipse at center, rgba(0,0,0,.38), rgba(0,0,0,.08) 70%); }
+.bs-hero--l .bs-hero__text { align-self: center; }
+.bs-hero--l { --bs-shade: linear-gradient(90deg, rgba(0,0,0,.6), rgba(0,0,0,0) 65%); }
+.bs-hero--split { background: var(--bs-alt); color: var(--bs-ink); grid-template-columns: 1fr 1fr; min-height: min(78vh, 760px); }
+.bs-hero--split .bs-hero__media { position: relative; order: 2; }
+.bs-hero--split .bs-hero__media::after { display: none; }
+.bs-hero--split .bs-hero__text { align-self: center; padding: 8vh 6vw; }
+.bs-hero--split .bs-eyebrow { color: var(--bs-muted); }
+
+/* Intro */
+.bs-intro { max-width: 860px; margin: 0 auto; padding: clamp(40px, 7vw, 96px) 24px; text-align: center; }
+.bs-intro__text { font-family: var(--bs-head); font-weight: var(--bs-hw); font-size: clamp(20px, 2vw, 28px); line-height: 1.45; margin: 0; }
+
+/* Udvalgte og kollektioner */
+.bs-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px 32px; padding: 0 max(24px, 4vw) 28px; }
+.bs-feat { padding-bottom: clamp(48px, 7vw, 96px); }
+.bs .td-rail__track { padding-inline: max(24px, 4vw); scroll-padding-inline: max(24px, 4vw); }
+.bs .td-rail__btn { background: var(--bs-btn-bg); color: var(--bs-btn-ink); }
+.bs-feat .td-rail__track > li { flex: 0 0 clamp(240px, 23vw, 340px); }
+.bs-card { display: flex; flex-direction: column; color: inherit; text-decoration: none; height: 100%; }
+.bs-card__img { display: grid; place-items: center; aspect-ratio: 4 / 5; background: var(--bs-card); border-radius: var(--bs-radius); overflow: hidden; }
+.bs-card__img img { width: 82%; height: 82%; object-fit: contain; mix-blend-mode: multiply; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+.bs-card:hover .bs-card__img img { transform: scale(1.05); }
+.bs-card__text { display: grid; gap: 4px; padding: 16px 2px 0; }
+.bs-card__text small { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--bs-muted); }
+.bs-card strong { font-size: 18px; line-height: 1.25; }
+.bs-card__text > span { font-size: 14px; color: var(--bs-muted); }
+
+.bs-cols { padding: clamp(48px, 7vw, 96px) 0; background: var(--bs-alt); }
+.bs-tiles { list-style: none; margin: 0; padding: 0 max(24px, 4vw); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 20px; }
+.bs-tile { position: relative; display: flex; flex-direction: column; height: 100%; background: var(--bs-bg); color: inherit; text-decoration: none; border-radius: var(--bs-radius); overflow: hidden; }
+.bs-tile__img, .bs-col__img, .bs-row__img { display: grid; place-items: center; aspect-ratio: 1; background: var(--bs-card); overflow: hidden; }
+.bs-tile__img img, .bs-col__img img, .bs-row__img img { width: 74%; height: 74%; object-fit: contain; mix-blend-mode: multiply; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+.is-photo img { width: 100%; height: 100%; object-fit: cover; mix-blend-mode: normal; }
+.bs-tile:hover img, .bs-col:hover img, .bs-row:hover img { transform: scale(1.05); }
+.bs-tile__text { display: grid; gap: 6px; padding: 22px 22px 26px; }
+.bs-tile strong { font-size: 22px; }
+.bs-tile__text > span { font-size: 14px; color: var(--bs-muted); }
+.bs-tile .bs-link { margin-top: 10px; }
+.bs-cols--rail .td-rail__track > li { flex: 0 0 clamp(220px, 21vw, 300px); }
+.bs-col { display: grid; gap: 6px; color: inherit; text-decoration: none; }
+.bs-col__img { margin-bottom: 10px; border-radius: var(--bs-radius); background: var(--bs-bg); }
+.bs-col strong { font-size: 20px; }
+.bs-col > span:last-child { font-size: 14px; color: var(--bs-muted); }
+.bs-rows { display: grid; gap: clamp(24px, 4vw, 56px); padding: 0 max(24px, 4vw); }
+.bs-row { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: clamp(24px, 5vw, 80px); color: inherit; text-decoration: none; }
+.bs-row.is-rev .bs-row__img { order: 2; }
+.bs-row__img { aspect-ratio: 4 / 3; background: var(--bs-bg); border-radius: var(--bs-radius); }
+.bs-row__text p { max-width: 460px; font-size: 16px; line-height: 1.65; color: var(--bs-muted); margin: 14px 0 20px; }
+
+/* Banner med film eller billede */
+.bs-banner { position: relative; overflow: hidden; color: #fff; background: #000; min-height: min(80vh, 760px); display: grid; }
+.bs-banner__text { position: relative; z-index: 1; align-self: end; padding: 0 6vw 9vh; max-width: 720px; }
+.bs-banner--c .bs-banner__text { justify-self: center; text-align: center; }
+.bs-banner--c .bs-lead { margin-inline: auto; }
+.bs-banner--r .bs-banner__text { justify-self: end; text-align: right; }
+.bs-banner--r .bs-lead { margin-left: auto; }
+.bs-banner .bs-h2 { font-size: clamp(32px, 4vw, 60px); }
+
+.bs-quote { padding: clamp(56px, 9vw, 128px) 24px; text-align: center; }
+.bs-quote p { font-size: clamp(28px, 4vw, 60px); margin: 0; }
+.bs-all .section-head .bs-btn { margin-top: 0; }
+.bs-retailer { background: var(--bs-alt); padding: clamp(56px, 8vw, 112px) 0; text-align: center; }
+.bs-retailer p { max-width: 620px; margin: 16px auto 0; line-height: 1.65; color: var(--bs-muted); }
+.bs-retailer__btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 12px; }
+
+@media (max-width: 760px) {
+  .bs-hero { min-height: 78vh; }
+  .bs-hero__text, .bs-banner__text { padding: 0 24px 56px; }
+  .bs-hero--split { grid-template-columns: 1fr; min-height: 0; }
+  .bs-hero--split .bs-hero__media { order: 0; aspect-ratio: 4 / 5; }
+  .bs-hero--split .bs-hero__text { padding: 36px 24px 48px; }
+  .bs-hero--l { --bs-shade: linear-gradient(0deg, rgba(0,0,0,.65), rgba(0,0,0,0) 65%); }
+  .bs-hero--l .bs-hero__text { align-self: end; }
+  .bs-row { grid-template-columns: 1fr; }
+  .bs-row.is-rev .bs-row__img { order: 0; }
+  .bs-banner--r .bs-banner__text { text-align: left; justify-self: start; }
+  .bs-banner--r .bs-lead { margin-left: 0; }
+}
+
+/* ---- Hvert mærkes udtryk ---- */
+/* OMEGA: tynd, spærret grotesk med versaler, mørke firkantede knapper */
+.bs--omega { --bs-head: "Jost", "Helvetica Neue", Arial, sans-serif; --bs-body: "Jost", Arial, sans-serif; --bs-hw: 300; --bs-case: uppercase; --bs-track: .08em; --bs-ink: #1c1c1c; --bs-muted: #555; --bs-accent: #1c1c1c; --bs-btn-bg: #1c1c1c; --bs-alt: #f3f3f3; --bs-card: #f3f3f3; --bs-h1: clamp(30px, 3.6vw, 54px); }
+.bs--omega .bs-hero__text { max-width: 640px; }
+.bs--omega .bs-tile { background: #fff; }
+/* Grand Seiko: rolig serif, ingen versaler, hvid tekst på mørke billeder */
+.bs--grand-seiko { --bs-head: "Source Serif 4", Georgia, serif; --bs-body: "Source Serif 4", Georgia, serif; --bs-hw: 300; --bs-track: .03em; --bs-ink: #1a1a1a; --bs-muted: #666; --bs-accent: #1a1a1a; --bs-btn-bg: transparent; --bs-btn-ink: #fff; --bs-alt: #f7f6f3; --bs-card: #f2f1ee; }
+.bs--grand-seiko .bs-btn { border-color: currentColor; }
+.bs--grand-seiko .bs-intro, .bs--grand-seiko .bs-all, .bs--grand-seiko .bs-retailer, .bs--grand-seiko .bs-feat { --bs-btn-bg: #1a1a1a; }
+.bs--grand-seiko .bs-eyebrow { letter-spacing: .3em; font-weight: 400; }
+.bs--grand-seiko .bs-cols { background: #0e0e0e; color: #f2f1ee; --bs-muted: #b9b6ae; --bs-accent: #f2f1ee; }
+.bs--grand-seiko .bs-row__img { background: #f2f1ee; }
+/* Longines: kraftig serif over film, marineblå */
+.bs--longines { --bs-head: "Playfair Display", Georgia, serif; --bs-body: "Lato", Arial, sans-serif; --bs-hw: 700; --bs-ink: #0f1f3d; --bs-muted: #5a6478; --bs-accent: #0f1f3d; --bs-btn-bg: #0f1f3d; --bs-alt: #f1f3f6; --bs-card: #eef0f4; }
+.bs--longines .bs-hero .bs-btn { background: #fff; color: #0f1f3d; border-color: #fff; }
+.bs--longines .bs-col strong { text-transform: uppercase !important; font-family: var(--bs-body); font-size: 15px; letter-spacing: .14em; }
+.bs--longines .bs-quote { background: #0f1f3d; color: #fff; }
+.bs--longines .bs-quote p { font-style: italic; font-weight: 500; }
+/* Chopard: Bodoni-serif med versaler, sort og hvidt */
+.bs--chopard { --bs-head: "Bodoni Moda", "Didot", Georgia, serif; --bs-body: "Jost", Arial, sans-serif; --bs-hw: 400; --bs-case: uppercase; --bs-track: .06em; --bs-ink: #000; --bs-muted: #666; --bs-accent: #000; --bs-btn-bg: #000; --bs-alt: #f7f5f2; --bs-card: #f7f5f2; }
+.bs--chopard .bs-hero .bs-btn { background: transparent; border-color: #fff; color: #fff; }
+.bs--chopard .bs-intro__text { text-transform: none; font-style: italic; }
+.bs--chopard .bs-tiles { grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); }
+.bs--chopard .bs-card strong { font-size: 15px; }
+/* DOXA: kraftig grotesk med versaler, sort og orange */
+.bs--doxa { --bs-head: "Montserrat", Arial, sans-serif; --bs-body: "Montserrat", Arial, sans-serif; --bs-hw: 800; --bs-case: uppercase; --bs-track: .01em; --bs-ink: #1c1c1c; --bs-muted: #5c5c5c; --bs-accent: #e8590c; --bs-btn-bg: #e8590c; --bs-alt: #1c1c1c; --bs-card: #f1f1f1; --bs-radius: 2px; --bs-h1: clamp(38px, 5.4vw, 86px); }
+.bs--doxa .bs-cols { color: #fff; --bs-muted: #c8c8c8; --bs-accent: #ff7a2f; }
+.bs--doxa .bs-col__img { background: #f1f1f1; }
+.bs--doxa .bs-eyebrow { color: #ff7a2f; font-weight: 700; }
+.bs--doxa .bs-eyebrow--dark { color: #c2410c; }
+.bs--doxa .bs-retailer { background: #f1f1f1; }
+/* Oris: venlig geometrisk grotesk, sort på hvidt, lyse kort */
+.bs--oris { --bs-head: "DM Sans", Arial, sans-serif; --bs-body: "DM Sans", Arial, sans-serif; --bs-hw: 500; --bs-track: -.01em; --bs-ink: #000; --bs-muted: #575757; --bs-accent: #000; --bs-btn-bg: #000; --bs-alt: #f4f4f2; --bs-card: #f4f4f2; --bs-radius: 999px; }
+.bs--oris .bs-eyebrow { text-transform: none; letter-spacing: 0; font-size: 15px; }
+.bs--oris .bs-card__img, .bs--oris .bs-tile, .bs--oris .bs-hero__media img { border-radius: 0; }
+.bs--oris .bs-tile__img { background: #fff; }
+.bs--oris .bs-link { text-transform: none; letter-spacing: 0; font-size: 15px; }
+/* TAG Heuer: stram grotesk med versaler, sort med rødt */
+.bs--tag-heuer { --bs-head: "Inter Tight", Arial, sans-serif; --bs-body: "Inter Tight", Arial, sans-serif; --bs-hw: 800; --bs-case: uppercase; --bs-track: -.01em; --bs-ink: #111; --bs-muted: #5a5a5a; --bs-accent: #c8102e; --bs-btn-bg: #111; --bs-alt: #111; --bs-card: #f2f2f2; }
+.bs--tag-heuer .bs-cols { color: #fff; --bs-muted: #bdbdbd; --bs-accent: #ff4d5e; }
+.bs--tag-heuer .bs-tile { background: #1d1d1d; }
+.bs--tag-heuer .bs-tile__img { background: #f2f2f2; }
+.bs--tag-heuer .bs-quote { background: #c8102e; color: #fff; }
+.bs--tag-heuer .bs-retailer { background: #f2f2f2; }
+.bs--tag-heuer .bs-hero .bs-btn { background: #c8102e; border-color: #c8102e; }
+/* Baume & Mercier: let Montserrat, varme lyse toner */
+.bs--baume-mercier { --bs-head: "Montserrat", Arial, sans-serif; --bs-body: "Montserrat", Arial, sans-serif; --bs-hw: 300; --bs-ink: #232323; --bs-muted: #666; --bs-accent: #232323; --bs-btn-bg: #232323; --bs-alt: #f5f1ec; --bs-card: #f5f1ec; }
+.bs--baume-mercier .bs-row__img { background: #fff; }
+/* Gucci: små versaler, sort og hvidt, meget luft */
+.bs--gucci { --bs-head: "Work Sans", Arial, sans-serif; --bs-body: "Work Sans", Arial, sans-serif; --bs-hw: 500; --bs-case: uppercase; --bs-track: .04em; --bs-ink: #000; --bs-muted: #666; --bs-accent: #000; --bs-btn-bg: #000; --bs-alt: #fff; --bs-card: #fbfbfb; --bs-h1: clamp(28px, 3.4vw, 50px); }
+.bs--gucci .bs-card strong, .bs--gucci .bs-col strong { font-size: 13px; letter-spacing: .08em; }
+.bs--gucci .bs-cols { border-top: 1px solid #e6e6e6; }
+.bs--gucci .bs-retailer { background: #f6f6f6; }
+/* Montblanc: lys grotesk med versaler, sort og hvidt */
+.bs--montblanc { --bs-head: "Manrope", Arial, sans-serif; --bs-body: "Manrope", Arial, sans-serif; --bs-hw: 300; --bs-case: uppercase; --bs-track: .1em; --bs-ink: #000; --bs-muted: #606060; --bs-accent: #000; --bs-btn-bg: #000; --bs-alt: #f5f5f5; --bs-card: #f5f5f5; --bs-h1: clamp(28px, 3.2vw, 48px); }
+.bs--montblanc .bs-tile { background: #fff; }
+/* Glashütte Original: saglig grotesk, sort og gråt */
+.bs--glashutte-original { --bs-head: "Fira Sans", Arial, sans-serif; --bs-body: "Fira Sans", Arial, sans-serif; --bs-hw: 300; --bs-ink: #030304; --bs-muted: #545454; --bs-accent: #030304; --bs-btn-bg: #030304; --bs-alt: #f4f4f4; --bs-card: #f4f4f4; }
+.bs--glashutte-original .bs-row__img { background: #fff; }
+.bs--chopard .bs-hero--c .bs-hero__text { align-self: end; padding-bottom: 9vh; }
+.bs--chopard .bs-hero--c { --bs-shade: linear-gradient(0deg, rgba(0,0,0,.5), rgba(0,0,0,0) 55%); }
+.bs-hero__media.is-pack { display: grid; place-items: center; background: var(--bs-card); }
+.bs-hero__media.is-pack img { width: 70%; height: 80%; object-fit: contain; mix-blend-mode: multiply; }

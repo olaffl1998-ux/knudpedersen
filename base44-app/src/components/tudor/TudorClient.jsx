@@ -38,7 +38,7 @@ export function TudorVideoEl({ v, active = true, loop = true, onTime, onEnd, laz
     return (<video ref={ref} className="td-video" muted playsInline loop={loop} autoPlay={active && !lazy} preload={active && !lazy ? "auto" : "none"} poster={v.poster} aria-hidden="true" onTimeUpdate={(e) => onTime?.(e.currentTarget.duration ? e.currentTarget.currentTime / e.currentTarget.duration : 0)} onEnded={onEnd}>
       {seen && <>
         <source src={v.mobile} type="video/mp4" media="(max-width: 700px)"/>
-        <source src={v.av1} type={AV1}/>
+        {v.av1 && <source src={v.av1} type={AV1}/>}
         <source src={v.h264} type="video/mp4"/>
       </>}
     </video>);
