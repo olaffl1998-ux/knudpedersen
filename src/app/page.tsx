@@ -42,10 +42,10 @@ function RolexBanner({ s, eager }: { s: (typeof rolexAssets.slides)[number]; eag
 /** [Kundeanmeldelser fra Google eller Trustpilot: navn, dato og kilde leveres af Knud Pedersen] */
 const T = "/billeder/pics/_thumbs/";
 const jewelTiles = [
-  { href: "/smykker/marselis", name: "Marselis Jewellery", line: "Diamanter i 18 karat guld", img: `${T}0641-0554-4-Marselis--banner_mobile.w640.h640.jpg` },
-  { href: "/smykker/georg-jensen", name: "Georg Jensen", line: "Dansk design siden 1904", img: `${T}GJ_AW26_JW_Seasonal-_WS-eCom-banner_640x640px.w640.h640.jpg` },
-  { href: "/smykker/chopard", name: "Chopard", line: "Happy Diamonds", img: "/brands/chopard/happy-poster.jpg" },
-  { href: "/smykker/gucci", name: "Gucci", line: "Interlocking G", img: `${T}Gucci_GUCCI_INTERLOCKING_BANGLE_640x640.w640.h640.jpg` },
+  { href: "/smykker/marselis", name: "Marselis Jewellery", line: "Diamanter i 18 karat guld", img: "/billeder/shop/R-ASO4-S-GG-Aisling-Ring-Oval-Center-Round-Sides-GG-standing-1200.webp", alt: "Marselis Elegance-ring i guld med diamanter" },
+  { href: "/smykker/georg-jensen", name: "Georg Jensen", line: "Fusion", img: "/billeder/shop/20000332.webp", zoom: 1.12, alt: "Georg Jensen Fusion-ring i hvidguld" },
+  { href: "/smykker/chopard", name: "Chopard", line: "Happy Diamonds", img: "/billeder/shop/798232-9001.webp", alt: "Chopard Happy Spirit-vedhæng med bevægelige diamanter" },
+  { href: "/smykker/gucci", name: "Gucci", line: "Interlocking G", img: "/billeder/shop/YBD786563002_001.webp", zoom: 1.3, alt: "Gucci Interlocking-øreringe med grøn emalje" },
 ];
 /** Rolex' officielle billede til forhandlere (Udforsk Rolex, serviceeftersyn) */
 const ROLEX_SERVICE_IMG = "/billeder/pics/Rolex/v7images/discover-rolex-page-assets/discover-rolex-page-assets-landscape/keep-exploring-landscape/rolex-keep-exploring-servicing-2234_rolex-sav_retailers_176_controle-final_mise_heure_v2-landscape.jpg";
@@ -161,7 +161,7 @@ export default function Home() {
               <li key={t.href}>
                 <Link href={t.href} className="hp-jw__tile">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <span className="hp-jw__img"><img src={t.img} alt={`${t.name}: ${t.line}`} loading="eager" /></span>
+                  <span className="hp-jw__img" style={"zoom" in t ? ({ ["--z" as string]: t.zoom } as React.CSSProperties) : undefined}><img src={t.img} alt={t.alt} loading="eager" decoding="async" /></span>
                   <span className="hp-jw__name">{t.name}</span>
                   <span className="hp-jw__line">{t.line}</span>
                 </Link>
