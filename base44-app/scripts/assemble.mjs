@@ -43,20 +43,24 @@ for (const dir of pages) {
   else { file = segs.join(".") + ".jsx"; routePath = "/" + segs.join("/"); }
   const view = "@/views/" + (dir ? clean(dir) + "/" : "") + "page";
   const dyn = params.length > 0;
+  // Siden hentes som sin egen fil (code splitting): loaderen importerer den dynamisk og beregner metadata,
+  // så katalogdata og sidekomponenter ikke havner i det fælles hovedbundt, som alle sider skal hente
   const code = `import { createFileRoute${dyn ? ", notFound" : ""} } from "@tanstack/react-router";
-import * as mod from "${view}";
+import Page from "${view}";
 import { metaHead } from "@/lib/next/meta";
 
 export const Route = createFileRoute("${routePath}")({
-${dyn ? `  loader: ({ params }) => {
-    if (mod.generateMetadata && !Object.keys(mod.generateMetadata({ params }) || {}).length) throw notFound();
+  loader: async (${dyn ? "{ params }" : ""}) => {
+    const mod = await import("${view}");
+${dyn ? `    if (mod.generateMetadata && !Object.keys(mod.generateMetadata({ params }) || {}).length) throw notFound();
+` : ""}    return { head: metaHead(mod${dyn ? ", params" : ""}) };
   },
-` : ""}  head: (${dyn ? "{ params }" : ""}) => metaHead(mod${dyn ? ", params" : ""}),
+  head: ({ loaderData }) => loaderData?.head ?? {},
   component: RouteComponent,
 });
 
 function RouteComponent() {
-${dyn ? "  const params = Route.useParams();\n  return <mod.default params={params} />;" : "  return <mod.default />;"}
+${dyn ? "  const params = Route.useParams();\n  return <Page params={params} />;" : "  return <Page />;"}
 }
 `;
   fs.mkdirSync(`${A}/src/routes`, { recursive: true });

@@ -1672,3 +1672,11 @@ p { color: inherit; }
 .bx-cell__img .c { opacity: 1; transform: scale(.94); }
 .bx-cell__in:hover .c, .bx-cell__in:focus-visible .c { transform: scale(1) rotate(2deg); }
 .bx-grid:hover .bx-cell:not(:hover), .bx-grid:focus-within .bx-cell:not(:focus-within) { opacity: .75; }
+/* Mobil: logoet må ikke vokse, når man scroller, så ikonerne skubbes ud over kanten */
+@media (max-width: 640px) {
+  .site-header__in { column-gap: 12px; }
+  .logo { padding-inline: 0; min-width: 0; }
+  .logo b, .site-header.is-scrolled .logo b { font-size: 18px; letter-spacing: .14em; }
+  .logo span { font-size: 9px; letter-spacing: .2em; }
+}
+@media (max-width: 360px) { .logo b, .site-header.is-scrolled .logo b { font-size: 16px; letter-spacing: .1em; } }

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { models } from "@/data/catalog";
 import { showroomBrands } from "@/data/brands";
 import BrandShowroom from "@/components/showroom/BrandShowroom";
-import { rolexAssets } from "@/data/rolex";
+import { rolexAssets } from "@/data/rolexAssets";
 import CampaignHero, { type Campaign } from "@/components/CampaignHero";
 import FeatureWatch from "@/components/FeatureWatch";
 import { CountUp, Words } from "@/components/Motion";

@@ -1,12 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import * as mod from "@/views/handelsbetingelser/page";
+import Page from "@/views/handelsbetingelser/page";
 import { metaHead } from "@/lib/next/meta";
 
 export const Route = createFileRoute("/handelsbetingelser")({
-  head: () => metaHead(mod),
+  loader: async () => {
+    const mod = await import("@/views/handelsbetingelser/page");
+    return { head: metaHead(mod) };
+  },
+  head: ({ loaderData }) => loaderData?.head ?? {},
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  return <mod.default />;
+  return <Page />;
 }

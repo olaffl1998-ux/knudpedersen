@@ -1,6 +1,6 @@
 import Link from "@/lib/next/link";
 import { business } from "@/lib/site";
-import { rolexAssets } from "@/data/rolex";
+import { rolexAssets } from "@/data/rolexAssets";
 import { CookieSettingsButton } from "./Consent";
 import Newsletter from "./Newsletter";
 import BackToTop from "./BackToTop";

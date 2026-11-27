@@ -8,7 +8,7 @@
 import { brands, brandHref, getModelsForBrand } from "./catalog";
 import { jewelleryBrandList, piecesFor } from "./jewellery";
 import { showroomBrands } from "./brands";
-import { rolexAssets } from "./rolex";
+import { rolexAssets } from "./rolexAssets";
 
 export type BrandHero = { src: string; width: number; height: number; alt: string; video?: string; poster?: string };
 export type BrandEntry = {

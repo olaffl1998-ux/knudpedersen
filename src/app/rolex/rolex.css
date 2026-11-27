@@ -115,8 +115,9 @@
 .rx-feature-link strong { color: #fff; font-size: clamp(1.5rem, 3vw, 2.5rem); }
 .rx-group { padding-bottom: 72px; }
 .rx-group > h2 { text-align: center; margin-bottom: 32px; }
-.rx-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-@media (max-width: 1023px) { .rx-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+.rx-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+@media (max-width: 1023px) { .rx-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } }
+.rx-grid li { min-width: 0; overflow-wrap: anywhere; }
 .rx-col-card { display: block; text-decoration: none; background: var(--rx-beige); }
 .rx-col-card picture { overflow: hidden; }
 .rx-col-card img { transition: transform .4s ease; }

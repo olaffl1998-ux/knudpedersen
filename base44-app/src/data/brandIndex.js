@@ -8,7 +8,7 @@
 import { brands, brandHref, getModelsForBrand } from "./catalog";
 import { jewelleryBrandList, piecesFor } from "./jewellery";
 import { showroomBrands } from "./brands";
-import { rolexAssets } from "./rolex";
+import { rolexAssets } from "./rolexAssets";
 const productImage = (slug) => showroomBrands.find((b) => b.slug === slug && !b.framed)?.image
     ?? getModelsForBrand(slug).find((m) => m.image)?.image
     ?? piecesFor(slug).find((p) => p.image)?.image;

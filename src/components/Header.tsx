@@ -7,7 +7,7 @@ import { mainNav, business, ROLEX_CLOCK_KEY, rolexClockSrc } from "@/lib/site";
 import { watchCategories, jewelleryCategories } from "@/data/categories";
 import { jewelleryBrandList } from "@/data/jewellery";
 import { nonRolexBrands } from "@/data/catalog";
-import { rolexAssets } from "@/data/rolex";
+import { rolexAssets } from "@/data/rolexAssets";
 import { todayText } from "./OpeningToday";
 import { SearchIcon, HeartIcon } from "./Icons";
 import { WishlistCount } from "./Wishlist";

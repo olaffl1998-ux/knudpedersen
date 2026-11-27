@@ -1,12 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import * as mod from "@/views/ure/page";
+import Page from "@/views/ure/page";
 import { metaHead } from "@/lib/next/meta";
 
 export const Route = createFileRoute("/ure/")({
-  head: () => metaHead(mod),
+  loader: async () => {
+    const mod = await import("@/views/ure/page");
+    return { head: metaHead(mod) };
+  },
+  head: ({ loaderData }) => loaderData?.head ?? {},
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  return <mod.default />;
+  return <Page />;
 }

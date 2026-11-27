@@ -1,12 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import * as mod from "@/views/rolex/accessories/page";
+import Page from "@/views/rolex/accessories/page";
 import { metaHead } from "@/lib/next/meta";
 
 export const Route = createFileRoute("/rolex/accessories/")({
-  head: () => metaHead(mod),
+  loader: async () => {
+    const mod = await import("@/views/rolex/accessories/page");
+    return { head: metaHead(mod) };
+  },
+  head: ({ loaderData }) => loaderData?.head ?? {},
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  return <mod.default />;
+  return <Page />;
 }
