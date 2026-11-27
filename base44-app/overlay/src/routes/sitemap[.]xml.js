@@ -9,6 +9,7 @@ function sitemap() {
   const paths = [
     "/", "/ure", "/maerker", "/smykker", "/vielsesringe", "/brugte-ure", "/service", "/om-os", "/kontakt", "/book-tid",
     "/handelsbetingelser", "/privatlivspolitik", "/cookiepolitik", "/tilgaengelighed",
+    "/ringstoerrelse", "/nyheder", "/en", "/en/watches", "/en/jewellery", "/en/service", "/en/about", "/en/visit",
     ...nonRolexBrands.map((b) => `/maerker/${b.slug}`),
     ...nonRolexBrands.flatMap((b) => Array.from(new Set(getModelsForBrand(b.slug).map((m) => m.collection).filter(Boolean))).map((c) => `/maerker/${b.slug}/${collectionSlug(c)}`)),
     ...watchCategories.map((c) => `/ure/${c.slug}`),

@@ -9,6 +9,18 @@ const clean = (v, max = 2000) => String(v ?? "").replace(/[\u0000-\u001f\u007f]/
 const KNOWN = { mode: 20, variant: 20, purpose: 100, date: 20, time: 10, name: 200, phone: 40, email: 200, message: 4000, subject: 200, brand: 100 };
 const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
+/** Simpel beskyttelse mod spam: højst 6 indsendelser pr. IP-adresse pr. 10 minutter (pr. server-instans) */
+const hits = new Map();
+function tooMany() {
+  const ip = getRequestHeader("cf-connecting-ip") || getRequestHeader("x-forwarded-for")?.split(",")[0]?.trim() || "ukendt";
+  const now = Date.now();
+  const list = (hits.get(ip) || []).filter((t) => now - t < 600_000);
+  list.push(now);
+  hits.set(ip, list);
+  if (hits.size > 5000) for (const [k, v] of hits) if (!v.some((t) => now - t < 600_000)) hits.delete(k);
+  return list.length > 6;
+}
+
 /** Lovable Cloud (Supabase). Lovable lægger adressen og den offentlige nøgle i miljøet */
 function cloud() {
   const env = globalThis.process?.env ?? {};
@@ -33,6 +45,7 @@ export const submitInquiry = createServerFn({ method: "POST" })
   .validator(z.record(z.string().max(60), z.unknown()))
   .handler(async ({ data }) => {
     if (clean(data.website)) return { ok: true }; // honeypot
+    if (tooMany()) throw new Error("For mange henvendelser. Prøv igen om lidt.");
     const rec = {};
     for (const [k, max] of Object.entries(KNOWN)) rec[k] = clean(data[k], max) || null;
     rec.mode = rec.mode === "message" ? "Besked" : "Booking";
@@ -50,6 +63,7 @@ export const submitInquiry = createServerFn({ method: "POST" })
 export const subscribeNewsletter = createServerFn({ method: "POST" })
   .validator(z.object({ email: z.string().max(200), consent: z.literal(true) }))
   .handler(async ({ data }) => {
+    if (tooMany()) throw new Error("For mange tilmeldinger. Prøv igen om lidt.");
     const email = clean(data.email, 200).toLowerCase();
     if (!EMAIL.test(email)) throw new Error("Ugyldig e-mail");
     const st = await insert("nyhedsbrev", { email, consent: true });
